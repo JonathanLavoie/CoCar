@@ -52,7 +52,7 @@
         android:singleLine="true" />
 
     <Button
-        android:id="@+id/email_sign_in_button" style="?android:textAppearanceSmall"
+        android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -60,6 +60,14 @@
         android:textStyle="bold"
         android:layout_gravity="center_horizontal"
         android:shadowColor="#ff00ff12" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="@string/btn_Inscription"
+        android:id="@+id/Inscription_button"
+        android:layout_gravity="center_horizontal"
+        android:onClick="inscriptionActivity" />
 
     <ScrollView
         android:id="@+id/login_form"
