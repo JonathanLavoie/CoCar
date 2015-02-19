@@ -11,7 +11,6 @@
     <string name="action_apropos">À Propos</string>
     <string name="txt_nom">Nom</string>
     <string name="txt_MotDePasse">Mot de Passe</string>
-    <string name="txt_adresse">Adresse</string>
     <string name="txt_NumeroTel">Numéro de Téléphone</string>
     <string name="txt_btn_enregistrer">Enregistrer</string>
     <string name="txt_btn_connexion">Connexion</string>
@@ -21,8 +20,10 @@
     <string name="title_activity_inscription">Inscription</string>
     <string name="btn_Inscription">S\'inscrire</string>
     <string name="title_activity_apropos">AProposActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="txt_Email">Email</string>
+    <string name="hint_nom">Prénom et Nom</string>
+    <string name="hint_Address">Votre adresse</string>
+
 
 
 </resources>
