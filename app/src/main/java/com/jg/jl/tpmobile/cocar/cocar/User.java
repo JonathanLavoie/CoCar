@@ -4,61 +4,93 @@ package com.jg.jl.tpmobile.cocar.cocar;
  * Created by Jonathan Lavoie on 19/02/2015.
  */
 public class User {
-    // Variable de la class d'un usager
-    private String _nom, _identifiant, _motDePasse, _address, _phone;
+    // Labels table name
+    public static final String TABLE = "User";
 
-    //Constructeur
-    public User (String nom, String identifiant, String motDePasse, String address, String phone)
-    {
-        this._nom = nom;
-        this._identifiant = identifiant;
-        this._motDePasse = Util.encryptPassword(motDePasse);
-        this._address = address;
-        this._phone = phone;
+    // Labels Table Columns names
+    public static final String KEY_Identification = "Identification";
+    public static final String KEY_nom = "nom";
+    public static final String KEY_motPasse = "MotPasse";
+    public static final String KEY_adresse = "Adresse";
+    public static final String KEY_phone = "Phone";
+    public static final String KEY_sumRate = "SumRate";
+    public static final String Key_countRate = "CountRate";
+
+
+    // property help us to keep data
+    private String _identification, _nom, _motPasse, _adresse, _phone;
+    private int _sumRate, _countRate;
+
+    // Constructeur
+    public User() {
+        _identification = "";
+        _nom = "";
+        _motPasse = "";
+        _adresse = "";
+        _phone = "";
+        _sumRate = 0;
+        _countRate = 0;
+    };
+    //--------------------------------------------
+    //-------------Set des variables--------------
+    //--------------------------------------------
+    public void set_identification(String identification) {
+        this._identification = identification;
     }
 
-    //------------------------------------------
-    // -----------Set des variable--------------
-    //------------------------------------------
     public void set_nom(String nom) {
         this._nom = nom;
     }
 
-    public void set_identifiant(String identifiant) {
-        this._identifiant = identifiant;
+    public void set_motPasse(String motPasse) {
+        this._motPasse = motPasse;
     }
 
-    public void set_motDePasse(String motDePasse) {
-        this._motDePasse = Util.encryptPassword(motDePasse);
-    }
-
-    public void set_address(String address) {
-        this._address = address;
+    public void set_adresse(String adresse) {
+        this._adresse = adresse;
     }
 
     public void set_phone(String phone) {
         this._phone = phone;
     }
-    //------------------------------------------
-    // -----------Get des variable--------------
-    //------------------------------------------
+
+    public void set_sumRate(int sumRate) {
+        this._sumRate = sumRate;
+    }
+
+    public void set_countRate(int countRate) {
+        this._countRate = countRate;
+    }
+
+    //--------------------------------------------
+    //-------------Get des variables--------------
+    //--------------------------------------------
+
+    public String get_identification() {
+        return _identification;
+    }
+
     public String get_nom() {
         return _nom;
     }
 
-    public String get_identifiant() {
-        return _identifiant;
+    public String get_motPasse() {
+        return _motPasse;
     }
 
-    public String get_motDePasse() {
-        return _motDePasse;
-    }
-
-    public String get_address() {
-        return _address;
+    public String get_adresse() {
+        return _adresse;
     }
 
     public String get_phone() {
         return _phone;
+    }
+
+    public int get_sumRate() {
+        return _sumRate;
+    }
+
+    public int get_countRate() {
+        return _countRate;
     }
 }
