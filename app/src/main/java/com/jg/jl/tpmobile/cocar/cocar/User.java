@@ -9,7 +9,7 @@ public class User {
 
     // Labels Table Columns names
     public static final String KEY_Identification = "Identification";
-    public static final String KEY_nom = "nom";
+    public static final String KEY_nom = "Nom";
     public static final String KEY_motPasse = "MotPasse";
     public static final String KEY_adresse = "Adresse";
     public static final String KEY_phone = "Phone";
@@ -92,5 +92,25 @@ public class User {
 
     public int get_countRate() {
         return _countRate;
+    }
+
+    //--------------------------------------------
+    //-----------------Méthodes-------------------
+    //--------------------------------------------
+
+    // Methode pour ajouter un
+    public void ajouterRate(int rate) {
+        this._sumRate = this._sumRate + rate;
+        this._countRate = this._countRate + 1;
+    }
+
+    // Methode pour confirmer de mot de passe
+    public boolean verifierMotPasse(String motPasse) {
+        if (this._motPasse == Util.encryptPassword(motPasse)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }

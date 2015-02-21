@@ -10,6 +10,7 @@ import java.util.Formatter;
  */
 public class Util {
 
+    // Méthode pour encrypter le mot de passe
     public static String encryptPassword(String password)
     {
         String sha1 = "";
@@ -31,6 +32,7 @@ public class Util {
         return sha1;
     }
 
+    // Méthode pour changé la chaine de charactere en hexadeciaml
     private static String byteToHex(final byte[] hash)
     {
         Formatter formatter = new Formatter();
