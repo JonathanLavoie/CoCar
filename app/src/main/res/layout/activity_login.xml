@@ -51,7 +51,8 @@
         android:text="@string/txt_btn_connexion"
         android:textStyle="bold"
         android:layout_gravity="center_horizontal"
-        android:shadowColor="#ff00ff12" />
+        android:shadowColor="#ff00ff12"
+        android:onClick="login" />
 
     <Button
         android:layout_width="wrap_content"

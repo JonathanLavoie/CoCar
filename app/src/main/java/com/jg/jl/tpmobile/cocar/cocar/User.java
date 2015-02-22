@@ -98,13 +98,20 @@ public class User {
     //-----------------Méthodes-------------------
     //--------------------------------------------
 
-    // Methode pour ajouter un
+    /**
+     * Methode pour ajouter une quote
+     * @param rate - La quote sur 5
+     */
     public void ajouterRate(int rate) {
         this._sumRate = this._sumRate + rate;
         this._countRate = this._countRate + 1;
     }
 
-    // Methode pour confirmer de mot de passe
+    /**
+     * Méthode pour confirmer de mot de passe
+     * @param motPasse - String Mot de passe
+     * @return - Boolean Vrai,faux si le mot de passe est le meme.
+     */
     public boolean verifierMotPasse(String motPasse) {
         if (this._motPasse == Util.encryptPassword(motPasse)) {
             return true;

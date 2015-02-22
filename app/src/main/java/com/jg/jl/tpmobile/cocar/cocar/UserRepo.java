@@ -11,12 +11,20 @@ import android.database.sqlite.SQLiteDatabase;
 public class UserRepo {
     private DBHelper dbHelper;
 
+    /**
+     * Constructeur
+     * @param context - Contexte de l'application
+     */
     public UserRepo(Context context) {
         dbHelper = new DBHelper(context);
     }
 
-    public int insert(User user) {
-        //Open connection to write data
+    /**
+     * Méthode pour ajouter un utilisateur a la BD
+     * @param user - Un Utilisateur
+     */
+    public void insert(User user) {
+        //Ouvre la connexion
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(User.KEY_Identification, user.get_identification());
@@ -27,19 +35,26 @@ public class UserRepo {
         values.put(User.KEY_sumRate, 0);
         values.put(User.Key_countRate, 0);
 
-        // Inserting Row
-        long student_Id = db.insert(User.TABLE, null, values);
-        db.close(); // Closing database connection
-        return (int) student_Id;
+        // Ajoute les données
+        db.insert(User.TABLE, null, values);
+        db.close(); // Ferme la BD
     }
 
+    /**
+     * Supprime l'usager
+     * @param user_identification
+     */
     public void delete(String user_identification) {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(User.TABLE, User.KEY_Identification + "= ?", new String[] { user_identification });
-        db.close(); // Closing database connection
+        db.close();
     }
 
+    /**
+     * Modifie l'usager
+     * @param user - String Usager
+     */
     public void update(User user) {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -53,13 +68,19 @@ public class UserRepo {
         values.put(User.KEY_sumRate, user.get_sumRate());
         values.put(User.Key_countRate, user.get_countRate());
 
-        // It's a good practice to use parameter ?, instead of concatenate string
+        // Modifie l'usager avec les nouvelle valeur
         db.update(User.TABLE, values, User.KEY_Identification + "= ?", new String[] { user.get_identification() });
-        db.close(); // Closing database connection
+        db.close();
     }
 
+    /**
+     * Retourne l'usager a partir de l'identifiant
+     * @param identification
+     * @return - L'utilisateur
+     */
     public User getUserByIdentification(String identification){
         SQLiteDatabase db = dbHelper.getReadableDatabase();
+        // Création de la requête
         String selectQuery =  "SELECT  " +
                 User.KEY_Identification + "," +
                 User.KEY_nom + "," +
@@ -72,8 +93,9 @@ public class UserRepo {
                 + " WHERE " +
                 User.KEY_Identification + "=?";
 
+        // Création d'un nouveau utilisateur
         User user = new User();
-
+        // Création d'un cursor
         Cursor cursor = db.rawQuery(selectQuery, new String[] { identification } );
 
         if (cursor.moveToFirst()) {
@@ -88,6 +110,7 @@ public class UserRepo {
                 } while (cursor.moveToNext());
         }
 
+        // Ferme le cursor, la BD et renvois l'utilisateur selectionner
         cursor.close();
         db.close();
         return user;

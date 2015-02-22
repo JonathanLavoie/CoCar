@@ -2,16 +2,83 @@
   <dictionary name="Main Nain">
     <words>
       <w>adresse</w>
+      <w>affiche</w>
+      <w>afficher</w>
+      <w>ajoute</w>
+      <w>ajouter</w>
+      <w>attribut</w>
+      <w>bouton</w>
+      <w>chaine</w>
+      <w>changé</w>
+      <w>chaque</w>
+      <w>charactere</w>
+      <w>charactère</w>
+      <w>confirmer</w>
       <w>connecter</w>
       <w>constructeur</w>
+      <w>contexte</w>
+      <w>contien</w>
+      <w>couriel</w>
+      <w>courielle</w>
       <w>création</w>
+      <w>crée</w>
+      <w>d'un</w>
+      <w>doit</w>
+      <w>données</w>
+      <w>editeur</w>
+      <w>encrypter</w>
+      <w>entrez</w>
+      <w>erreur</w>
+      <w>faux</w>
+      <w>ferme</w>
+      <w>fichier</w>
+      <w>fois</w>
+      <w>garder</w>
+      <w>hexadeciaml</w>
+      <w>identifiant</w>
+      <w>indentifiant</w>
+      <w>indentification</w>
+      <w>l'alert</w>
+      <w>l'application</w>
+      <w>l'identifiant</w>
       <w>l'identification</w>
+      <w>l'indentifiant</w>
+      <w>l'indentification</w>
+      <w>l'usager</w>
+      <w>l'ustilisateur</w>
+      <w>l'utilisateur</w>
       <w>lavoie</w>
+      <w>modifie</w>
+      <w>méthode</w>
+      <w>nouveau</w>
+      <w>nouvelle</w>
+      <w>ouvre</w>
+      <w>partir</w>
+      <w>permet</w>
       <w>redirige</w>
+      <w>regarde</w>
+      <w>remplit</w>
+      <w>renvois</w>
+      <w>requete</w>
+      <w>requête</w>
+      <w>resultat</w>
       <w>retourne</w>
+      <w>s'inscrire</w>
       <w>sauvgarde</w>
+      <w>selectionner</w>
       <w>sinon</w>
       <w>stockage</w>
+      <w>supprime</w>
+      <w>texte</w>
+      <w>tous</w>
+      <w>usager</w>
+      <w>utilisateur</w>
+      <w>valide</w>
+      <w>varibales</w>
+      <w>voir</w>
+      <w>votre</w>
+      <w>vrai</w>
+      <w>être</w>
     </words>
   </dictionary>
 </component>

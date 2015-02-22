@@ -9,12 +9,11 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class DBHelper  extends SQLiteOpenHelper {
-    //version number to upgrade database version
-    //each time if you Add, Edit table, you need to change the
-    //version number.
+    //Version de la BD
+    // Doit être changé a chaque fois que la BD est modifier
     private static final int DATABASE_VERSION = 1;
 
-    // Database Name
+    // Nom de la BD
     private static final String DATABASE_NAME = "CoCar.db";
 
     public DBHelper(Context context ) {
@@ -23,7 +22,7 @@ public class DBHelper  extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //All necessary tables you like to create will create here
+        //Tout les tables de l'application
 
         String CREATE_TABLE_STUDENT = "CREATE TABLE " + User.TABLE  + "("
                 + User.KEY_Identification  + " TEXT PRIMARY KEY,"
@@ -39,10 +38,10 @@ public class DBHelper  extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed, all data will be gone!!!
+        // Drop tous les table
         db.execSQL("DROP TABLE IF EXISTS " + User.TABLE);
 
-        // Create tables again
+        // Crée les tables
         onCreate(db);
 
     }

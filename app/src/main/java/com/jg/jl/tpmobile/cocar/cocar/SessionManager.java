@@ -33,14 +33,21 @@ public class SessionManager {
     // Email address
     public static final String KEY_Nom = "Nom";
 
-    // Constructor
+    /**
+     * Constructeur
+     * @param context - Context de l'application
+     */
     public SessionManager(Context context){
         this._contexte = context;
         pref = _contexte.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
     }
 
-    //Création et stockage du login
+    /**
+     * Création et stockage du login
+     * @param Identification - Le Email de l'utilisateur
+     * @param nom - Le nom de l'utilisateur
+     */
     public void createLoginSession(String Identification, String nom){
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
@@ -55,20 +62,26 @@ public class SessionManager {
         editor.commit();
     }
 
-    // Retourne l'identification (email)
+    /**
+     * Retourne l'identification (email)
+     * @return - String indentification
+     */
     public String getIdentification() {
         return pref.getString(KEY_Identification, null);
     }
 
-    // Retourne le nom
+    /**
+     * Retourne le nom
+     * @return - String nom
+     */
     public String getNom() {
         return pref.getString(KEY_Nom, null);
     }
 
-    //------------------------------------------
-    // Regard si le user est connecter sinon on
-    //    redirige ver la page de connection
-    //------------------------------------------
+    /**
+     * Regard si le user est connecter sinon on
+     *   redirige ver la page de connection
+     */
     public void checkLogin(){
         if(!pref.getBoolean(IS_LOGIN, false)){
             Intent i = new Intent(_contexte, Login.class);
@@ -76,9 +89,9 @@ public class SessionManager {
         }
     }
 
-    //------------------------------------------
-    //-------------logout l'usager--------------
-    //------------------------------------------
+    /**
+     * Logout l'ustilisateur
+     */
     public void logoutUser(){
         // Efface et commit les preferences
         editor.clear();
