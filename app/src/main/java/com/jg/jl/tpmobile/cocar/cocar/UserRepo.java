@@ -33,7 +33,7 @@ public class UserRepo {
         values.put(User.KEY_adresse, user.get_adresse());
         values.put(User.KEY_phone, user.get_phone());
         values.put(User.KEY_sumRate, 0);
-        values.put(User.Key_countRate, 0);
+        values.put(User.KEY_countRate, 0);
 
         // Ajoute les données
         db.insert(User.TABLE, null, values);
@@ -66,7 +66,7 @@ public class UserRepo {
         values.put(User.KEY_adresse, user.get_adresse());
         values.put(User.KEY_phone, user.get_phone());
         values.put(User.KEY_sumRate, user.get_sumRate());
-        values.put(User.Key_countRate, user.get_countRate());
+        values.put(User.KEY_countRate, user.get_countRate());
 
         // Modifie l'usager avec les nouvelle valeur
         db.update(User.TABLE, values, User.KEY_Identification + "= ?", new String[] { user.get_identification() });
@@ -88,7 +88,7 @@ public class UserRepo {
                 User.KEY_adresse + "," +
                 User.KEY_phone + "," +
                 User.KEY_sumRate + "," +
-                User.Key_countRate +
+                User.KEY_countRate +
                 " FROM " + User.TABLE
                 + " WHERE " +
                 User.KEY_Identification + "=?";

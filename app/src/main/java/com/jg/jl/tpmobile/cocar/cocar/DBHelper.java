@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper  extends SQLiteOpenHelper {
     //Version de la BD
     // Doit être changé a chaque fois que la BD est modifier
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Nom de la BD
     private static final String DATABASE_NAME = "CoCar.db";
@@ -24,15 +24,15 @@ public class DBHelper  extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         //Tout les tables de l'application
 
-        String CREATE_TABLE_STUDENT = "CREATE TABLE " + User.TABLE  + "("
+        String CREATE_TABLE_USER = "CREATE TABLE " + User.TABLE  + "("
                 + User.KEY_Identification  + " TEXT PRIMARY KEY,"
                 + User.KEY_nom + " TEXT, "
                 + User.KEY_motPasse + " TEXT, "
                 + User.KEY_adresse + " TEXT, "
                 + User.KEY_phone + " TEXT, "
                 + User.KEY_sumRate + " INTEGER, "
-                + User.Key_countRate + " INTEGER) ";
-        db.execSQL(CREATE_TABLE_STUDENT);
+                + User.KEY_countRate + " INTEGER) ";
+        db.execSQL(CREATE_TABLE_USER);
 
     }
 

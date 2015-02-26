@@ -20,9 +20,6 @@ public class Login extends ActionBarActivity {
     // Champs texte pour l'indentifiant et le mot de passe
     EditText txtIndentifiant, txtMotPasse;
 
-    // Bouton pour se connecter
-    Button btnLogin;
-
     // Session pour garder les information du login
     SessionManager session;
 
@@ -60,7 +57,7 @@ public class Login extends ActionBarActivity {
         if(indentifiant.trim().length() > 0 && motDePass.trim().length() > 0){
 
         } else {
-            Util.afficherAlertBox(Login.this, "Entrez votre Email et mot de passe","Erreur");
+            Util.afficherAlertBox(Login.this, "Entrez votre Email et votre mot de passe","Erreur");
         }
     }
 }

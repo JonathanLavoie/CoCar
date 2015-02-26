@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:ems="10"
-            android:id="@+id/editText"
+            android:id="@+id/txtEmail"
             android:layout_marginTop="5dp"
             android:hint="@string/txt_Email" />
 
@@ -73,7 +73,8 @@
             android:text="@string/btn_Inscription"
             android:id="@+id/btnInscription"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="5dp"
+            android:onClick="inscription" />
 
     </LinearLayout>
 

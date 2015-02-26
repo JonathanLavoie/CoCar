@@ -66,14 +66,15 @@ public class Util {
      * @param titre - Titre a afficher
      */
     public static void afficherAlertBox(Context context, String message, String titre) {
-        AlertDialog messageBox = new AlertDialog.Builder(context).create();
+        AlertDialog.Builder messageBox = new AlertDialog.Builder(context);
         // Affiche le titre
         messageBox.setTitle(titre);
         // Affiche le message
         messageBox.setMessage(message);
         // Ajoute un bouton ok
-        messageBox.setButton("OK", new DialogInterface.OnClickListener() {
+        messageBox.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+
             }
         });
         // Affiche l'alert
@@ -81,7 +82,7 @@ public class Util {
     }
 
     /**
-     * Méthode qui permet de voir si l'identification est une adresse courielle valide
+     * Méthode qui permet de voir si l'identification est une adresse courriel valide
      * @param identification - Adresse courielle
      * @return - True (valide) - False (inValide)
      */
@@ -99,6 +100,31 @@ public class Util {
         // Crée un match
         Matcher matcher = pattern.matcher(couriel);
         // Regarde si l'identification est une adresse courielle
+        if (matcher.matches()) {
+            valide = true;
+        }
+        return valide;
+    }
+
+    /**
+     * Méthode qui permet de voir si le numéro de téléphone est valide
+     * @param phone - Adresse courielle
+     * @return - True (valide) - False (inValide)
+     */
+    public static boolean phoneValide(String phone) {
+        // Numéro de téléphone valide ou non
+        boolean valide = false;
+
+        // Expression pour une adresse courielle
+        String expression = "^(?:(?:\\+?1\\s*(?:[.-]\\s*)?)?(?:\\(\\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\\s*\\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\\s*(?:[.-]\\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\\s*(?:[.-]\\s*)?([0-9]{4})(?:\\s*(?:#|x\\.?|ext\\.?|extension)\\s*(\\d+))?$";
+
+        // change la chaine de charactère en CharSequence
+        CharSequence numTel = phone;
+        // Crée un pattern
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        // Crée un match
+        Matcher matcher = pattern.matcher(numTel);
+        // Regarde si le numéro de téléphone est valide
         if (matcher.matches()) {
             valide = true;
         }

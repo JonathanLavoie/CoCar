@@ -14,7 +14,7 @@ public class User {
     public static final String KEY_adresse = "Adresse";
     public static final String KEY_phone = "Phone";
     public static final String KEY_sumRate = "SumRate";
-    public static final String Key_countRate = "CountRate";
+    public static final String KEY_countRate = "CountRate";
 
 
     // property help us to keep data
