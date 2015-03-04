@@ -97,8 +97,15 @@ public class InscriptionActivity extends ActionBarActivity {
                 // Vérifie si le numéro de téléphone est valide
                 if (Util.phoneValide(phone)) {
                     // Vérifie si l'adresse courriel est utilisé
-                    if ()
-                    return true;
+                    UserRepo repo = new UserRepo(this);
+                    User utilisateur = repo.getUserByIdentification(email);
+                    if (utilisateur.get_nom() == "" || utilisateur.get_nom() == null) {
+                        return true;
+                    }
+                    else {
+                        Util.afficherAlertBox(InscriptionActivity.this, "Le email est deja utiliser", "Email Utiliser");
+                        return false;
+                    }
                 }
                 else {
                     // Erreur sur la validation du numéro de téléphone

@@ -51,11 +51,20 @@ public class Login extends ActionBarActivity {
      * @param view
      */
     public void login(View view) {
-        String indentifiant = txtIndentifiant.getText().toString();
+        String identifiant = txtIndentifiant.getText().toString();
         String motDePass = txtMotPasse.getText().toString();
-
-        if(indentifiant.trim().length() > 0 && motDePass.trim().length() > 0){
-
+        // Verifier si l'utilisateur a entrez l'identification et le mot de passe.
+        if(identifiant.trim().length() > 0 && motDePass.trim().length() > 0){
+            // Verifier si l'utilisateur a entrez un bon identifiant et mot de passe.
+            UserRepo repo = new UserRepo(this);
+            User utilisateur = repo.getUserByIdentification(identifiant);
+            if (utilisateur.get_motPasse().equals(Util.encryptPassword(motDePass.trim()))) {
+                Intent i = new Intent(Login.this,InscriptionActivity.class);
+                startActivity(i);
+            }
+            else {
+                Util.afficherAlertBox(Login.this, "Identification ou mot de passe incorrect","Erreur");
+            }
         } else {
             Util.afficherAlertBox(Login.this, "Entrez votre Email et votre mot de passe","Erreur");
         }

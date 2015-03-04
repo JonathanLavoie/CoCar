@@ -107,9 +107,8 @@ public class UserRepo {
                 user.set_phone(cursor.getString(cursor.getColumnIndex(User.KEY_phone)));
                 user.set_sumRate(cursor.getInt(cursor.getColumnIndex(User.KEY_sumRate)));
                 user.set_countRate(cursor.getInt(cursor.getColumnIndex(User.KEY_sumRate)));
-                } while (cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
-
         // Ferme le cursor, la BD et renvois l'utilisateur selectionner
         cursor.close();
         db.close();
