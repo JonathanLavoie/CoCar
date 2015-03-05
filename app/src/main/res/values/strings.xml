@@ -19,11 +19,29 @@
     <string name="txt_hint_login">Indentifiant (Email)</string>
     <string name="title_activity_inscription">Inscription</string>
     <string name="btn_Inscription">S\'inscrire</string>
-    <string name="title_activity_apropos">AProposActivity</string>
     <string name="txt_Email">Email</string>
     <string name="hint_nom">Prénom et Nom</string>
     <string name="hint_Address">Votre adresse</string>
+    <string name="title_activity_search">searchActivity</string>
+
+    <string name="title_Profil">Profil</string>
+    <string name="title_Depart">Départ</string>
+    <string name="title_Proposition">Proposition</string>
+    <string name="title_Note">Évaluer un utilisateur</string>
+    <string name="title_Rechercher">Rechercher</string>
 
 
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="action_settings">Déconnexion</string>
+    <string name="title_activity_base">BaseActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="action_example">Example action</string>
 </resources>
