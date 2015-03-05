@@ -66,7 +66,7 @@ public class Login extends ActionBarActivity {
                 // Ajoute les Shared preferences et redirige vers la page recherche
 
                 session.createLoginSession(identifiant.trim(), utilisateur.get_nom());
-                Intent i = new Intent(Login.this,InscriptionActivity.class);
+                Intent i = new Intent(Login.this,BaseActivity.class);
                 startActivity(i);
             }
             else {
