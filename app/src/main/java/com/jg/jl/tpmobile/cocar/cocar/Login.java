@@ -53,12 +53,19 @@ public class Login extends ActionBarActivity {
     public void login(View view) {
         String identifiant = txtIndentifiant.getText().toString();
         String motDePass = txtMotPasse.getText().toString();
+
         // Verifier si l'utilisateur a entrez l'identification et le mot de passe.
         if(identifiant.trim().length() > 0 && motDePass.trim().length() > 0){
+
             // Verifier si l'utilisateur a entrez un bon identifiant et mot de passe.
             UserRepo repo = new UserRepo(this);
             User utilisateur = repo.getUserByIdentification(identifiant);
+
             if (utilisateur.get_motPasse().equals(Util.encryptPassword(motDePass.trim()))) {
+
+                // Ajoute les Shared preferences et redirige vers la page recherche
+
+                session.createLoginSession(identifiant.trim(), utilisateur.get_nom());
                 Intent i = new Intent(Login.this,InscriptionActivity.class);
                 startActivity(i);
             }
