@@ -34,12 +34,40 @@ public class DBHelper  extends SQLiteOpenHelper {
                 + User.KEY_countRate + " INTEGER) ";
         db.execSQL(CREATE_TABLE_USER);
 
+        String CREATE_TABLE_PARCOURS = "CREATE TABLE" + Parcours.TABLE + "("
+                + Parcours.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
+                + Parcours.KEY_ConducteurID + " INTEGER, "
+                + Parcours.KEY_PassagerID + " INTEGER, "
+                + Parcours.KEY_Date + " TEXT )";
+        db.execSQL(CREATE_TABLE_PARCOURS);
+
+        String CREATE_TABLE_PARCOURSPASSAGER = "CREATE TABLE" + ParcoursPassager.TABLE + "("
+                + ParcoursPassager.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
+                + ParcoursPassager.KEY_Depart + " TEXT, "
+                + ParcoursPassager.KEY_Destination + " TEXT, "
+                + ParcoursPassager.KEY_Frequence + " TEXT, "
+                + ParcoursPassager.KEY_NombrePassager + " INTEGER, "
+                + ParcoursPassager.KEY_Date + " TEXT)";
+        db.execSQL(CREATE_TABLE_PARCOURSPASSAGER);
+
+        String CREATE_TABLE_PARCOURSCONDUCTEUR = "CREATE TABLE" + ParcoursConducteur.TABLE + "("
+                + ParcoursConducteur.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
+                + ParcoursConducteur.KEY_Depart + " TEXT, "
+                + ParcoursConducteur.KEY_Destination + " TEXT, "
+                + ParcoursConducteur.KEY_Frequence + " TEXT, "
+                + ParcoursConducteur.KEY_NombrePlace + " INTEGER, "
+                + ParcoursConducteur.KEY_Date + " TEXT, "
+                + ParcoursConducteur.KEY_KM + " INTEGER) ";
+        db.execSQL(CREATE_TABLE_PARCOURSCONDUCTEUR);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop tous les table
         db.execSQL("DROP TABLE IF EXISTS " + User.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + Parcours.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + ParcoursPassager.TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + ParcoursConducteur.TABLE);
 
         // Crée les tables
         onCreate(db);
