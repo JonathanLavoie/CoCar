@@ -96,9 +96,5 @@ public class SessionManager {
         // Efface et commit les preferences
         editor.clear();
         editor.commit();
-
-        // On redirige ver la page de connexion
-        Intent i = new Intent(_contexte, Login.class);
-        _contexte.startActivity(i);
     }
 }

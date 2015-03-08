@@ -1,6 +1,7 @@
 package com.jg.jl.tpmobile.cocar.cocar;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -31,11 +32,16 @@ public class BaseActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+
+        session = new SessionManager(getApplicationContext());
+        session.checkLogin();
+
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -125,7 +131,12 @@ public class BaseActivity extends ActionBarActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_Deconnexion) {
+            session = new SessionManager(getApplicationContext());
+            session.logoutUser();
+            Intent i = new Intent(BaseActivity.this, Login.class);
+            startActivity(i);
+            finish();
             return true;
         }
 
