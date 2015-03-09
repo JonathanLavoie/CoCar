@@ -17,21 +17,23 @@ public class ParcoursConducteur {
     public static final String KEY_Date = "Date";
     public static final String KEY_NombrePlace = "NombrePlace";
     public static final String KEY_KM = "KM";
+    public static final String KEY_Heure = "Heure";
 
 
     // property help us to keep data
-    private String _depart, _destination, _frequence;
+    private String _depart, _destination, _frequence, _heure;
     int _nombreDePlace, _ID, _KM;
-    Date _date;
+    String _date;
 
     // Constructeur
     public ParcoursConducteur() {
+        _heure ="";
         _depart = "";
         _destination = "";
         _frequence = "";
         _nombreDePlace = 0;
         _ID = 0;
-        _date = new Date();
+        _date = "";
         _KM = 0;
     };
 
@@ -54,7 +56,7 @@ public class ParcoursConducteur {
         this._frequence = _frequence;
     }
 
-    public void set_date(Date _date) {
+    public void set_date(String _date) {
         this._date = _date;
     }
 
@@ -64,6 +66,10 @@ public class ParcoursConducteur {
 
     public void set_KM(int _KM) {
         this._KM = _KM;
+    }
+
+    public void set_heure(String _heure) {
+        this._heure = _heure;
     }
 
     //--------------------------------------------
@@ -83,7 +89,7 @@ public class ParcoursConducteur {
         return _frequence;
     }
 
-    public Date get_date() {
+    public String get_date() {
         return _date;
     }
 
@@ -93,6 +99,10 @@ public class ParcoursConducteur {
 
     public int get_KM() {
         return _KM;
+    }
+
+    public String get_heure() {
+        return _heure;
     }
 
     //--------------------------------------------

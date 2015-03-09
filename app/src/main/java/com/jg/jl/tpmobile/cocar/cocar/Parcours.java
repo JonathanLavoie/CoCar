@@ -14,15 +14,18 @@ public class Parcours {
     public static final String KEY_ConducteurID = "ConducteurID";
     public static final String KEY_PassagerID = "PassagerID";
     public static final String KEY_Date = "Date";
+    public static final String KEY_Heure = "Heure";
 
+    String _heure;
     int _ID, _PassagerID, _ConducteurID;
-    Date _date;
+    String _date;
 
     public Parcours () {
+        _heure ="";
         _ID = 0;
         _PassagerID = 0;
         _ConducteurID = 0;
-        _date = new Date();
+        _date = "";
     }
     //--------------------------------------------
     //-------------Set des variables--------------
@@ -40,8 +43,12 @@ public class Parcours {
         this._PassagerID = _PassagerID;
     }
 
-    public void set_date(Date _date) {
+    public void set_date(String _date) {
         this._date = _date;
+    }
+
+    public void set_heure(String _heure) {
+        this._heure = _heure;
     }
 
     //--------------------------------------------
@@ -59,7 +66,11 @@ public class Parcours {
         return _PassagerID;
     }
 
-    public Date get_date() {
+    public String get_date() {
         return _date;
+    }
+
+    public String get_heure() {
+        return _heure;
     }
 }
