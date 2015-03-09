@@ -40,6 +40,7 @@ public class ParcoursConducteurRepo {
         values.put(ParcoursConducteur.KEY_Date, parcoursConducteur.get_date().toString());
         values.put(ParcoursConducteur.KEY_NombrePlace, parcoursConducteur.get_nombreDePlace());
         values.put(ParcoursConducteur.KEY_KM, parcoursConducteur.get_KM());
+        values.put(ParcoursConducteur.KEY_Heure, parcoursConducteur.get_heure());
 
         // Ajoute les données
         db.insert(ParcoursConducteur.TABLE, null, values);
@@ -73,6 +74,7 @@ public class ParcoursConducteurRepo {
                 ParcoursConducteur.KEY_Date + "," +
                 ParcoursConducteur.KEY_NombrePlace + "," +
                 ParcoursConducteur.KEY_KM + "," +
+                ParcoursConducteur.KEY_Heure +
                 " FROM " + ParcoursConducteur.TABLE
                 + " WHERE " +
                 ParcoursConducteur.KEY_ID + "=?";
@@ -90,15 +92,17 @@ public class ParcoursConducteurRepo {
                 parcoursConducteur.set_frequence(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Frequence)));
                 // Date conversion a faire
                 String date = cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Date));
-                DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
-                try {
-                    Date dateBon = format.parse(date);
-                    parcoursConducteur.set_date(dateBon);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                //DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
+                //try {
+                 //   Date dateBon = date;
+                  //  parcoursConducteur.set_date(dateBon);
+                //} catch (ParseException e) {
+                  //  e.printStackTrace();
+                //}
+                parcoursConducteur.set_date(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Date)));
                 parcoursConducteur.set_nombreDePlace(cursor.getInt(cursor.getColumnIndex(ParcoursConducteur.KEY_NombrePlace)));
                 parcoursConducteur.set_KM(cursor.getInt(cursor.getColumnIndex(ParcoursConducteur.KEY_KM)));
+                parcoursConducteur.set_heure(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Heure)));
             } while (cursor.moveToNext());
         }
         // Ferme le cursor, la BD et renvois l'utilisateur selectionner

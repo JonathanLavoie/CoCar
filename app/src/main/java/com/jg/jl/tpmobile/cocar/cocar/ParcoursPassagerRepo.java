@@ -39,6 +39,7 @@ public class ParcoursPassagerRepo {
         values.put(ParcoursPassager.KEY_Frequence, parcoursPassager.get_frequence());
         values.put(ParcoursPassager.KEY_Date, parcoursPassager.get_date().toString());
         values.put(ParcoursPassager.KEY_NombrePassager, parcoursPassager.get_nombrePassager());
+        values.put(ParcoursPassager.KEY_Heure, parcoursPassager.get_heure());
 
         // Ajoute les données
         db.insert(ParcoursPassager.TABLE, null, values);
@@ -71,6 +72,7 @@ public class ParcoursPassagerRepo {
                 ParcoursPassager.KEY_Frequence + "," +
                 ParcoursPassager.KEY_Date + "," +
                 ParcoursPassager.KEY_NombrePassager + "," +
+                ParcoursPassager.KEY_Heure +
                 " FROM " + ParcoursPassager.TABLE
                 + " WHERE " +
                 ParcoursPassager.KEY_ID + "=?";
@@ -87,15 +89,17 @@ public class ParcoursPassagerRepo {
                 parcoursPassager.set_destination(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Destination)));
                 parcoursPassager.set_frequence(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Frequence)));
                 // Date conversion a faire
-                String date = cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Date));
-                DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
-                try {
-                    Date dateBon = format.parse(date);
-                    parcoursPassager.set_date(dateBon);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+               // String date = cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Date));
+                //DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
+                //try {
+                  //  Date dateBon = format.parse(date);
+                   // parcoursPassager.set_date(dateBon);
+                //} catch (ParseException e) {
+                  //  e.printStackTrace();
+                //}
+                parcoursPassager.set_date(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Date)));
                 parcoursPassager.set_nombrePassager(cursor.getInt(cursor.getColumnIndex(ParcoursPassager.KEY_NombrePassager)));
+                parcoursPassager.set_heure(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Heure)));
             } while (cursor.moveToNext());
         }
         // Ferme le cursor, la BD et renvois l'utilisateur selectionner

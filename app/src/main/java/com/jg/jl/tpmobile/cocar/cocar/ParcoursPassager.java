@@ -16,21 +16,22 @@ public class ParcoursPassager {
     public static final String KEY_Frequence = "Frequence";
     public static final String KEY_Date = "Date";
     public static final String KEY_NombrePassager = "NombrePassager";
-
+    public static final String KEY_Heure = "Heure";
 
     // property help us to keep data
-    private String _depart, _destination, _frequence;
+    private String _depart, _destination, _frequence, _heure;
     int _ID, _nombrePassager;
-    Date _date;
+    String _date;
 
     // Constructeur
     public ParcoursPassager() {
+        _heure ="";
         _depart = "";
         _destination = "";
         _frequence = "";
         _ID = 0;
         _nombrePassager = 0;
-        _date = new Date();
+        _date = "";
     };
 
     //--------------------------------------------
@@ -52,12 +53,16 @@ public class ParcoursPassager {
         this._frequence = _frequence;
     }
 
-    public void set_date(Date _date) {
+    public void set_date(String _date) {
         this._date = _date;
     }
 
     public void set_nombrePassager(int _nombrePassager) {
         this._nombrePassager = _nombrePassager;
+    }
+
+    public void set_heure(String _heure) {
+        this._heure = _heure;
     }
 
     //--------------------------------------------
@@ -73,7 +78,7 @@ public class ParcoursPassager {
         return _frequence;
     }
 
-    public Date get_date() {
+    public String get_date() {
         return _date;
     }
 
@@ -84,6 +89,11 @@ public class ParcoursPassager {
     public int get_nombrePassager() {
         return _nombrePassager;
     }
+
+    public String get_heure() {
+        return _heure;
+    }
+
     //--------------------------------------------
     //-----------------Méthodes-------------------
     //--------------------------------------------

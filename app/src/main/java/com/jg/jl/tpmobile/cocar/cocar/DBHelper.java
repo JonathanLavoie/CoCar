@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper  extends SQLiteOpenHelper {
     //Version de la BD
     // Doit être changé a chaque fois que la BD est modifier
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 9;
 
     // Nom de la BD
     private static final String DATABASE_NAME = "CoCar.db";
@@ -23,7 +23,7 @@ public class DBHelper  extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //Tout les tables de l'application
-
+        db.execSQL("DROP TABLE IF EXISTS " + User.TABLE);
         String CREATE_TABLE_USER = "CREATE TABLE " + User.TABLE  + "("
                 + User.KEY_Identification  + " TEXT PRIMARY KEY,"
                 + User.KEY_nom + " TEXT, "
@@ -33,30 +33,33 @@ public class DBHelper  extends SQLiteOpenHelper {
                 + User.KEY_sumRate + " INTEGER, "
                 + User.KEY_countRate + " INTEGER) ";
         db.execSQL(CREATE_TABLE_USER);
-
-        String CREATE_TABLE_PARCOURS = "CREATE TABLE" + Parcours.TABLE + "("
-                + Parcours.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
+        db.execSQL("DROP TABLE IF EXISTS " + Parcours.TABLE);
+        String CREATE_TABLE_PARCOURS = "CREATE TABLE " + Parcours.TABLE + "("
+                + Parcours.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + Parcours.KEY_ConducteurID + " INTEGER, "
                 + Parcours.KEY_PassagerID + " INTEGER, "
-                + Parcours.KEY_Date + " TEXT )";
+                + Parcours.KEY_Heure + " TEXT, "
+                + Parcours.KEY_Date + " TEXT)";
         db.execSQL(CREATE_TABLE_PARCOURS);
-
-        String CREATE_TABLE_PARCOURSPASSAGER = "CREATE TABLE" + ParcoursPassager.TABLE + "("
-                + ParcoursPassager.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
+        db.execSQL("DROP TABLE IF EXISTS " + ParcoursPassager.TABLE);
+        String CREATE_TABLE_PARCOURSPASSAGER = "CREATE TABLE " + ParcoursPassager.TABLE + "("
+                + ParcoursPassager.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + ParcoursPassager.KEY_Depart + " TEXT, "
                 + ParcoursPassager.KEY_Destination + " TEXT, "
                 + ParcoursPassager.KEY_Frequence + " TEXT, "
                 + ParcoursPassager.KEY_NombrePassager + " INTEGER, "
+                + ParcoursPassager.KEY_Heure + " TEXT, "
                 + ParcoursPassager.KEY_Date + " TEXT)";
         db.execSQL(CREATE_TABLE_PARCOURSPASSAGER);
-
-        String CREATE_TABLE_PARCOURSCONDUCTEUR = "CREATE TABLE" + ParcoursConducteur.TABLE + "("
-                + ParcoursConducteur.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
+        db.execSQL("DROP TABLE IF EXISTS " + ParcoursConducteur.TABLE);
+        String CREATE_TABLE_PARCOURSCONDUCTEUR = "CREATE TABLE " + ParcoursConducteur.TABLE + "("
+                + ParcoursConducteur.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + ParcoursConducteur.KEY_Depart + " TEXT, "
                 + ParcoursConducteur.KEY_Destination + " TEXT, "
                 + ParcoursConducteur.KEY_Frequence + " TEXT, "
                 + ParcoursConducteur.KEY_NombrePlace + " INTEGER, "
                 + ParcoursConducteur.KEY_Date + " TEXT, "
+                + ParcoursConducteur.KEY_Heure + " TEXT, "
                 + ParcoursConducteur.KEY_KM + " INTEGER) ";
         db.execSQL(CREATE_TABLE_PARCOURSCONDUCTEUR);
     }
