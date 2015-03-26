@@ -3,13 +3,111 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:gravity="center_horizontal">
 
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Profil"
+            android:id="@+id/textView2"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Profil"
-        android:id="@+id/textView2"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:inputType="textPersonName"
+        android:ems="15"
+        android:layout_marginTop="20dp"
+        android:id="@+id/lblNom"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/hint_nom" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/lblVotreNom"
+            android:layout_gravity="center_horizontal"
+             />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="15"
+        android:id="@+id/txtEmail"
+        android:layout_marginTop="15dp"
+        android:text="@string/txt_Email" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/lblVotreEmail"
+            android:layout_gravity="center_horizontal"
+            />
+        <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPostalAddress"
+        android:ems="15"
+        android:id="@+id/txtAddress"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/hint_Address"
+        android:layout_marginTop="15dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/lblVotreAdresse"
+            android:layout_gravity="center_horizontal"
+            />
+
+        <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:ems="15"
+        android:id="@+id/txtPhone"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/txt_NumeroTel"
+        android:layout_marginTop="15dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/lblVotrePhone"
+            android:layout_gravity="center_horizontal"
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/lblVotreMoyenne"
+            android:text="Votre moyenne"
+            android:layout_gravity="center_horizontal"
+            />
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:isIndicator="true"
+            android:id="@+id/ratingBarProfil"
+            android:rating="1" />
+
+    </LinearLayout>
+
 </RelativeLayout>

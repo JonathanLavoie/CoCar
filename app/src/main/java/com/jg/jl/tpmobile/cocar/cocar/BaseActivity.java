@@ -45,7 +45,7 @@ public class BaseActivity extends ActionBarActivity
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
+        mTitle = getString(R.string.title_Rechercher);
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -74,12 +74,17 @@ public class BaseActivity extends ActionBarActivity
             case 4:
                 objFragment = new profil_fragment();
                 break;
+            case 5:
+                objFragment = new updateUser_fragment();
+                break;
         }
         // update the main content by replacing fragments
         android.app.FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, objFragment)
                 .commit();
+        onSectionAttached(position + 1);
+        restoreActionBar();
     }
 
     public void onSectionAttached(int number) {
@@ -99,7 +104,11 @@ public class BaseActivity extends ActionBarActivity
             case 5:
                 mTitle = getString(R.string.title_Profil);
                 break;
+            case 6:
+                mTitle = getString(R.string.title_modifProfil);
+                break;
         }
+
     }
 
     public void restoreActionBar() {
