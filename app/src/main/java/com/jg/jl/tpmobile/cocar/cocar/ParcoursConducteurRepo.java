@@ -4,7 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
+import java.util.ArrayList;
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -109,5 +110,56 @@ public class ParcoursConducteurRepo {
         cursor.close();
         db.close();
         return parcoursConducteur;
+    }
+
+    public ArrayList<ParcoursConducteur> getAllParcours()
+    {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        // Création de la requête
+        String selectQuery =  "SELECT  " +
+                ParcoursConducteur.KEY_ID + "," +
+                ParcoursConducteur.KEY_Depart + "," +
+                ParcoursConducteur.KEY_Destination + "," +
+                ParcoursConducteur.KEY_Frequence + "," +
+                ParcoursConducteur.KEY_Date + "," +
+                ParcoursConducteur.KEY_NombrePlace + "," +
+                ParcoursConducteur.KEY_KM + "," +
+                ParcoursConducteur.KEY_Heure +
+                " FROM " + ParcoursConducteur.TABLE;
+
+        // Création d'un parcours Conducteur
+        ParcoursConducteur parcoursConducteur;
+        ArrayList<ParcoursConducteur> listConducteur = new ArrayList<>();
+        // Création d'un cursor
+        Cursor cursor = db.rawQuery(selectQuery,null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                parcoursConducteur = new ParcoursConducteur();
+                parcoursConducteur.set_ID(cursor.getInt(cursor.getColumnIndex(ParcoursConducteur.KEY_ID)));
+                parcoursConducteur.set_depart(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Depart)));
+                parcoursConducteur.set_destination(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Destination)));
+                parcoursConducteur.set_frequence(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Frequence)));
+                // Date conversion a faire
+                String date = cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Date));
+                //DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
+                //try {
+                //   Date dateBon = date;
+                //  parcoursConducteur.set_date(dateBon);
+                //} catch (ParseException e) {
+                //  e.printStackTrace();
+                //}
+                parcoursConducteur.set_date(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Date)));
+                parcoursConducteur.set_nombreDePlace(cursor.getInt(cursor.getColumnIndex(ParcoursConducteur.KEY_NombrePlace)));
+                parcoursConducteur.set_KM(cursor.getInt(cursor.getColumnIndex(ParcoursConducteur.KEY_KM)));
+                parcoursConducteur.set_heure(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Heure)));
+                listConducteur.add(parcoursConducteur);
+
+            } while (cursor.moveToNext());
+        }
+        // Ferme le cursor, la BD et renvois l'utilisateur selectionner
+        cursor.close();
+        db.close();
+        return listConducteur;
     }
 }

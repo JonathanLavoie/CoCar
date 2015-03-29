@@ -101,7 +101,7 @@ public class rechercher_fragment extends ListFragment{
         private EditText m_time;
         private EditText m_date;
         public BtnCreateConducteur(int p_position,EditText p_depart,EditText p_destination,
-                                   EditText p_km, EditText p_pass, EditText p_time, EditText p_date
+                                   EditText p_km, EditText p_pass, EditText p_date, EditText p_time
                                    ){
             this.m_depart = p_depart;
             this.m_position = p_position;
@@ -116,12 +116,12 @@ public class rechercher_fragment extends ListFragment{
         public void onClick(DialogInterface dialog, int which) {
             ParcoursConducteurRepo repo = new ParcoursConducteurRepo(getActivity());
             ParcoursConducteur conduc = new ParcoursConducteur();
-            conduc.set_depart(m_depart.toString());
-            conduc.set_destination(m_destination.toString());
+            conduc.set_depart(m_depart.getText().toString());
+            conduc.set_destination(m_destination.getText().toString());
             conduc.set_nombreDePlace(Integer.parseInt(m_nbPass.getText().toString().trim()));
             conduc.set_KM(Integer.parseInt(m_nbKM.getText().toString().trim()));
-            conduc.set_date(m_date.toString());
-            conduc.set_heure(m_time.toString());
+            conduc.set_date(m_date.getText().toString());
+            conduc.set_heure(m_time.getText().toString());
             repo.insert(conduc);
             Toast.makeText(getActivity(),"Parcours Creer",Toast.LENGTH_SHORT).show();
         }
@@ -164,11 +164,11 @@ public class rechercher_fragment extends ListFragment{
         public void onClick(DialogInterface dialog, int which) {
             ParcoursPassagerRepo repo = new ParcoursPassagerRepo(getActivity());
             ParcoursPassager passager = new ParcoursPassager();
-            passager.set_depart(m_depart.toString());
-            passager.set_destination(m_destination.toString());
-            passager.set_date(m_date.toString());
-            passager.set_heure(m_time.toString());
-            passager.set_nombrePassager(Integer.parseInt(m_pass.toString()));
+            passager.set_depart(m_depart.getText().toString());
+            passager.set_destination(m_destination.getText().toString());
+            passager.set_date(m_date.getText().toString());
+            passager.set_heure(m_time.getText().toString());
+            passager.set_nombrePassager(Integer.parseInt(m_pass.getText().toString()));
             repo.insert(passager);
             Toast.makeText(getActivity(),"Passager Creer",Toast.LENGTH_SHORT).show();
         }

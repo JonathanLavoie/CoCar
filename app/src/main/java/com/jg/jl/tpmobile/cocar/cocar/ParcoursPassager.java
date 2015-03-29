@@ -7,7 +7,7 @@ import java.util.Date;
  */
 public class ParcoursPassager {
     // Labels table name
-    public static final String TABLE = "ParcoursConducteur";
+    public static final String TABLE = "ParcoursPassager";
 
     // Labels Table Columns names
     public static final String KEY_ID = "ID";
