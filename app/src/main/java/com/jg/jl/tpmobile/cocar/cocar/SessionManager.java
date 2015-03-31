@@ -30,7 +30,7 @@ public class SessionManager {
     // User Identification (email)
     public static final String KEY_Identification = "Identification";
 
-    // Email address
+
     public static final String KEY_Nom = "Nom";
 
     /**

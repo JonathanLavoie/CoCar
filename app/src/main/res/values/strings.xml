@@ -31,7 +31,8 @@
     <string name="title_Proposition">Proposition</string>
     <string name="title_Note">Évaluer un utilisateur</string>
     <string name="title_Rechercher">Rechercher</string>
-
+    <string name="title_modifProfil">Modifier le profil</string>
+    <string name="btn_Modif">Modifier</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -43,4 +44,10 @@
     <string name="title_passager">Vous êtes un passager</string>
 
     <string name="action_example">Example action</string>
+    <string name="title_activity_update_user">UpdateUserActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
