@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal" android:id="@+id/principaleProfil">
 
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/linearProfil"
         android:gravity="center_horizontal">
         <TextView
             android:layout_width="wrap_content"
@@ -98,7 +99,6 @@
             android:inputType="textPersonName"
             android:ems="10"
             android:id="@+id/lblVotreMoyenne"
-            android:text="Votre moyenne"
             android:layout_gravity="center_horizontal"
             />
         <RatingBar

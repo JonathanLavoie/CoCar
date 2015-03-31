@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
+import  java.util.ArrayList;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -106,5 +106,46 @@ public class ParcoursPassagerRepo {
         cursor.close();
         db.close();
         return parcoursPassager;
+    }
+
+    public ArrayList<ParcoursPassager> getAllParcours()
+    {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        // Création de la requête
+        String selectQuery =  "SELECT " +
+                ParcoursPassager.KEY_ID + ", " +
+                ParcoursPassager.KEY_Depart + ", " +
+                ParcoursPassager.KEY_Destination + ", " +
+                ParcoursPassager.KEY_Frequence + ", " +
+                ParcoursPassager.KEY_Date + ", " +
+                ParcoursPassager.KEY_NombrePassager + ", " +
+                ParcoursPassager.KEY_Heure +
+                " FROM " + ParcoursPassager.TABLE;
+
+        // Création d'un parcours Conducteur
+        ParcoursPassager parcoursPassager;
+        ArrayList<ParcoursPassager> listPassager = new ArrayList<>();
+        // Création d'un cursor
+        Cursor cursor = db.rawQuery(selectQuery,null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                parcoursPassager = new ParcoursPassager();
+                parcoursPassager.set_ID(cursor.getInt(cursor.getColumnIndex(ParcoursPassager.KEY_ID)));
+                parcoursPassager.set_depart(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Depart)));
+                parcoursPassager.set_destination(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Destination)));
+                parcoursPassager.set_frequence(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Frequence)));
+                // Date conversion a faire
+                parcoursPassager.set_date(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Date)));
+                parcoursPassager.set_nombrePassager(cursor.getColumnIndex(ParcoursPassager.KEY_NombrePassager));
+                parcoursPassager.set_heure(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Heure)));
+                listPassager.add(parcoursPassager);
+
+            } while (cursor.moveToNext());
+        }
+        // Ferme le cursor, la BD et renvois l'utilisateur selectionner
+        cursor.close();
+        db.close();
+        return listPassager;
     }
 }

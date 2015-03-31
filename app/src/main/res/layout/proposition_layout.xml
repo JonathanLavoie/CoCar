@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:gravity="center_horizontal">
-
+    android:gravity="center_horizontal" android:id="@+id/rlpropo">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -10,17 +9,11 @@
         android:text="Proposition"
         android:id="@+id/textView2"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Aucune proposition"
-        android:id="@+id/textView7"
-        android:layout_below="@+id/textView2"
-        android:layout_alignRight="@+id/textView2"
-        android:layout_alignEnd="@+id/textView2"
-        android:layout_marginTop="73dp" />
+    <ListView
+        android:id="@+id/listviewperso"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/textView2" />
 </RelativeLayout>
