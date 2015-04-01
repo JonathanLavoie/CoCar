@@ -51,16 +51,18 @@ public class proposition_fragment extends Fragment {
             map = new HashMap<>();
             type = "Passager";
             map.put("img", String.valueOf(R.drawable.passager));
-            map.put("date", listPassager.get(i).get_date()+ " " + listPassager.get(i).get_heure());
+            map.put("id","Numéro de parcours : 1" + listPassager.get(i).get_ID());
+            map.put("date", "Date : " + listPassager.get(i).get_date()+ " " + listPassager.get(i).get_heure());
             map.put("description", type.toUpperCase() + "\nDestination : " + listPassager.get(i).get_destination()
-            + "\nNombre de passager: " + listPassager.get(i).get_nombrePassager());
+                    + "\nNombre de passager: " + listPassager.get(i).get_nombrePassager());
             listMap.add(map);
         }
         for (int i = 0; i < listConducteur.size(); i++) {
             map = new HashMap<>();
             type = "Conducteur";
             map.put("img", String.valueOf(R.drawable.car72));
-            map.put("date", listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
+            map.put("id","Numéro de parcours : 2" + listConducteur.get(i).get_ID());
+            map.put("date", "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
             map.put("description", type.toUpperCase());
             listMap.add(map);
         }
@@ -76,7 +78,7 @@ public class proposition_fragment extends Fragment {
         listMap = triBulle(listMap);
 
         SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), listMap, R.layout.layout_proposition_personnalise,
-                new String[]{"img", "date", "description"}, new int[]{R.id.img, R.id.titre, R.id.description});
+                new String[]{"img", "id","date","description"}, new int[]{R.id.img, R.id.titre,R.id.date,R.id.description});
         maListe.setAdapter(adapter);
 
         maListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -85,7 +87,7 @@ public class proposition_fragment extends Fragment {
                 AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
                 HashMap<String,String> map = (HashMap<String,String>)  maListe.getItemAtPosition(position);
                 adb.setTitle("Item cliquer");
-                adb.setMessage("Date et heure : " + map.get("date") +" \nType : " +  map.get("description"));
+                adb.setMessage(map.get("id") + "\n" +map.get("date") +" \nType : " +  map.get("description") + "\n/!\\ Attention cette action est définitif, vous ne pouvez pas annuler une fois accepté./!\\ ");
                 adb.setNegativeButton("Annuler", null);
                 adb.setPositiveButton("Proposer", null);
                 adb.show();
@@ -113,7 +115,7 @@ public class proposition_fragment extends Fragment {
                     ex.printStackTrace();
                 }
             }
-         }
+        }
         return list;
     }
 }
