@@ -70,23 +70,25 @@ public class depart_fragment extends Fragment{
             RelativeLayout lst = (RelativeLayout)rootView.findViewById(R.id.rlpropo);
             lst.addView(tv);
         }
-        listMap = triBulle(listMap);
+        else {
+            //listMap = triBulle(listMap);
 
-        SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), listMap, R.layout.layout_proposition_personnalise,
-                new String[]{"img", "id","date","description"}, new int[]{R.id.img, R.id.titre,R.id.date,R.id.description});
-        maListe.setAdapter(adapter);
+            SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), listMap, R.layout.layout_proposition_personnalise,
+                    new String[]{"img", "id", "date", "description"}, new int[]{R.id.img, R.id.titre, R.id.date, R.id.description});
+            maListe.setAdapter(adapter);
 
-        maListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
-                HashMap<String,String> map = (HashMap<String,String>)  maListe.getItemAtPosition(position);
-                adb.setTitle("Aperçu");
-                adb.setMessage(map.get("id") + "\n" +  map.get("date") +" \nType : " +  map.get("description"));
-                adb.setPositiveButton("OK", null);
-                adb.show();
-            }
-        });
+            maListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+                    HashMap<String, String> map = (HashMap<String, String>) maListe.getItemAtPosition(position);
+                    adb.setTitle("Aperçu");
+                    adb.setMessage(map.get("id") + "\n" + map.get("date") + " \nType : " + map.get("description"));
+                    adb.setPositiveButton("OK", null);
+                    adb.show();
+                }
+            });
+        }
     }
 
     public ArrayList<HashMap<String, String>> triBulle(ArrayList<HashMap<String, String>> list) {
