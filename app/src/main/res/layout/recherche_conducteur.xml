@@ -63,14 +63,14 @@
         android:layout_height="wrap_content"
         android:inputType="date"
         android:ems="10"
-        android:hint="MM/DD/YYYY"
+        android:hint="YYYY-MM-DD"
         android:id="@+id/dateC" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Heure de départ"
+        android:text="Heure de départ (24h)"
         android:id="@+id/textView6" />
 
     <EditText

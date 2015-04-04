@@ -17,11 +17,12 @@ public class ParcoursPassager {
     public static final String KEY_Date = "Date";
     public static final String KEY_NombrePassager = "NombrePassager";
     public static final String KEY_Heure = "Heure";
+    public static final String KEY_IDENTIFIANT = "Identifiant";
 
     // property help us to keep data
     private String _depart, _destination, _frequence, _heure;
-    int _ID, _nombrePassager;
-    String _date;
+    int  _nombrePassager;
+    String _ID,_date,_identifiant;
 
     // Constructeur
     public ParcoursPassager() {
@@ -29,15 +30,16 @@ public class ParcoursPassager {
         _depart = "";
         _destination = "";
         _frequence = "";
-        _ID = 0;
+        _ID = "";
         _nombrePassager = 0;
         _date = "";
+        _identifiant ="";
     };
 
     //--------------------------------------------
     //-------------Set des variables--------------
     //--------------------------------------------
-    public void set_ID(int _ID) {
+    public void set_ID(String _ID) {
         this._ID = _ID;
     }
 
@@ -65,10 +67,19 @@ public class ParcoursPassager {
         this._heure = _heure;
     }
 
+
+    public void set_identifiant(String _identifiant) {
+        this._identifiant = _identifiant;
+    }
+
     //--------------------------------------------
     //-------------Get des variables--------------
     //--------------------------------------------
-    public int get_ID(){return this._ID;}
+    public String get_ID(){return this._ID;}
+
+    public String get_identifiant() {
+        return _identifiant;
+    }
 
     public String get_depart() {
         return _depart;

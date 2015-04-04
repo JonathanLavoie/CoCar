@@ -84,7 +84,7 @@ public class ParcoursPassagerRepo {
 
         if (cursor.moveToFirst()) {
             do {
-                parcoursPassager.set_ID(cursor.getInt(cursor.getColumnIndex(ParcoursPassager.KEY_ID)));
+                parcoursPassager.set_ID(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_ID)));
                 parcoursPassager.set_depart(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Depart)));
                 parcoursPassager.set_destination(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Destination)));
                 parcoursPassager.set_frequence(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Frequence)));
@@ -131,7 +131,7 @@ public class ParcoursPassagerRepo {
         if (cursor.moveToFirst()) {
             do {
                 parcoursPassager = new ParcoursPassager();
-                parcoursPassager.set_ID(cursor.getInt(cursor.getColumnIndex(ParcoursPassager.KEY_ID)));
+                parcoursPassager.set_ID(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_ID)));
                 parcoursPassager.set_depart(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Depart)));
                 parcoursPassager.set_destination(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Destination)));
                 parcoursPassager.set_frequence(cursor.getString(cursor.getColumnIndex(ParcoursPassager.KEY_Frequence)));

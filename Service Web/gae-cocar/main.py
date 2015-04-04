@@ -11,6 +11,7 @@ import datetime
 
 from google.appengine.ext import ndb
 from google.appengine.ext import db
+from random import randint
 
 from models import ParcoursConducteur,ParcoursPassager
 
@@ -23,6 +24,19 @@ def serialiser_pour_json(obj):
     else:
         return obj
 
+
+def idAleatoire():
+    char = ["1","2","3","4","5","6","7","8","9","0",
+            "a","b","c","d","e","f","g","h","i","j",
+            "k","l","m","n","o","p","q","r","s","t",
+            "u","v","w","x","y","z"]
+    chaine = ""
+    for x in range(0,7):
+        index = randint(0,35)
+        chaine += char[index]
+    return chaine;
+
+
 class MainPageHandler(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
@@ -33,18 +47,13 @@ class ConducteurHandler(webapp2.RequestHandler):
         try:
             #obtient toutes les conducteurs
             resultat = []
-            query = ParcoursConducteur.query();
-            #filtre pour recupere seulement 
-            #logging.info()
-            query = query.filter(ParcoursConducteur.dateHeureC >= datetime.datetime.now())
-            #logging.info(datetime.datetime.now())
+            qr = ParcoursConducteur.query().order(ParcoursConducteur.dateHeureC)
 
-
-            for p in query:
+            for p in qr:
                 dictConducteur = p.to_dict()
                 dictConducteur['id'] = p.key.id()
                 resultat.append(dictConducteur)
-            self.response.headers['Content-Type'] = 'application/json'
+                self.response.headers['Content-Type'] = 'application/json'
             self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))
 
         except (ValueError, db.BadValueError), ex:
@@ -54,9 +63,11 @@ class ConducteurHandler(webapp2.RequestHandler):
             logging.info(ex)
             self.error(500)
 
-    def put(self, id):
+    def put(self):
         try:
-
+            
+            id = idAleatoire()
+        
             cle = ndb.Key('ParcoursConducteur',id)
             cond = cle.get()
             status = 204
@@ -65,16 +76,16 @@ class ConducteurHandler(webapp2.RequestHandler):
                 #nouveauConducteur
                 cond = ParcoursConducteur(key=cle)
                 status = 201
-
-            jsonObj = json.loads(self.request.body)
-            logging.info("ici: " + jsonObj['dateHeureC'])
-            #Ajout des champs du nouveau conducteur
-            cond.departC = jsonObj['departC']
-            cond.destinationC = jsonObj['destinationC']
-            cond.dateHeureC = datetime.datetime.strptime(jsonObj['dateHeureC'],'%Y-%m-%d %H:%M')
-            cond.nombrePlace = int(jsonObj['nombrePlace'])
-            cond.nbKm = int(jsonObj['nbKm'])
-            cond.put()
+                
+                jsonObj = json.loads(self.request.body)
+                #Ajout des champs du nouveau conducteur
+                cond.departC = jsonObj['departC']
+                cond.destinationC = jsonObj['destinationC']
+                cond.dateHeureC = datetime.datetime.strptime(jsonObj['dateHeureC'],'%Y-%m-%d %H:%M')
+                cond.identifiantCree = jsonObj['identifiantCree']
+                cond.nombrePlace = int(jsonObj['nombrePlace'])
+                cond.nbKm = int(jsonObj['nbKm'])
+                cond.put()
             self.response.set_status(status)
 
         except (ValueError, db.BadValueError), ex:
@@ -83,11 +94,64 @@ class ConducteurHandler(webapp2.RequestHandler):
         except Exception, ex:
             logging.info(ex)
             self.error(500)
+            
+class PassagerHandler(webapp2.RequestHandler):
+    def get(self):
+        try:
+            #obtient toutes les conducteurs
+            resultat = []
+            qr = ParcoursPassager.query().order(ParcoursPassager.dateHeureP)
 
+            for p in qr:
+                dictPassager = p.to_dict()
+                dictPassager['id'] = p.key.id()
+                resultat.append(dictPassager)
+                self.response.headers['Content-Type'] = 'application/json'
+            self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))
+
+        except (ValueError, db.BadValueError), ex:
+            logging.info(ex)
+            self.error(400)
+        except Exception, ex:
+            logging.info(ex)
+            self.error(500)
+
+    def put(self):
+        try:
+            
+            id = idAleatoire()
+        
+            cle = ndb.Key('ParcoursPassager',id)
+            passa = cle.get()
+            status = 204
+
+            if (passa is None):
+                #nouveauConducteur
+                passa = ParcoursPassager(key=cle)
+                status = 201
+                
+                jsonObj = json.loads(self.request.body)
+                
+                #Ajout des champs du nouveau conducteur
+                passa.departP = jsonObj['departP']
+                passa.destinationP = jsonObj['destinationP']
+                passa.dateHeureP = datetime.datetime.strptime(jsonObj['dateHeureP'],'%Y-%m-%d %H:%M')
+                passa.identifiantCree = jsonObj['identifiantCree']
+                passa.nombrePassager = int(jsonObj['nombrePassager'])
+                logging.info(passa.dateHeureP)
+                passa.put()
+            self.response.set_status(status)
+
+        except (ValueError, db.BadValueError), ex:
+            logging.info(ex)
+            self.error(400)
+        except Exception, ex:
+            logging.info(ex)
+            self.error(500)
 application = webapp2.WSGIApplication(
     [
         ('/',                                               MainPageHandler),
-        webapp2.Route(r'/conducteur',                       handler=ConducteurHandler, methods=['GET']),
-        webapp2.Route(r'/conducteur/<id>',                  handler=ConducteurHandler, methods=['PUT']),
+        webapp2.Route(r'/conducteur',                       handler=ConducteurHandler, methods=['GET','PUT']),                                               
+        webapp2.Route(r'/passager',                         handler=PassagerHandler, methods=['GET','PUT']),
     ],
     debug=True)
