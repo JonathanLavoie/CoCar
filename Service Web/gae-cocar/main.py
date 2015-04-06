@@ -43,17 +43,32 @@ class MainPageHandler(webapp2.RequestHandler):
         self.response.out.write('<html><body><h1>Cocar Google App Engine fonctionne bien !</h1></body></html>')
 
 class ConducteurHandler(webapp2.RequestHandler):
-    def get(self):
+    
+    def get(self,id = None):
         try:
             #obtient toutes les conducteurs
+            
             resultat = []
-            qr = ParcoursConducteur.query().order(ParcoursConducteur.dateHeureC)
-
-            for p in qr:
-                dictConducteur = p.to_dict()
-                dictConducteur['id'] = p.key.id()
+            if (id is None):
+                qr = ParcoursConducteur.query().order(ParcoursConducteur.dateHeureC)
+                for p in qr:
+                    dictConducteur = p.to_dict()
+                    dictConducteur['id'] = p.key.id()
+                    resultat.append(dictConducteur)
+                    self.response.headers['Content-Type'] = 'application/json'
+            else:
+                cle = ndb.Key('ParcoursConducteur',id)
+                qr = cle.get()
+                dictConducteur = {}
+                dictConducteur['id'] = id
+                dictConducteur['dateHeureC'] = qr.dateHeureC
+                dictConducteur['departC'] = qr.departC
+                dictConducteur['destinationC'] = qr.destinationC
+                dictConducteur['identifiantCree'] = qr.identifiantCree
+                dictConducteur['nbKm'] = qr.nbKm
+                dictConducteur['nombrePlace'] = qr.nombrePlace
                 resultat.append(dictConducteur)
-                self.response.headers['Content-Type'] = 'application/json'
+            
             self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))
 
         except (ValueError, db.BadValueError), ex:
@@ -63,15 +78,15 @@ class ConducteurHandler(webapp2.RequestHandler):
             logging.info(ex)
             self.error(500)
 
-    def put(self):
-        try:
-            
-            id = idAleatoire()
-        
+    #Permet d'inserer un nouveau conducteur
+    def put(self,id = None,nbPlace = None):
+        try:   
+            if (id is None):
+                id = idAleatoire()
+            logging.info(nbPlace)
             cle = ndb.Key('ParcoursConducteur',id)
             cond = cle.get()
             status = 204
-
             if (cond is None):
                 #nouveauConducteur
                 cond = ParcoursConducteur(key=cle)
@@ -86,6 +101,19 @@ class ConducteurHandler(webapp2.RequestHandler):
                 cond.nombrePlace = int(jsonObj['nombrePlace'])
                 cond.nbKm = int(jsonObj['nbKm'])
                 cond.put()
+                
+            else:
+                logging.info(nbPlace)
+                if (nbPlace is not None):
+                    if(cond.nombrePlace >= int(nbPlace)):
+                        logging.info(nbPlace)
+                        cond.nombrePlace = cond.nombrePlace - int(nbPlace)
+                        status = 200
+                        cond.put()
+                    else:   
+                        status = 204
+                else: 
+                    status = 204       
             self.response.set_status(status)
 
         except (ValueError, db.BadValueError), ex:
@@ -94,11 +122,11 @@ class ConducteurHandler(webapp2.RequestHandler):
         except Exception, ex:
             logging.info(ex)
             self.error(500)
-            
+             
 class PassagerHandler(webapp2.RequestHandler):
     def get(self):
         try:
-            #obtient toutes les conducteurs
+            #obtient toutes les passagers
             resultat = []
             qr = ParcoursPassager.query().order(ParcoursPassager.dateHeureP)
 
@@ -115,7 +143,8 @@ class PassagerHandler(webapp2.RequestHandler):
         except Exception, ex:
             logging.info(ex)
             self.error(500)
-
+    
+    #Permet de rajoute un nouveau passager
     def put(self):
         try:
             
@@ -148,10 +177,14 @@ class PassagerHandler(webapp2.RequestHandler):
         except Exception, ex:
             logging.info(ex)
             self.error(500)
+            
+            
 application = webapp2.WSGIApplication(
     [
-        ('/',                                               MainPageHandler),
-        webapp2.Route(r'/conducteur',                       handler=ConducteurHandler, methods=['GET','PUT']),                                               
-        webapp2.Route(r'/passager',                         handler=PassagerHandler, methods=['GET','PUT']),
+        ('/',                                                       MainPageHandler),
+        webapp2.Route(r'/conducteur',                               handler=ConducteurHandler, methods=['GET','PUT']),
+        webapp2.Route(r'/conducteur/<id>',                          handler=ConducteurHandler, methods=['GET']),                                               
+        webapp2.Route(r'/passager',                                 handler=PassagerHandler, methods=['GET','PUT']),
+        webapp2.Route(r'/conducteur/<id>/nbPlace/<nbPlace>',        handler=ConducteurHandler,methods=['PUT']),
     ],
     debug=True)

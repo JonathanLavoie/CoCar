@@ -2,20 +2,23 @@ package com.jg.jl.tpmobile.cocar.cocar;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -26,6 +29,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 import java.net.URI;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,6 +50,8 @@ public class proposition_fragment extends Fragment {
     private final static String WEB_SERVICE_URL = "10.0.2.2:8080";
     private final static String REST_CONDUCTEUR = "/conducteur";
     private final static String REST_PASSAGER = "/passager";
+    private final static String REST_NBPLACE = "/nbPlace/";
+
     private HttpClient m_ClientHttp = new DefaultHttpClient();
     private ArrayList<ParcoursConducteur> listConducteur = null;
     private ArrayList<ParcoursPassager> listPassager = null;
@@ -61,7 +67,7 @@ public class proposition_fragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        new backCreateConducteurTest().execute((Void)null);
+        new backCreate().execute((Void)null);
     }
 
     //méthode qui permet d'obtenir les conducteurs
@@ -99,7 +105,7 @@ public class proposition_fragment extends Fragment {
     }
 
 //Exécution asynchrone pour obtenir les données
-private class backCreateConducteurTest extends  AsyncTask<Void, Void, Void>{
+private class backCreate extends  AsyncTask<Void, Void, Void>{
     @Override
     protected void onPreExecute() {
         getActivity().setProgressBarIndeterminateVisibility(true);
@@ -125,30 +131,66 @@ private class backCreateConducteurTest extends  AsyncTask<Void, Void, Void>{
         ArrayList<HashMap<String, String>> listMap = new ArrayList<>();
         HashMap<String, String> map;
         String type;
+        DateFormat dateCurrent = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        Date date1 = null;
         if(!listConducteur.isEmpty())
         {
             for (int i = 0; i < listConducteur.size(); i++) {
-                map = new HashMap<>();
-                type = "Conducteur";
-                map.put("img", String.valueOf(R.drawable.car72));
-                map.put("id","Identifiant du parcours : 2" + listConducteur.get(i).get_ID());
-                map.put("date", "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
-                map.put("description", type.toUpperCase());
-                listMap.add(map);
+                Exception exc;
+                if (!listConducteur.get(i).get_identifiant().equals(session.getIdentification())) {
+                    try {
+                        String strDate =listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure();
+                        date1 = dateCurrent.parse(strDate);
+                    }catch (Exception ex)
+                    {
+                        exc = ex;
+                    }
+
+                    if(date.before(date1)) {
+                        map = new HashMap<>();
+                        type = "Conducteur";
+                        map.put("type", type);
+                        map.put("img", String.valueOf(R.drawable.car72));
+                        map.put("id", "Identifiant du parcours : " + listConducteur.get(i).get_ID());
+                        map.put("date", "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
+                        map.put("description", "Depart : " + listConducteur.get(i).get_depart() +
+                                "\nDestination : " + listConducteur.get(i).get_destination() +
+                                "\nNombre de place disponible : " + listConducteur.get(i).get_nombreDePlace());
+                        map.put("infoSupp", "\nCourriel du demandeur : \n" + listConducteur.get(i).get_identifiant() +
+                                "\nKm max à parcourir : " + listConducteur.get(i).get_KM() + "\n");
+                        listMap.add(map);
+
+                    }
+                }
             }
         }
 
         if (!listPassager.isEmpty())
         {
             for (int i = 0; i < listPassager.size(); i++) {
-                map = new HashMap<>();
-                type = "Passager";
-                map.put("img", String.valueOf(R.drawable.passager));
-                map.put("id","Numéro de parcours : 1" + listPassager.get(i).get_ID());
-                map.put("date", "Date : " + listPassager.get(i).get_date()+ " " + listPassager.get(i).get_heure());
-                map.put("description", type.toUpperCase() + "\nDestination : " + listPassager.get(i).get_destination()
-                        + "\nNombre de passager: " + listPassager.get(i).get_nombrePassager());
-                listMap.add(map);
+                Exception exc;
+                if (!listPassager.get(i).get_identifiant().equals(session.getIdentification())) {
+                    try {
+                        String strDate =listPassager.get(i).get_date() + " " + listPassager.get(i).get_heure();
+                        date1 = dateCurrent.parse(strDate);
+                    }catch (Exception ex)
+                    {
+                        exc = ex;
+                    }
+                    if(date.before(date1)) {
+                        map = new HashMap<>();
+                        type = "Passager";
+                        map.put("type", type);
+                        map.put("img", String.valueOf(R.drawable.passager));
+                        map.put("id", "Identifiant de parcours : " + listPassager.get(i).get_ID());
+                        map.put("date", "Date : " + listPassager.get(i).get_date() + " " + listPassager.get(i).get_heure());
+                        map.put("description", "Destination : " + listPassager.get(i).get_destination()
+                                + "\nNombre de passager: " + listPassager.get(i).get_nombrePassager());
+                        map.put("infoSupp", "\nCourriel : " + listPassager.get(i).get_identifiant() + "\n");
+                        listMap.add(map);
+                    }
+                }
             }
         }
 
@@ -162,7 +204,7 @@ private class backCreateConducteurTest extends  AsyncTask<Void, Void, Void>{
             lst.addView(tv);
         }
 
-        listMap = triBulle(listMap);
+        listMap = triBulleMap(listMap);
         SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), listMap, R.layout.layout_proposition_personnalise,
                 new String[]{"img", "id","date","description"}, new int[]{R.id.img, R.id.titre,R.id.date,R.id.description});
         maListe.setAdapter(adapter);
@@ -173,16 +215,22 @@ private class backCreateConducteurTest extends  AsyncTask<Void, Void, Void>{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
                 HashMap<String,String> map = (HashMap<String,String>)  maListe.getItemAtPosition(position);
-                adb.setTitle("Parcours");
-                adb.setMessage(map.get("id") + "\n" +map.get("date") +" \nType : " +  map.get("description") + "\n/!\\ Attention cette action est définitif, vous ne pouvez pas annuler une fois accepté./!\\ ");
+                adb.setTitle("Parcours " + map.get("type"));
+
+                adb.setMessage(map.get("id") + "\n" + map.get("date") +
+                            " \nType : " + map.get("type") + "\n" +
+                            map.get("description")
+                            + map.get("infoSupp")+
+                            "\n/!\\ Attention cette action est définitif, vous ne pouvez pas annuler une fois accepté./!\\ ");
+
                 adb.setNegativeButton("Annuler", null);
-                adb.setPositiveButton("Proposer", null);
+                adb.setPositiveButton("Proposer",new btnProposer(1,map.get("id")));
                 adb.show();
             }
         });
     }
 
-    public ArrayList<HashMap<String, String>> triBulle(ArrayList<HashMap<String, String>> list) {
+    public ArrayList<HashMap<String, String>> triBulleMap(ArrayList<HashMap<String, String>> list) {
         for (int i = 0; i <= list.size() - 2; i++) {
             for (int j = list.size() - 1; i < j; j--) {
                 HashMap<String, String> hashmap1 = list.get(j);
@@ -206,5 +254,58 @@ private class backCreateConducteurTest extends  AsyncTask<Void, Void, Void>{
             }
         }
         return list;
+    }
+    private int m_nbPlace;
+    private String m_id;
+    ParcoursConducteur unParcours = new ParcoursConducteur();
+    private class btnProposer implements DialogInterface.OnClickListener{
+
+        public btnProposer(int p_nbPlace, String p_id){
+            p_id = p_id.substring(26);
+            m_nbPlace = p_nbPlace;
+            m_id = p_id;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            new updateConducteur().execute((Void)null);
+            Toast.makeText(getActivity(), "Update réussi", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+
+    private class updateConducteur extends AsyncTask<Void,Void,Void>{
+        Exception m_exception;
+
+        @Override
+        protected void onPreExecute() {
+            getActivity().setProgressBarIndeterminateVisibility(true);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                String strHttp = "http://10.0.2.2:8080/conducteur/" + m_id;
+                String strPut = strHttp + "/nbPlace/" + m_nbPlace;
+                URI uri = new URI("http",WEB_SERVICE_URL,REST_CONDUCTEUR + "/" +m_id + REST_NBPLACE + m_nbPlace,null,null);
+                ArrayList<ParcoursConducteur> m_listeCondu;
+                HttpPut put = new HttpPut(uri);
+                put.addHeader("Content-Type", "application/json");
+                m_ClientHttp.execute(put,new BasicResponseHandler());
+
+                uri = new URI(strHttp);
+                HttpGet get = new HttpGet(uri);
+                String body = m_ClientHttp.execute(get,new BasicResponseHandler());
+                m_listeCondu = jsonParser.parseConducteurListe(body);
+                ParcoursConducteurRepo repCondu = new ParcoursConducteurRepo(getActivity().getApplicationContext());
+                unParcours = m_listeCondu.get(0);
+                unParcours.set_nombreDePlace(m_nbPlace);
+                repCondu.insert(unParcours);
+            }catch (Exception e){
+                m_exception = e;
+            }
+            return null;
+        }
     }
 }
