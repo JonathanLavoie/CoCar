@@ -81,20 +81,22 @@ public class rechercher_fragment extends ListFragment{
         AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.menu_conducteur:
-                CreateConducteur(menuInfo.position);
+                CreateConducteur();
                 break;
             case R.id.menu_passager:
-                CreatePassager(menuInfo.position);
+                CreatePassager();
                 break;
         }
         return super.onContextItemSelected(item);
     }
 
-    private void CreateConducteur(int position){
+    private void CreateConducteur(){
 
         View setView = View.inflate(getActivity(),R.layout.recherche_conducteur,null);
         EditText txtSetDepart = (EditText) setView.findViewById(R.id.txtDepartC);
+        EditText txtSetDepartLong = (EditText) setView.findViewById(R.id.txtDepartCLong);
         EditText txtSetDestination = (EditText) setView.findViewById(R.id.txtDestinationC);
+        EditText txtSetDestinationLong = (EditText) setView.findViewById(R.id.txtDestinationCLong);
         EditText km = (EditText) setView.findViewById(R.id.nbKM);
         EditText nb = (EditText) setView.findViewById(R.id.nbPass);
         EditText date = (EditText) setView.findViewById(R.id.dateC);
@@ -104,25 +106,27 @@ public class rechercher_fragment extends ListFragment{
         .setTitle("Nouveau parcours")
                 .setView(setView)
                 .setNegativeButton("Annuler",null)
-                .setPositiveButton("Creer",new BtnCreateConducteur(position,txtSetDepart,
-                        txtSetDestination,km,nb,date,time))
+                .setPositiveButton("Creer",new BtnCreateConducteur(txtSetDepart,txtSetDepartLong,
+                        txtSetDestination,txtSetDestinationLong,km,nb,date,time))
                 .show();
     }
 
     private class BtnCreateConducteur implements DialogInterface.OnClickListener {
-        private int m_position;
         private EditText m_depart;
         private EditText m_destination;
         private EditText m_nbPass;
         private EditText m_nbKM;
         private EditText m_time;
         private EditText m_date;
-        public BtnCreateConducteur(int p_position,EditText p_depart,EditText p_destination,
+        private EditText m_departLong;
+        private EditText m_destinationLong;
+        public BtnCreateConducteur(EditText p_depart,EditText p_departLong,EditText p_destination, EditText p_destinationLong,
                                    EditText p_km, EditText p_pass, EditText p_date, EditText p_time
                                    ){
             this.m_depart = p_depart;
-            this.m_position = p_position;
+            this.m_departLong = p_departLong;
             this.m_destination = p_destination;
+            this.m_destinationLong = p_destinationLong;
             this.m_nbPass = p_pass;
             this.m_nbKM = p_km;
             this.m_date = p_date;
@@ -132,9 +136,10 @@ public class rechercher_fragment extends ListFragment{
         @Override
         public void onClick(DialogInterface dialog, int which) {
             SessionManager session = new SessionManager(getActivity().getApplicationContext());
-
-            conduc.set_depart(m_depart.getText().toString());
-            conduc.set_destination(m_destination.getText().toString());
+            String coordonneeDepart = m_depart.getText().toString() + "," + m_departLong.getText().toString();
+            String coordonneeDestination = m_destination.getText().toString() + "," + m_destinationLong.getText().toString();
+            conduc.set_depart(coordonneeDepart);
+            conduc.set_destination(coordonneeDestination);
             conduc.set_nombreDePlace(Integer.parseInt(m_nbPass.getText().toString().trim()));
             conduc.set_KM(Integer.parseInt(m_nbKM.getText().toString().trim()));
             conduc.set_date(m_date.getText().toString());
@@ -168,10 +173,12 @@ private class putConducteur extends AsyncTask<Void,Void,Void>{
         return null;
     }
 }
-    private void CreatePassager(int position){
+    private void CreatePassager(){
 
         View setView = View.inflate(getActivity(),R.layout.recherche_passager,null);
         EditText txtSetDepart = (EditText) setView.findViewById(R.id.txtDepartP);
+        EditText txtSetDepartLong = (EditText) setView.findViewById(R.id.txtDepartP2);
+        EditText txtSetDestinationLong = (EditText) setView.findViewById(R.id.txtDestinationP2);
         EditText txtSetDestination = (EditText) setView.findViewById(R.id.txtDestinationP);
         EditText date = (EditText) setView.findViewById(R.id.dateD);
         EditText time = (EditText) setView.findViewById(R.id.heureD);
@@ -180,22 +187,25 @@ private class putConducteur extends AsyncTask<Void,Void,Void>{
                 .setTitle("Creer un passager")
                 .setView(setView)
                 .setNegativeButton("Annuler",null)
-                .setPositiveButton("Creer",new BtnCreatePassager(position,txtSetDepart,
-                        txtSetDestination,nbPass,date,time))
+                .setPositiveButton("Creer",new BtnCreatePassager(txtSetDepart,txtSetDepartLong,
+                        txtSetDestination,txtSetDestinationLong,nbPass,date,time))
                 .show();
     }
     private class BtnCreatePassager implements DialogInterface.OnClickListener {
-        private int m_position;
+
         private  EditText m_depart;
+        private EditText m_departLong;
         private EditText m_destination;
+        private EditText m_destinationLong;
         private EditText m_date;
         private EditText m_time;
         private EditText m_pass;
-        public BtnCreatePassager(int p_position,EditText p_depart,EditText p_destination,EditText p_pass,
+        public BtnCreatePassager(EditText p_depart,EditText p_departLong,EditText p_destination,EditText p_destinationLong,EditText p_pass,
                                  EditText p_date,EditText p_time){
             this.m_depart = p_depart;
-            this.m_position = p_position;
+            this.m_departLong = p_departLong;
             this.m_destination = p_destination;
+            this.m_destinationLong = p_destinationLong;
             this.m_date = p_date;
             this.m_time = p_time;
             this.m_pass = p_pass;
@@ -204,8 +214,10 @@ private class putConducteur extends AsyncTask<Void,Void,Void>{
         @Override
         public void onClick(DialogInterface dialog, int which) {
             SessionManager session = new SessionManager(getActivity().getApplicationContext());
-            passager.set_depart(m_depart.getText().toString());
-            passager.set_destination(m_destination.getText().toString());
+            String coordonneeDepart = m_depart.getText().toString() + "," + m_departLong.getText().toString();
+            String coordonneeDestination = m_destination.getText().toString() + "," + m_destinationLong.getText().toString();
+            passager.set_depart(coordonneeDepart);
+            passager.set_destination(coordonneeDestination);
             passager.set_date(m_date.getText().toString());
             passager.set_heure(m_time.getText().toString());
             passager.set_identifiant(session.getIdentification());

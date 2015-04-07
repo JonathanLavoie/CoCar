@@ -20,8 +20,10 @@
     <string name="title_activity_inscription">Inscription</string>
     <string name="btn_Inscription">S\'inscrire</string>
     <string name="txt_Email">Email</string>
-    <string name="txt_depart">Adresse de départ</string>
-    <string name="txt_destination">Adresse de destination</string>
+    <string name="txt_longDepart">Longitude de départ</string>
+    <string name="txt_latDepart">Latitude de départ</string>
+    <string name="txt_longDestination">Longitude de destination</string>
+    <string name="txt_latDestination">Latitude de destination</string>
     <string name="hint_nom">Prénom et Nom</string>
     <string name="hint_Address">Votre adresse</string>
     <string name="title_activity_search">searchActivity</string>
