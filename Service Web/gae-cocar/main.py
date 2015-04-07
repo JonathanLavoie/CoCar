@@ -12,7 +12,7 @@ import datetime
 from google.appengine.ext import ndb
 from google.appengine.ext import db
 from random import randint
-
+from math import radians,cos,sin,asin,sqrt
 from models import ParcoursConducteur,ParcoursPassager
 
 def serialiser_pour_json(obj):
@@ -37,6 +37,15 @@ def idAleatoire():
     return chaine;
 
 
+def calculerDistance(lat1,long1,lat2,long2):
+    lat1,long1,lat2,long2 = map(radians,[float(lat1),float(long1),float(lat2),float(long2)])
+    dlong = long2 - long1
+    dLat = lat2 - lat1
+    a = sin(dLat/2)**2 + cos(lat1) * cos(lat2) * sin(dlong/2)**2
+    c = 2 * asin(sqrt(a))
+    km = 6367 * c 
+    return km
+
 class MainPageHandler(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
@@ -44,18 +53,29 @@ class MainPageHandler(webapp2.RequestHandler):
 
 class ConducteurHandler(webapp2.RequestHandler):
     
-    def get(self,id = None):
+    def get(self,id = None,lat2 = None,long2 = None):
         try:
             #obtient toutes les conducteurs
             
             resultat = []
             if (id is None):
-                qr = ParcoursConducteur.query().order(ParcoursConducteur.dateHeureC)
+                qr = ParcoursConducteur.query()
                 for p in qr:
                     dictConducteur = p.to_dict()
+                    latLong = dictConducteur['departC']
+                    vectlatLong = latLong.split(',')
+                    latLongDest = dictConducteur['destinationC']
+                    vectlatLongDest = latLongDest.split(',')
+                    kmDep = calculerDistance(vectlatLong[0], vectlatLong[1], lat2, long2)
+                    kmDest = calculerDistance(vectlatLongDest[0], vectlatLongDest[1], lat2, long2)
                     dictConducteur['id'] = p.key.id()
-                    resultat.append(dictConducteur)
-                    self.response.headers['Content-Type'] = 'application/json'
+                    dictConducteur['disDest'] = round(kmDest,2)
+                    dictConducteur['disDep'] = round(kmDep,2)
+                    km = kmDep + kmDest
+                    if (km <= float(dictConducteur['nbKm'])):
+                        if (int(dictConducteur['nombrePlace']) > 0):
+                            resultat.append(dictConducteur)
+                            self.response.headers['Content-Type'] = 'application/json'
             else:
                 cle = ndb.Key('ParcoursConducteur',id)
                 qr = cle.get()
@@ -67,6 +87,14 @@ class ConducteurHandler(webapp2.RequestHandler):
                 dictConducteur['identifiantCree'] = qr.identifiantCree
                 dictConducteur['nbKm'] = qr.nbKm
                 dictConducteur['nombrePlace'] = qr.nombrePlace
+                latLong = dictConducteur['departC']
+                vectlatLong = latLong.split(',')
+                latLongDest = dictConducteur['destinationC']
+                vectlatLongDest = latLongDest.split(',')
+                kmDep = calculerDistance(vectlatLong[0], vectlatLong[1], lat2, long2)
+                kmDest = calculerDistance(vectlatLongDest[0], vectlatLongDest[1], lat2, long2)
+                dictConducteur['disDest'] = round(kmDest,2)
+                dictConducteur['disDep'] = round(kmDep,2)
                 resultat.append(dictConducteur)
             
             self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))
@@ -83,7 +111,6 @@ class ConducteurHandler(webapp2.RequestHandler):
         try:   
             if (id is None):
                 id = idAleatoire()
-            logging.info(nbPlace)
             cle = ndb.Key('ParcoursConducteur',id)
             cond = cle.get()
             status = 204
@@ -124,7 +151,7 @@ class ConducteurHandler(webapp2.RequestHandler):
             self.error(500)
              
 class PassagerHandler(webapp2.RequestHandler):
-    def get(self):
+    def get(self,lat2 = None, long2 = None):
         try:
             #obtient toutes les passagers
             resultat = []
@@ -132,7 +159,15 @@ class PassagerHandler(webapp2.RequestHandler):
 
             for p in qr:
                 dictPassager = p.to_dict()
-                dictPassager['id'] = p.key.id()
+                latLong = dictPassager['departP']
+                vectlatLong = latLong.split(',')
+                latLongDest = dictPassager['destinationP']
+                vectlatLongDest = latLongDest.split(',')
+                kmDep = calculerDistance(vectlatLong[0], vectlatLong[1], lat2, long2)
+                kmDest = calculerDistance(vectlatLongDest[0], vectlatLongDest[1], lat2, long2)
+                dictPassager['disDest'] = round(kmDest,2)
+                dictPassager['disDep'] = round(kmDep,2)
+                dictPassager['id'] = p.key.id()             
                 resultat.append(dictPassager)
                 self.response.headers['Content-Type'] = 'application/json'
             self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))
@@ -182,9 +217,9 @@ class PassagerHandler(webapp2.RequestHandler):
 application = webapp2.WSGIApplication(
     [
         ('/',                                                       MainPageHandler),
-        webapp2.Route(r'/conducteur',                               handler=ConducteurHandler, methods=['GET','PUT']),
-        webapp2.Route(r'/conducteur/<id>',                          handler=ConducteurHandler, methods=['GET']),                                               
-        webapp2.Route(r'/passager',                                 handler=PassagerHandler, methods=['GET','PUT']),
+        webapp2.Route(r'/conducteur/lat/<lat2>/long/<long2>',       handler=ConducteurHandler, methods=['GET','PUT']),
+        webapp2.Route(r'/conducteur/<id>/lat/<lat2>/long/<long2>',  handler=ConducteurHandler, methods=['GET']),                                               
+        webapp2.Route(r'/passager/lat/<lat2>/long/<long2>',         handler=PassagerHandler, methods=['GET','PUT']),
         webapp2.Route(r'/conducteur/<id>/nbPlace/<nbPlace>',        handler=ConducteurHandler,methods=['PUT']),
     ],
     debug=True)

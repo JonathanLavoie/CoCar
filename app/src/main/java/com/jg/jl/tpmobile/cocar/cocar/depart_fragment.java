@@ -72,9 +72,9 @@ public class depart_fragment extends Fragment{
         if (listMap.isEmpty())
         {
             TextView tv = new TextView(getActivity());
-            tv.setText("Aucune propostion");
+            tv.setText("Aucun départ de prévu");
             tv.setPadding(50,250,0,0);
-            RelativeLayout lst = (RelativeLayout)rootView.findViewById(R.id.rlpropo);
+            RelativeLayout lst = (RelativeLayout)rootView.findViewById(R.id.rldepart);
             lst.addView(tv);
         }
         else {

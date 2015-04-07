@@ -17,7 +17,7 @@ import android.widget.Toast;
 public class InscriptionActivity extends ActionBarActivity {
 
     // Variable pour les champs de l'activity
-    EditText txtNom, txtIndentifiant, txtMotPasse, txtAdresse, txtNumTel;
+    EditText txtNom, txtIndentifiant, txtMotPasse, txtlong, txtNumTel,txtLat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,8 @@ public class InscriptionActivity extends ActionBarActivity {
         txtNom = (EditText) findViewById(R.id.txtNom);
         txtIndentifiant = (EditText) findViewById(R.id.txtEmail);
         txtMotPasse = (EditText) findViewById(R.id.txtMotDePasse);
-        txtAdresse = (EditText) findViewById(R.id.txtAddress);
+        txtLat = (EditText) findViewById(R.id.txtLatInscrip);
+        txtlong = (EditText) findViewById(R.id.txtLongInscrip);
         txtNumTel = (EditText) findViewById(R.id.txtPhone);
     }
 
@@ -54,7 +55,7 @@ public class InscriptionActivity extends ActionBarActivity {
         String nom = txtNom.getText().toString();
         String email = txtIndentifiant.getText().toString();
         String motDePasse = txtMotPasse.getText().toString();
-        String adresse = txtAdresse.getText().toString();
+        String adresse = txtLat.getText().toString() + "," + txtlong.getText().toString();
         String phone = txtNumTel.getText().toString();
 
         if (champsValide(nom.trim(), email.trim(), motDePasse.trim(),adresse.trim(),phone.trim())) {

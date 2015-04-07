@@ -52,9 +52,19 @@
             android:layout_height="wrap_content"
             android:inputType="textPostalAddress"
             android:ems="10"
-            android:id="@+id/txtAddress"
+            android:id="@+id/txtLongInscrip"
             android:layout_gravity="center_horizontal"
-            android:hint="@string/hint_Address"
+            android:hint="Longitude"
+            android:layout_marginTop="5dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPostalAddress"
+            android:ems="10"
+            android:id="@+id/txtLatInscrip"
+            android:layout_gravity="center_horizontal"
+            android:hint="Latitude"
             android:layout_marginTop="5dp" />
 
         <EditText

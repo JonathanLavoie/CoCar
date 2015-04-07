@@ -51,6 +51,9 @@ public class proposition_fragment extends Fragment {
     private final static String REST_CONDUCTEUR = "/conducteur";
     private final static String REST_PASSAGER = "/passager";
     private final static String REST_NBPLACE = "/nbPlace/";
+    private final static String REST_LAT = "/lat/";
+    private final static String REST_LONG = "/long/";
+    private String[] vectLongLat = null;
 
     private HttpClient m_ClientHttp = new DefaultHttpClient();
     private ArrayList<ParcoursConducteur> listConducteur = null;
@@ -75,8 +78,13 @@ public class proposition_fragment extends Fragment {
             Exception m_exception;
             ArrayList<ParcoursConducteur> liste = null;
             session = new SessionManager(getActivity().getApplicationContext());
+             UserRepo UtilCourant = new UserRepo(getActivity().getApplicationContext());
             try{
-                URI uri = new URI("Http", WEB_SERVICE_URL, REST_CONDUCTEUR, null, null);
+                User unUser = UtilCourant.getUserByIdentification(session.getIdentification());
+                String longLat = unUser.get_adresse();
+                vectLongLat = longLat.split(",");
+                URI uri = new URI("Http", WEB_SERVICE_URL, REST_CONDUCTEUR+ REST_LAT +
+                        vectLongLat[0] + REST_LONG + vectLongLat[1], null, null);
                 HttpGet get = new HttpGet(uri);
                 String body = m_ClientHttp.execute(get,new BasicResponseHandler());
                 Log.i(TAG,"Reçu conduteur: " + body);
@@ -91,8 +99,13 @@ public class proposition_fragment extends Fragment {
         Exception m_exception;
         ArrayList<ParcoursPassager> liste = null;
         session = new SessionManager(getActivity().getApplicationContext());
+        UserRepo UtilCourant = new UserRepo(getActivity().getApplicationContext());
         try{
-            URI uri = new URI("Http", WEB_SERVICE_URL, REST_PASSAGER, null, null);
+            User unUser = UtilCourant.getUserByIdentification(session.getIdentification());
+            String longLat = unUser.get_adresse();
+            vectLongLat = longLat.split(",");
+            URI uri = new URI("Http", WEB_SERVICE_URL, REST_PASSAGER + REST_LAT +
+                    vectLongLat[0] + REST_LONG + vectLongLat[1], null, null);
             HttpGet get = new HttpGet(uri);
             String body = m_ClientHttp.execute(get,new BasicResponseHandler());
             Log.i(TAG,"Reçu passager : " + body);
@@ -157,7 +170,9 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
                         map.put("description", "Depart : " + listConducteur.get(i).get_depart() +
                                 "\nDestination : " + listConducteur.get(i).get_destination() +
                                 "\nNombre de place disponible : " + listConducteur.get(i).get_nombreDePlace());
-                        map.put("infoSupp", "\nCourriel du demandeur : \n" + listConducteur.get(i).get_identifiant() +
+                        map.put("infoSupp", "\nNombre de kilomètre du point de départ : "+
+                                listConducteur.get(i).get_disDep() + " km\nNombre de kilomètre de la destination : "+
+                                listConducteur.get(i).get_disDest() + " km\nCourriel du demandeur : \n" + listConducteur.get(i).get_identifiant() +
                                 "\nKm max à parcourir : " + listConducteur.get(i).get_KM() + "\n");
                         listMap.add(map);
 
@@ -185,9 +200,12 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
                         map.put("img", String.valueOf(R.drawable.passager));
                         map.put("id", "Identifiant de parcours : " + listPassager.get(i).get_ID());
                         map.put("date", "Date : " + listPassager.get(i).get_date() + " " + listPassager.get(i).get_heure());
-                        map.put("description", "Destination : " + listPassager.get(i).get_destination()
-                                + "\nNombre de passager: " + listPassager.get(i).get_nombrePassager());
-                        map.put("infoSupp", "\nCourriel : " + listPassager.get(i).get_identifiant() + "\n");
+                        map.put("description", "Départ : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
+                                + "\nNombre de passager : " + listPassager.get(i).get_nombrePassager());
+                        map.put("infoSupp", "\nNombre de kilomètre du point de départ : "+
+                                listPassager.get(i).get_disDep() + " km\nNombre de kilomètre de la destination : "+
+                                listPassager.get(i).get_disDest() + " km\nCourriel : " + listPassager.get(i).get_identifiant()
+                                + "\n");
                         listMap.add(map);
                     }
                 }
@@ -286,19 +304,21 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                String strHttp = "http://10.0.2.2:8080/conducteur/" + m_id;
-                String strPut = strHttp + "/nbPlace/" + m_nbPlace;
+
                 URI uri = new URI("http",WEB_SERVICE_URL,REST_CONDUCTEUR + "/" +m_id + REST_NBPLACE + m_nbPlace,null,null);
+                URI uri2 = new URI("http",WEB_SERVICE_URL,REST_CONDUCTEUR + "/" + m_id + REST_LAT +
+                        vectLongLat[0] + REST_LONG + vectLongLat[1],null,null);
+                HttpGet get = new HttpGet(uri2);
                 ArrayList<ParcoursConducteur> m_listeCondu;
                 HttpPut put = new HttpPut(uri);
                 put.addHeader("Content-Type", "application/json");
-                m_ClientHttp.execute(put,new BasicResponseHandler());
 
-                uri = new URI(strHttp);
-                HttpGet get = new HttpGet(uri);
+                ParcoursConducteurRepo repCondu = new ParcoursConducteurRepo(getActivity().getApplicationContext());
+
+
                 String body = m_ClientHttp.execute(get,new BasicResponseHandler());
                 m_listeCondu = jsonParser.parseConducteurListe(body);
-                ParcoursConducteurRepo repCondu = new ParcoursConducteurRepo(getActivity().getApplicationContext());
+                m_ClientHttp.execute(put,new BasicResponseHandler());
                 unParcours = m_listeCondu.get(0);
                 unParcours.set_nombreDePlace(m_nbPlace);
                 repCondu.insert(unParcours);

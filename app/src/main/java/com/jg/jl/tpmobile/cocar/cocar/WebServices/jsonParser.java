@@ -46,6 +46,8 @@ public class jsonParser{
             condu.set_identifiant(jsonCond.getString("identifiantCree"));
             condu.set_KM(jsonCond.getInt("nbKm"));
             condu.set_nombreDePlace(jsonCond.getInt("nombrePlace"));
+            condu.set_disDep(jsonCond.getDouble("disDep"));
+            condu.set_disDest(jsonCond.getDouble("disDest"));
             liste.add(condu);
         }
         return liste;
@@ -66,6 +68,8 @@ public class jsonParser{
             pass.set_heure(vectDate[1]);
             pass.set_identifiant(jsonCond.getString("identifiantCree"));
             pass.set_nombrePassager(jsonCond.getInt("nombrePassager"));
+            pass.set_disDep(jsonCond.getDouble("disDep"));
+            pass.set_disDest(jsonCond.getDouble("disDest"));
             liste.add(pass);
         }
         return liste;
