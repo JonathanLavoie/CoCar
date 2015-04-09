@@ -57,8 +57,15 @@ public class rechercher_fragment extends ListFragment{
     private HttpClient m_ClientHttp = new DefaultHttpClient();
     ParcoursConducteur conduc = new ParcoursConducteur();
     ParcoursPassager passager = new ParcoursPassager();
-
-
+    EditText txtSetDepart;
+    EditText txtSetDepartLong;
+    EditText txtSetDestination;
+    EditText txtSetDestinationLong;
+    EditText km;
+    EditText nb;
+    EditText date;
+    EditText time;
+    EditText nbPass;
     View rootView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -93,15 +100,6 @@ public class rechercher_fragment extends ListFragment{
         }
         return super.onContextItemSelected(item);
     }
-
-    EditText txtSetDepart;
-    EditText txtSetDepartLong;
-    EditText txtSetDestination;
-    EditText txtSetDestinationLong;
-    EditText km;
-    EditText nb;
-    EditText date;
-    EditText time;
     private void CreateConducteur(){
 
         View setView = View.inflate(getActivity(),R.layout.recherche_conducteur,null);
@@ -164,7 +162,9 @@ public class rechercher_fragment extends ListFragment{
                             nbPlace = Double.parseDouble(nb.getText().toString());
                         } catch(NumberFormatException nfe) {
                             valide = false;
-                            message = "Les nombres de places doivent être numériques";
+                            if (message == "") {
+                                message = "Les nombres de places doivent être numériques";
+                            }
                         }
                         if (nbPlace < 1 || nbPlace > 6)
                         {
@@ -207,7 +207,7 @@ public class rechercher_fragment extends ListFragment{
         d.show();
     }
 
-    private class BtnCreateConducteur implements DialogInterface.OnClickListener {
+    /*private class BtnCreateConducteur implements DialogInterface.OnClickListener {
         private EditText m_depart;
         private EditText m_destination;
         private EditText m_nbPass;
@@ -244,7 +244,7 @@ public class rechercher_fragment extends ListFragment{
                 new putConducteur().execute((Void)null);
                 Toast.makeText(getActivity(),"Parcours Creer",Toast.LENGTH_SHORT).show();
         }
-    }
+    }*/
 private class putConducteur extends AsyncTask<Void,Void,Void>{
     Exception m_exception;
 
@@ -272,22 +272,106 @@ private class putConducteur extends AsyncTask<Void,Void,Void>{
     private void CreatePassager(){
 
         View setView = View.inflate(getActivity(),R.layout.recherche_passager,null);
-        EditText txtSetDepart = (EditText) setView.findViewById(R.id.txtDepartP);
-        EditText txtSetDepartLong = (EditText) setView.findViewById(R.id.txtDepartP2);
-        EditText txtSetDestinationLong = (EditText) setView.findViewById(R.id.txtDestinationP2);
-        EditText txtSetDestination = (EditText) setView.findViewById(R.id.txtDestinationP);
-        EditText date = (EditText) setView.findViewById(R.id.dateD);
-        EditText time = (EditText) setView.findViewById(R.id.heureD);
-        EditText nbPass = (EditText) setView.findViewById(R.id.nbPassP);
-        new AlertDialog.Builder(getActivity())
+        txtSetDepart = (EditText) setView.findViewById(R.id.txtDepartP);
+        txtSetDepartLong = (EditText) setView.findViewById(R.id.txtDepartP2);
+        txtSetDestinationLong = (EditText) setView.findViewById(R.id.txtDestinationP2);
+        txtSetDestination = (EditText) setView.findViewById(R.id.txtDestinationP);
+        date = (EditText) setView.findViewById(R.id.dateD);
+        time = (EditText) setView.findViewById(R.id.heureD);
+        nbPass = (EditText) setView.findViewById(R.id.nbPassP);
+        final AlertDialog d = new AlertDialog.Builder(getActivity())
                 .setTitle("Creer un passager")
                 .setView(setView)
                 .setNegativeButton("Annuler",null)
-                .setPositiveButton("Creer",new BtnCreatePassager(txtSetDepart,txtSetDepartLong,
-                        txtSetDestination,txtSetDestinationLong,nbPass,date,time))
-                .show();
+                .setPositiveButton("Creer",null)
+                .create();
+
+        d.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        boolean valide = true;
+                        String message = "";
+                        double depart = 0;
+                        double departlong = 0;
+                        double destination = 0;
+                        double destinationlong = 0;
+                        double nbPlace = 0;
+                        Pattern p = Pattern.compile("^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$");
+                        Matcher m = p.matcher(date.getText().toString());
+                        try {
+                            depart = Double.parseDouble(txtSetDepart.getText().toString());
+                            departlong = Double.parseDouble(txtSetDepartLong.getText().toString());
+                            destination = Double.parseDouble(txtSetDestination.getText().toString());
+                            destinationlong = Double.parseDouble(txtSetDestinationLong.getText().toString());
+                        } catch(NumberFormatException nfe) {
+                            valide = false;
+                            message = "Les longitudes et latitudes doivent être numérique";
+                        }
+                        if (depart < 46 || depart > 47 ||
+                                departlong > -71 || departlong < -72 ||
+                                destination < 46 || destination > 47 ||
+                                destinationlong > -71 || destinationlong < -72)
+                        {
+                            valide = false;
+                            if (message == "") {
+                                message = "La latitude doit être entre 46 et 47. La longitude doit être entre -71 et -72";
+                            }
+                        }
+                        try {
+                            nbPlace = Double.parseDouble(nbPass.getText().toString());
+                        } catch(NumberFormatException nfe) {
+                            valide = false;
+                            if (message == "") {
+                                message = "Les nombres de places doivent être numériques";
+                            }
+                        }
+                        if (nbPlace < 1 || nbPlace > 6)
+                        {
+                            if (message == "") {
+                                message = "Le nombre de place doit être entre 1 et 6";
+                            }
+                            valide = false;
+                        }
+                        else if (!m.find())
+                        {
+                            if (message == "") {
+                                message = "La date n'est pas conforme";
+                            }
+                            valide = false;
+                        }
+                        if (valide){
+                            SessionManager session = new SessionManager(getActivity().getApplicationContext());
+                            String coordonneeDepart = txtSetDepart.getText().toString() + "," + txtSetDepartLong.getText().toString();
+                            String coordonneeDestination = txtSetDestination.getText().toString() + "," + txtSetDestinationLong.getText().toString();
+                            passager.set_depart(coordonneeDepart);
+                            passager.set_destination(coordonneeDestination);
+                            passager.set_date(date.getText().toString());
+                            passager.set_heure(time.getText().toString());
+                            passager.set_identifiant(session.getIdentification());
+                            passager.set_nombrePassager(Integer.parseInt(nbPass.getText().toString()));
+                            new putPassager().execute((Void)null);
+                            Toast.makeText(getActivity(),"Passager Creer",Toast.LENGTH_SHORT).show();
+
+                            d.dismiss();
+                        }
+                        else
+                        {
+                            Toast.makeText(getActivity(),message,Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
+        d.show();
     }
-    private class BtnCreatePassager implements DialogInterface.OnClickListener {
+    /*private class BtnCreatePassager implements DialogInterface.OnClickListener {
 
         private  EditText m_depart;
         private EditText m_departLong;
@@ -321,7 +405,7 @@ private class putConducteur extends AsyncTask<Void,Void,Void>{
             new putPassager().execute((Void)null);
             Toast.makeText(getActivity(),"Passager Creer",Toast.LENGTH_SHORT).show();
         }
-    }
+    }*/
 
     private class putPassager extends AsyncTask<Void,Void,Void>{
         Exception m_exception;
