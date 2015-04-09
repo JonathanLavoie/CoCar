@@ -133,6 +133,7 @@ public class rechercher_fragment extends ListFragment{
                     @Override
                     public void onClick(View view) {
                         boolean valide = true;
+                        String message = "";
                         double depart = 0;
                         double departlong = 0;
                         double destination = 0;
@@ -140,51 +141,43 @@ public class rechercher_fragment extends ListFragment{
                         double nbPlace = 0;
                         Pattern p = Pattern.compile("^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$");
                         Matcher m = p.matcher(date.getText().toString());
-                        if (!(Util.isNumeric(txtSetDepart.getText().toString()) &&
-                            Util.isNumeric(txtSetDepartLong.getText().toString()) &&
-                            Util.isNumeric(txtSetDestination.getText().toString()) &&
-                            Util.isNumeric(txtSetDestinationLong.getText().toString())))
+                        try {
+                            depart = Double.parseDouble(txtSetDepart.getText().toString());
+                            departlong = Double.parseDouble(txtSetDepartLong.getText().toString());
+                            destination = Double.parseDouble(txtSetDestination.getText().toString());
+                            destinationlong = Double.parseDouble(txtSetDestinationLong.getText().toString());
+                        } catch(NumberFormatException nfe) {
+                            valide = false;
+                            message = "Les longitudes et latitudes doivent être numérique";
+                        }
+                        if (depart < 46 || depart > 47 ||
+                                 departlong > -71 || departlong < -72 ||
+                                 destination < 46 || destination > 47 ||
+                                 destinationlong > -71 || destinationlong < -72)
                         {
                             valide = false;
-                            try {
-                                depart = Double.parseDouble(txtSetDepart.getText().toString());
-                                departlong = Double.parseDouble(txtSetDepartLong.getText().toString());
-                                destination = Double.parseDouble(txtSetDestination.getText().toString());
-                                destinationlong = Double.parseDouble(txtSetDestinationLong.getText().toString());
-                            } catch(NumberFormatException nfe) {
-                                Toast.makeText(getActivity(),"Les longitudes et latitudes doivent être numérique",Toast.LENGTH_SHORT).show();
+                            if (message == "") {
+                                message = "La latitude doit être entre 46 et 47. La longitude doit être entre -71 et -72";
                             }
                         }
-                        else if (depart < 46 &&
-                                   depart > 47 &&
-                                   departlong > -71 &&
-                                   departlong < -72 &&
-                                   destination < 46 &&
-                                   destination > 47 &&
-                                   destinationlong > -71 &&
-                                   destinationlong < -72)
-                        {
+                        try {
+                            nbPlace = Double.parseDouble(nb.getText().toString());
+                        } catch(NumberFormatException nfe) {
                             valide = false;
-                            Toast.makeText(getActivity(),"La latitude doit être entre 46 et 47. La longitude doit être entre -71 et -72",Toast.LENGTH_SHORT).show();
+                            message = "Les nombres de places doivent être numériques";
                         }
-                        else if (!(Util.isNumeric(nb.getText().toString())))
+                        if (nbPlace < 1 || nbPlace > 6)
                         {
-                            try {
-                                nbPlace = Double.parseDouble(nb.getText().toString());
-                            } catch(NumberFormatException nfe) {
-                                Toast.makeText(getActivity(),"nombre de place doit être un numéro",Toast.LENGTH_SHORT).show();
+                            if (message == "") {
+                                message = "Le nombre de place doit être entre 1 et 6";
                             }
-                            valide = false;
-                        }
-                        else if (nbPlace < 1 &&
-                            nbPlace > 6)
-                        {
-                            Toast.makeText(getActivity(),"nombre de place doit être entre 1 et 6",Toast.LENGTH_SHORT).show();
                             valide = false;
                         }
                         else if (!m.find())
                         {
-                            Toast.makeText(getActivity(),"La date n'est pas conforme",Toast.LENGTH_SHORT).show();
+                            if (message == "") {
+                                message = "La date n'est pas conforme";
+                            }
                             valide = false;
                         }
                         if (valide){
@@ -202,6 +195,10 @@ public class rechercher_fragment extends ListFragment{
                             Toast.makeText(getActivity(),"Parcours Creer",Toast.LENGTH_SHORT).show();
 
                             d.dismiss();
+                        }
+                        else
+                        {
+                            Toast.makeText(getActivity(),message,Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
