@@ -221,5 +221,7 @@ application = webapp2.WSGIApplication(
         webapp2.Route(r'/conducteur/<id>/lat/<lat2>/long/<long2>',  handler=ConducteurHandler, methods=['GET']),                                               
         webapp2.Route(r'/passager/lat/<lat2>/long/<long2>',         handler=PassagerHandler, methods=['GET','PUT']),
         webapp2.Route(r'/conducteur/<id>/nbPlace/<nbPlace>',        handler=ConducteurHandler,methods=['PUT']),
+        webapp2.Route(r'/conducteur',                               handler=ConducteurHandler,methods=['PUT']),
+        webapp2.Route(r'/passager',                                 handler=PassagerHandler, methods=['PUT']),
     ],
     debug=True)

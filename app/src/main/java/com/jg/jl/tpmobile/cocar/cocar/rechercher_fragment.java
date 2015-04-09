@@ -17,6 +17,9 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.util.Log;
@@ -26,6 +29,7 @@ import android.view.MenuItem;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.app.Activity;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -90,25 +94,120 @@ public class rechercher_fragment extends ListFragment{
         return super.onContextItemSelected(item);
     }
 
+    EditText txtSetDepart;
+    EditText txtSetDepartLong;
+    EditText txtSetDestination;
+    EditText txtSetDestinationLong;
+    EditText km;
+    EditText nb;
+    EditText date;
+    EditText time;
     private void CreateConducteur(){
 
         View setView = View.inflate(getActivity(),R.layout.recherche_conducteur,null);
-        EditText txtSetDepart = (EditText) setView.findViewById(R.id.txtDepartC);
-        EditText txtSetDepartLong = (EditText) setView.findViewById(R.id.txtDepartCLong);
-        EditText txtSetDestination = (EditText) setView.findViewById(R.id.txtDestinationC);
-        EditText txtSetDestinationLong = (EditText) setView.findViewById(R.id.txtDestinationCLong);
-        EditText km = (EditText) setView.findViewById(R.id.nbKM);
-        EditText nb = (EditText) setView.findViewById(R.id.nbPass);
-        EditText date = (EditText) setView.findViewById(R.id.dateC);
-        EditText time = (EditText) setView.findViewById(R.id.heureC);
+        txtSetDepart = (EditText) setView.findViewById(R.id.txtDepartC);
+        txtSetDepartLong = (EditText) setView.findViewById(R.id.txtDepartCLong);
+        txtSetDestination = (EditText) setView.findViewById(R.id.txtDestinationC);
+        txtSetDestinationLong = (EditText) setView.findViewById(R.id.txtDestinationCLong);
+        km = (EditText) setView.findViewById(R.id.nbKM);
+        nb = (EditText) setView.findViewById(R.id.nbPass);
+        date = (EditText) setView.findViewById(R.id.dateC);
+        time = (EditText) setView.findViewById(R.id.heureC);
 
-        new AlertDialog.Builder(getActivity())
+        final AlertDialog d = new AlertDialog.Builder(getActivity())
         .setTitle("Nouveau parcours")
                 .setView(setView)
                 .setNegativeButton("Annuler",null)
-                .setPositiveButton("Creer",new BtnCreateConducteur(txtSetDepart,txtSetDepartLong,
-                        txtSetDestination,txtSetDestinationLong,km,nb,date,time))
-                .show();
+                .setPositiveButton("Creer", null)
+                //.setPositiveButton("Creer",new BtnCreateConducteur(txtSetDepart,txtSetDepartLong,
+                        //txtSetDestination,txtSetDestinationLong,km,nb,date,time))
+                .create();
+        d.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        boolean valide = true;
+                        double depart = 0;
+                        double departlong = 0;
+                        double destination = 0;
+                        double destinationlong = 0;
+                        double nbPlace = 0;
+                        Pattern p = Pattern.compile("^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$");
+                        Matcher m = p.matcher(date.getText().toString());
+                        if (!(Util.isNumeric(txtSetDepart.getText().toString()) &&
+                            Util.isNumeric(txtSetDepartLong.getText().toString()) &&
+                            Util.isNumeric(txtSetDestination.getText().toString()) &&
+                            Util.isNumeric(txtSetDestinationLong.getText().toString())))
+                        {
+                            valide = false;
+                            try {
+                                depart = Double.parseDouble(txtSetDepart.getText().toString());
+                                departlong = Double.parseDouble(txtSetDepartLong.getText().toString());
+                                destination = Double.parseDouble(txtSetDestination.getText().toString());
+                                destinationlong = Double.parseDouble(txtSetDestinationLong.getText().toString());
+                            } catch(NumberFormatException nfe) {
+                                Toast.makeText(getActivity(),"Les longitudes et latitudes doivent être numérique",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else if (depart < 46 &&
+                                   depart > 47 &&
+                                   departlong > -71 &&
+                                   departlong < -72 &&
+                                   destination < 46 &&
+                                   destination > 47 &&
+                                   destinationlong > -71 &&
+                                   destinationlong < -72)
+                        {
+                            valide = false;
+                            Toast.makeText(getActivity(),"La latitude doit être entre 46 et 47. La longitude doit être entre -71 et -72",Toast.LENGTH_SHORT).show();
+                        }
+                        else if (!(Util.isNumeric(nb.getText().toString())))
+                        {
+                            try {
+                                nbPlace = Double.parseDouble(nb.getText().toString());
+                            } catch(NumberFormatException nfe) {
+                                Toast.makeText(getActivity(),"nombre de place doit être un numéro",Toast.LENGTH_SHORT).show();
+                            }
+                            valide = false;
+                        }
+                        else if (nbPlace < 1 &&
+                            nbPlace > 6)
+                        {
+                            Toast.makeText(getActivity(),"nombre de place doit être entre 1 et 6",Toast.LENGTH_SHORT).show();
+                            valide = false;
+                        }
+                        else if (!m.find())
+                        {
+                            Toast.makeText(getActivity(),"La date n'est pas conforme",Toast.LENGTH_SHORT).show();
+                            valide = false;
+                        }
+                        if (valide){
+                            SessionManager session = new SessionManager(getActivity().getApplicationContext());
+                            String coordonneeDepart = txtSetDepart.getText().toString() + "," + txtSetDepartLong.getText().toString();
+                            String coordonneeDestination = txtSetDestination.getText().toString() + "," + txtSetDestinationLong.getText().toString();
+                            conduc.set_depart(coordonneeDepart);
+                            conduc.set_destination(coordonneeDestination);
+                            conduc.set_nombreDePlace(Integer.parseInt(nb.getText().toString().trim()));
+                            conduc.set_KM(Integer.parseInt(km.getText().toString().trim()));
+                            conduc.set_date(date.getText().toString());
+                            conduc.set_heure(time.getText().toString());
+                            conduc.set_identifiant(session.getIdentification());
+                            new putConducteur().execute((Void)null);
+                            Toast.makeText(getActivity(),"Parcours Creer",Toast.LENGTH_SHORT).show();
+
+                            d.dismiss();
+                        }
+                    }
+                });
+            }
+        });
+        d.show();
     }
 
     private class BtnCreateConducteur implements DialogInterface.OnClickListener {
@@ -135,18 +234,18 @@ public class rechercher_fragment extends ListFragment{
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            SessionManager session = new SessionManager(getActivity().getApplicationContext());
-            String coordonneeDepart = m_depart.getText().toString() + "," + m_departLong.getText().toString();
-            String coordonneeDestination = m_destination.getText().toString() + "," + m_destinationLong.getText().toString();
-            conduc.set_depart(coordonneeDepart);
-            conduc.set_destination(coordonneeDestination);
-            conduc.set_nombreDePlace(Integer.parseInt(m_nbPass.getText().toString().trim()));
-            conduc.set_KM(Integer.parseInt(m_nbKM.getText().toString().trim()));
-            conduc.set_date(m_date.getText().toString());
-            conduc.set_heure(m_time.getText().toString());
-            conduc.set_identifiant(session.getIdentification());
-            new putConducteur().execute((Void)null);
-            Toast.makeText(getActivity(),"Parcours Creer",Toast.LENGTH_SHORT).show();
+                SessionManager session = new SessionManager(getActivity().getApplicationContext());
+                String coordonneeDepart = m_depart.getText().toString() + "," + m_departLong.getText().toString();
+                String coordonneeDestination = m_destination.getText().toString() + "," + m_destinationLong.getText().toString();
+                conduc.set_depart(coordonneeDepart);
+                conduc.set_destination(coordonneeDestination);
+                conduc.set_nombreDePlace(Integer.parseInt(m_nbPass.getText().toString().trim()));
+                conduc.set_KM(Integer.parseInt(m_nbKM.getText().toString().trim()));
+                conduc.set_date(m_date.getText().toString());
+                conduc.set_heure(m_time.getText().toString());
+                conduc.set_identifiant(session.getIdentification());
+                new putConducteur().execute((Void)null);
+                Toast.makeText(getActivity(),"Parcours Creer",Toast.LENGTH_SHORT).show();
         }
     }
 private class putConducteur extends AsyncTask<Void,Void,Void>{
