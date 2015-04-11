@@ -55,10 +55,10 @@ public class InscriptionActivity extends ActionBarActivity {
         String nom = txtNom.getText().toString();
         String email = txtIndentifiant.getText().toString();
         String motDePasse = txtMotPasse.getText().toString();
-        String adresse = txtLat.getText().toString() + "," + txtlong.getText().toString();
+        String adresse = txtLat.getText().toString() + ";" + txtlong.getText().toString();
         String phone = txtNumTel.getText().toString();
 
-        if (champsValide(nom.trim(), email.trim(), motDePasse.trim(),adresse.trim(),phone.trim())) {
+        if (champsValide(nom.trim(), email.trim(), motDePasse.trim(),txtLat.getText().toString().trim(), txtlong.getText().toString().trim(),phone.trim())) {
             // Insertion dans la bd
             UserRepo repo = new UserRepo(this);
             User user = new User();
@@ -81,16 +81,18 @@ public class InscriptionActivity extends ActionBarActivity {
      * @param nom
      * @param email
      * @param motPasse
-     * @param adresse
      * @param phone
      * @return
      */
-    public Boolean champsValide(String nom, String email, String motPasse, String adresse, String phone) {
+    public Boolean champsValide(String nom, String email, String motPasse, String Latitude, String longitude, String phone) {
+        Double lat;
+        Double lon;
         // Vérifie si les champs ne sont pas vide
         if(nom.length() > 0 &&
                 email.length() > 0 &&
                 motPasse.length() > 0 &&
-                adresse.length() > 0 &&
+                Latitude.length() > 0 &&
+                longitude.length() > 0 &&
                 phone.length() > 0)
         {
             // Vérifie si l'adresse courriel est valide
@@ -101,7 +103,20 @@ public class InscriptionActivity extends ActionBarActivity {
                     UserRepo repo = new UserRepo(this);
                     User utilisateur = repo.getUserByIdentification(email);
                     if (utilisateur.get_nom() == "" || utilisateur.get_nom() == null) {
-                        return true;
+                        try {
+                            lat = Double.parseDouble(Latitude);
+                            lon = Double.parseDouble(longitude);
+                        } catch(NumberFormatException nfe) {
+                            Util.afficherAlertBox(InscriptionActivity.this, "La longitude et latitude doit être numérique", "Latitude longitude erreur");
+                            return false;
+                        }
+                        if((lat >= 46 && lat <= 47) || (lon <= -71 && lon >= -72)) {
+                            return true;
+                        }
+                        else {
+                            Util.afficherAlertBox(InscriptionActivity.this, "La latitude doit être entre 46 et 47. La longitude doit être entre -71 et -72", "Latitude longitude erreur");
+                            return false;
+                        }
                     }
                     else {
                         Util.afficherAlertBox(InscriptionActivity.this, "Le email est deja utiliser", "Email Utiliser");

@@ -38,9 +38,12 @@ def idAleatoire():
 
 
 def calculerDistance(lat1,long1,lat2,long2):
+    logging.info(lat1)
+    logging.info(float(lat1))
     lat1,long1,lat2,long2 = map(radians,[float(lat1),float(long1),float(lat2),float(long2)])
     dlong = long2 - long1
     dLat = lat2 - lat1
+
     a = sin(dLat/2)**2 + cos(lat1) * cos(lat2) * sin(dlong/2)**2
     c = 2 * asin(sqrt(a))
     km = 6367 * c 
@@ -63,10 +66,11 @@ class ConducteurHandler(webapp2.RequestHandler):
                 for p in qr:
                     dictConducteur = p.to_dict()
                     latLong = dictConducteur['departC']
-                    vectlatLong = latLong.split(',')
+                    vectlatLong = latLong.split(';')
                     latLongDest = dictConducteur['destinationC']
-                    vectlatLongDest = latLongDest.split(',')
+                    vectlatLongDest = latLongDest.split(';')
                     kmDep = calculerDistance(vectlatLong[0], vectlatLong[1], lat2, long2)
+
                     kmDest = calculerDistance(vectlatLongDest[0], vectlatLongDest[1], lat2, long2)
                     dictConducteur['id'] = p.key.id()
                     dictConducteur['disDest'] = round(kmDest,2)
@@ -88,9 +92,9 @@ class ConducteurHandler(webapp2.RequestHandler):
                 dictConducteur['nbKm'] = qr.nbKm
                 dictConducteur['nombrePlace'] = qr.nombrePlace
                 latLong = dictConducteur['departC']
-                vectlatLong = latLong.split(',')
+                vectlatLong = latLong.split(';')
                 latLongDest = dictConducteur['destinationC']
-                vectlatLongDest = latLongDest.split(',')
+                vectlatLongDest = latLongDest.split(';')
                 kmDep = calculerDistance(vectlatLong[0], vectlatLong[1], lat2, long2)
                 kmDest = calculerDistance(vectlatLongDest[0], vectlatLongDest[1], lat2, long2)
                 dictConducteur['disDest'] = round(kmDest,2)
@@ -160,9 +164,9 @@ class PassagerHandler(webapp2.RequestHandler):
             for p in qr:
                 dictPassager = p.to_dict()
                 latLong = dictPassager['departP']
-                vectlatLong = latLong.split(',')
+                vectlatLong = latLong.split(';')
                 latLongDest = dictPassager['destinationP']
-                vectlatLongDest = latLongDest.split(',')
+                vectlatLongDest = latLongDest.split(';')
                 kmDep = calculerDistance(vectlatLong[0], vectlatLong[1], lat2, long2)
                 kmDest = calculerDistance(vectlatLongDest[0], vectlatLongDest[1], lat2, long2)
                 dictPassager['disDest'] = round(kmDest,2)

@@ -51,7 +51,7 @@ public class rechercher_fragment extends ListFragment{
     private String[] m_Tokens = {"Créer un parcours (Passager et Conducteur)"};
     private ArrayList<String> m_Items = new ArrayList<String>();
     private ArrayAdapter<String> m_Adapter;
-    private final static String WEB_SERVICE_URL = "10.0.2.2:8080";
+    private final static String WEB_SERVICE_URL = "appcocar.appspot.com";
     private final static String REST_CONDUCTEUR = "/conducteur";
     private final static String REST_PASSAGER = "/passager";
     private HttpClient m_ClientHttp = new DefaultHttpClient();
@@ -139,6 +139,8 @@ public class rechercher_fragment extends ListFragment{
                         double nbPlace = 0;
                         Pattern p = Pattern.compile("^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$");
                         Matcher m = p.matcher(date.getText().toString());
+                        Pattern p2 = Pattern.compile("([01]?[0-9]|2[0-3]):[0-5][0-9]");
+                        Matcher m2 = p2.matcher(time.getText().toString());
                         try {
                             depart = Double.parseDouble(txtSetDepart.getText().toString());
                             departlong = Double.parseDouble(txtSetDepartLong.getText().toString());
@@ -173,17 +175,28 @@ public class rechercher_fragment extends ListFragment{
                             }
                             valide = false;
                         }
-                        else if (!m.find())
+                        if (!m.find())
                         {
                             if (message == "") {
                                 message = "La date n'est pas conforme";
                             }
                             valide = false;
                         }
+                        if (!m2.find())
+                        {
+                            if (message == "") {
+                                message = "L'heure n'est pas conforme";
+                            }
+                            valide = false;
+                        }
                         if (valide){
                             SessionManager session = new SessionManager(getActivity().getApplicationContext());
-                            String coordonneeDepart = txtSetDepart.getText().toString() + "," + txtSetDepartLong.getText().toString();
-                            String coordonneeDestination = txtSetDestination.getText().toString() + "," + txtSetDestinationLong.getText().toString();
+                            String latiD = txtSetDepart.getText().toString().replace(',','.');
+                            String longiD = txtSetDepartLong.getText().toString().replace(',','.');
+                            String coordonneeDepart =  latiD + ";" + longiD;
+                            String lati = txtSetDestination.getText().toString().replace(',','.');
+                            String longi = txtSetDestinationLong.getText().toString().replace(',','.');
+                            String coordonneeDestination =  lati + ";" + longi;
                             conduc.set_depart(coordonneeDepart);
                             conduc.set_destination(coordonneeDestination);
                             conduc.set_nombreDePlace(Integer.parseInt(nb.getText().toString().trim()));
@@ -305,6 +318,8 @@ private class putConducteur extends AsyncTask<Void,Void,Void>{
                         double nbPlace = 0;
                         Pattern p = Pattern.compile("^[0-9]{4}-[0-1][0-9]-[0-3][0-9]$");
                         Matcher m = p.matcher(date.getText().toString());
+                        Pattern p2 = Pattern.compile("([01]?[0-9]|2[0-3]):[0-5][0-9]");
+                        Matcher m2 = p2.matcher(time.getText().toString());
                         try {
                             depart = Double.parseDouble(txtSetDepart.getText().toString());
                             departlong = Double.parseDouble(txtSetDepartLong.getText().toString());
@@ -339,17 +354,28 @@ private class putConducteur extends AsyncTask<Void,Void,Void>{
                             }
                             valide = false;
                         }
-                        else if (!m.find())
+                        if (!m.find())
                         {
                             if (message == "") {
                                 message = "La date n'est pas conforme";
                             }
                             valide = false;
                         }
+                        if (!m2.find())
+                        {
+                            if (message == "") {
+                                message = "L'heure n'est pas conforme";
+                            }
+                            valide = false;
+                        }
                         if (valide){
                             SessionManager session = new SessionManager(getActivity().getApplicationContext());
-                            String coordonneeDepart = txtSetDepart.getText().toString() + "," + txtSetDepartLong.getText().toString();
-                            String coordonneeDestination = txtSetDestination.getText().toString() + "," + txtSetDestinationLong.getText().toString();
+                            String latiD = txtSetDepart.getText().toString().replace(',','.');
+                            String longiD = txtSetDepartLong.getText().toString().replace(',','.');
+                            String coordonneeDepart = latiD + ";" + longiD;
+                            String lati = txtSetDestination.getText().toString().replace(',','.');
+                            String longi = txtSetDestinationLong.getText().toString().replace(',','.');
+                            String coordonneeDestination = lati + ";" + longi;
                             passager.set_depart(coordonneeDepart);
                             passager.set_destination(coordonneeDestination);
                             passager.set_date(date.getText().toString());

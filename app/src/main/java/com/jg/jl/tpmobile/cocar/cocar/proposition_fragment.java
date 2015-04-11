@@ -47,7 +47,7 @@ import com.jg.jl.tpmobile.cocar.cocar.WebServices.jsonParser;
 public class proposition_fragment extends Fragment {
     View rootView;
     private final String TAG = this.getClass().getSimpleName();
-    private final static String WEB_SERVICE_URL = "10.0.2.2:8080";
+    private final static String WEB_SERVICE_URL = "appcocar.appspot.com";
     private final static String REST_CONDUCTEUR = "/conducteur";
     private final static String REST_PASSAGER = "/passager";
     private final static String REST_NBPLACE = "/nbPlace/";
@@ -82,7 +82,9 @@ public class proposition_fragment extends Fragment {
             try{
                 User unUser = UtilCourant.getUserByIdentification(session.getIdentification());
                 String longLat = unUser.get_adresse();
-                vectLongLat = longLat.split(",");
+                vectLongLat = longLat.split(";");
+                vectLongLat[0].replace(',','.');
+                vectLongLat[1].replace(',','.');
                 URI uri = new URI("Http", WEB_SERVICE_URL, REST_CONDUCTEUR+ REST_LAT +
                         vectLongLat[0] + REST_LONG + vectLongLat[1], null, null);
                 HttpGet get = new HttpGet(uri);
@@ -103,7 +105,9 @@ public class proposition_fragment extends Fragment {
         try{
             User unUser = UtilCourant.getUserByIdentification(session.getIdentification());
             String longLat = unUser.get_adresse();
-            vectLongLat = longLat.split(",");
+            vectLongLat = longLat.split(";");
+            vectLongLat[0].replace(',','.');
+            vectLongLat[1].replace(',','.');
             URI uri = new URI("Http", WEB_SERVICE_URL, REST_PASSAGER + REST_LAT +
                     vectLongLat[0] + REST_LONG + vectLongLat[1], null, null);
             HttpGet get = new HttpGet(uri);
