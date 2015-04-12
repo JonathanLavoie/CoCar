@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -36,6 +37,7 @@ public class BaseActivity extends ActionBarActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
@@ -53,6 +55,7 @@ public class BaseActivity extends ActionBarActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
+    //Évènement qui indique quel fragment pour chaque élément de la liste du menu.
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments

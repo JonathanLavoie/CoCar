@@ -32,6 +32,7 @@ public class depart_fragment extends Fragment{
         return rootView;
     }
 
+    //Méthode qui charge tous les donnée du fragment départ.
     private void chargementDepart() {
         final ListView maListe = (ListView) rootView.findViewById(R.id.lstDepart);
         ArrayList<HashMap<String, String>> listMap = new ArrayList<>();
@@ -45,61 +46,73 @@ public class depart_fragment extends Fragment{
         for (int i = 0; i < listPassager.size(); i++) {
             map = new HashMap<>();
             type = "Passager";
+            map.put("type", type);
             map.put("img", String.valueOf(R.drawable.passager));
-            map.put("id","Numéro de parcours : 1" + listPassager.get(i).get_ID());
+            map.put("id","Numéro de parcours : " + listPassager.get(i).get_ID());
             map.put("date", "Date : " + listPassager.get(i).get_date()+ " " + listPassager.get(i).get_heure());
-            map.put("description", type.toUpperCase() + "\nDestination : " + listPassager.get(i).get_destination()
-                    + "\nNombre de passager: " + listPassager.get(i).get_nombrePassager());
+            map.put("description", "Depart : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
+                    + "\nNombre de passager réserver: " + listPassager.get(i).get_nombrePassager());
+            map.put("infoSupp", "\nCourriel : " + listPassager.get(i).get_identifiant() + "\n");
             listMap.add(map);
         }
         for (int i = 0; i < listConducteur.size(); i++) {
             map = new HashMap<>();
             type = "Conducteur";
+            map.put("type", type);
             map.put("img", String.valueOf(R.drawable.car72));
-            map.put("id","Numéro de parcours : 2" + listConducteur.get(i).get_ID());
+            map.put("id","Numéro de parcours : " + listConducteur.get(i).get_ID());
             map.put("date", "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
-            map.put("description", type.toUpperCase());
+            map.put("description", "Depart : " + listConducteur.get(i).get_depart() +
+                    "\nDestination : " + listConducteur.get(i).get_destination() +
+                    "\nNombre de place réserver: " + listConducteur.get(i).get_nombreDePlace());
+            map.put("infoSupp", "\nCourriel du demandeur : \n" + listConducteur.get(i).get_identifiant() +
+                    "Km max à parcourir : " + listConducteur.get(i).get_KM() + "\n");
             listMap.add(map);
         }
 
         if (listMap.isEmpty())
         {
             TextView tv = new TextView(getActivity());
-            tv.setText("Aucune propostion");
+            tv.setText("Aucun départ de prévu");
             tv.setPadding(50,250,0,0);
-            RelativeLayout lst = (RelativeLayout)rootView.findViewById(R.id.rlpropo);
+            RelativeLayout lst = (RelativeLayout)rootView.findViewById(R.id.rldepart);
             lst.addView(tv);
         }
-        listMap = triBulle(listMap);
+        else {
+            listMap = triBulle(listMap);
 
-        SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), listMap, R.layout.layout_proposition_personnalise,
-                new String[]{"img", "id","date","description"}, new int[]{R.id.img, R.id.titre,R.id.date,R.id.description});
-        maListe.setAdapter(adapter);
+            SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), listMap, R.layout.layout_proposition_personnalise,
+                    new String[]{"img", "id", "date", "description"}, new int[]{R.id.img, R.id.titre, R.id.date, R.id.description});
+            maListe.setAdapter(adapter);
 
-        maListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
-                HashMap<String,String> map = (HashMap<String,String>)  maListe.getItemAtPosition(position);
-                adb.setTitle("Aperçu");
-                adb.setMessage(map.get("id") + "\n" +  map.get("date") +" \nType : " +  map.get("description"));
-                adb.setPositiveButton("OK", null);
-                adb.show();
-            }
-        });
+            maListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+                    HashMap<String, String> map = (HashMap<String, String>) maListe.getItemAtPosition(position);
+                    adb.setTitle("Aperçu");
+                    adb.setMessage(map.get("id") + "\n" + map.get("date") + " \nType : " +map.get("type") + "\n"+ map.get("description") + map.get("infoSupp"));
+                    adb.setPositiveButton("OK", null);
+                    adb.show();
+                }
+            });
+        }
     }
 
+    //permet de faire un tri des depart en date du départ le plus prochain.
     public ArrayList<HashMap<String, String>> triBulle(ArrayList<HashMap<String, String>> list) {
         for (int i = 0; i <= list.size() - 2; i++) {
             for (int j = list.size() - 1; i < j; j--) {
                 HashMap<String, String> hashmap1 = list.get(j);
                 HashMap<String, String> hashmap2 = list.get(j - 1);
-                SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+                SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date date1;
                 Date date2;
                 try {
-                    date1 = date.parse(hashmap1.get("date"));
-                    date2 = date.parse(hashmap2.get("date"));
+                    String sub1 = hashmap1.get("date").substring(7);
+                    String sub2 = hashmap2.get("date").substring(7);
+                    date1 = date.parse(sub1);
+                    date2 = date.parse(sub2);
                     if (date1.before(date2)) {
                         HashMap<String, String> tempo = list.get(j);
                         list.set(j, list.get(j - 1));

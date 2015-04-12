@@ -11,7 +11,16 @@
         android:ems="10"
         android:id="@+id/txtDepartP"
         android:layout_marginTop="5dp"
-        android:hint="@string/txt_depart" />
+        android:hint="@string/txt_latDepart" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:ems="10"
+        android:id="@+id/txtDepartP2"
+        android:layout_marginTop="5dp"
+        android:hint="@string/txt_longDepart" />
 
     <EditText
         android:layout_width="match_parent"
@@ -20,7 +29,16 @@
         android:ems="10"
         android:id="@+id/txtDestinationP"
         android:layout_marginTop="5dp"
-        android:hint="@string/txt_destination"/>
+        android:hint="@string/txt_latDestination"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:ems="10"
+        android:id="@+id/txtDestinationP2"
+        android:layout_marginTop="5dp"
+        android:hint="@string/txt_longDestination" />
 
     <TextView
         android:layout_width="wrap_content"

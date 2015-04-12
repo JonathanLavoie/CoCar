@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper  extends SQLiteOpenHelper {
     //Version de la BD
     // Doit être changé a chaque fois que la BD est modifier
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 15;
 
     // Nom de la BD
     private static final String DATABASE_NAME = "CoCar.db";

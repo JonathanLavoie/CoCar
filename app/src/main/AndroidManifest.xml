@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jg.jl.tpmobile.cocar.cocar" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -25,21 +27,8 @@
                 android:value="com.jg.jl.tpmobile.cocar.cocar.Login" />
         </activity>
         <activity
-            android:name=".searchActivity"
-            android:label="@string/title_activity_search" >
-        </activity>
-        <activity
             android:name=".BaseActivity"
             android:label="@string/title_activity_base" >
         </activity>
-        <activity
-            android:name=".SearchActivity"
-            android:label="@string/title_activity_search" >
-        </activity>
-        <activity
-            android:name=".UpdateUserActivity"
-            android:label="@string/title_activity_update_user" >
-        </activity>
     </application>
-
 </manifest>

@@ -87,7 +87,7 @@ public class ParcoursConducteurRepo {
 
         if (cursor.moveToFirst()) {
             do {
-                parcoursConducteur.set_ID(cursor.getInt(cursor.getColumnIndex(ParcoursConducteur.KEY_ID)));
+                parcoursConducteur.set_ID(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_ID)));
                 parcoursConducteur.set_depart(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Depart)));
                 parcoursConducteur.set_destination(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Destination)));
                 parcoursConducteur.set_frequence(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Frequence)));
@@ -136,7 +136,7 @@ public class ParcoursConducteurRepo {
         if (cursor.moveToFirst()) {
             do {
                 parcoursConducteur = new ParcoursConducteur();
-                parcoursConducteur.set_ID(cursor.getInt(cursor.getColumnIndex(ParcoursConducteur.KEY_ID)));
+                parcoursConducteur.set_ID(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_ID)));
                 parcoursConducteur.set_depart(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Depart)));
                 parcoursConducteur.set_destination(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Destination)));
                 parcoursConducteur.set_frequence(cursor.getString(cursor.getColumnIndex(ParcoursConducteur.KEY_Frequence)));
