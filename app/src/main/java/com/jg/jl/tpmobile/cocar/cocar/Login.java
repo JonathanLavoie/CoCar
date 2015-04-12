@@ -4,14 +4,11 @@ package com.jg.jl.tpmobile.cocar.cocar;
  * Created by Jonathan Lavoie on 19/02/2015.
  */
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.Window;
 import android.widget.EditText;
 
 
@@ -25,7 +22,9 @@ public class Login extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
 
         // Remplit une nouvelle session

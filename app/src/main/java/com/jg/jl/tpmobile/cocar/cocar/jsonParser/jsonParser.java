@@ -1,27 +1,10 @@
-package com.jg.jl.tpmobile.cocar.cocar.WebServices;
+package com.jg.jl.tpmobile.cocar.cocar.jsonParser;
 
-import java.net.URI;
 import java.util.ArrayList;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.app.ListActivity;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.Window;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import com.jg.jl.tpmobile.cocar.cocar.ParcoursConducteur;
 import com.jg.jl.tpmobile.cocar.cocar.ParcoursPassager;

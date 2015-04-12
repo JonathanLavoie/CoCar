@@ -49,7 +49,7 @@ public class depart_fragment extends Fragment{
             map.put("img", String.valueOf(R.drawable.passager));
             map.put("id","Numéro de parcours : " + listPassager.get(i).get_ID());
             map.put("date", "Date : " + listPassager.get(i).get_date()+ " " + listPassager.get(i).get_heure());
-            map.put("description", "Destination : " + listPassager.get(i).get_destination()
+            map.put("description", "Depart : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
                     + "\nNombre de passager réserver: " + listPassager.get(i).get_nombrePassager());
             map.put("infoSupp", "\nCourriel : " + listPassager.get(i).get_identifiant() + "\n");
             listMap.add(map);
@@ -90,7 +90,7 @@ public class depart_fragment extends Fragment{
                     AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
                     HashMap<String, String> map = (HashMap<String, String>) maListe.getItemAtPosition(position);
                     adb.setTitle("Aperçu");
-                    adb.setMessage(map.get("id") + "\n" + map.get("date") + " \nType : " +map.get("type") + map.get("description") + map.get("infoSupp"));
+                    adb.setMessage(map.get("id") + "\n" + map.get("date") + " \nType : " +map.get("type") + "\n"+ map.get("description") + map.get("infoSupp"));
                     adb.setPositiveButton("OK", null);
                     adb.show();
                 }

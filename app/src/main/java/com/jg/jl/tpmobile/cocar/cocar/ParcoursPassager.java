@@ -1,6 +1,5 @@
 package com.jg.jl.tpmobile.cocar.cocar;
 
-import java.util.Date;
 
 /**
  * Created by Jonathan Lavoie on 04/03/2015.

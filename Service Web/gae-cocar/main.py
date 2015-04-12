@@ -38,12 +38,9 @@ def idAleatoire():
 
 
 def calculerDistance(lat1,long1,lat2,long2):
-    logging.info(lat1)
-    logging.info(float(lat1))
     lat1,long1,lat2,long2 = map(radians,[float(lat1),float(long1),float(lat2),float(long2)])
     dlong = long2 - long1
     dLat = lat2 - lat1
-
     a = sin(dLat/2)**2 + cos(lat1) * cos(lat2) * sin(dlong/2)**2
     c = 2 * asin(sqrt(a))
     km = 6367 * c 
@@ -155,23 +152,42 @@ class ConducteurHandler(webapp2.RequestHandler):
             self.error(500)
              
 class PassagerHandler(webapp2.RequestHandler):
-    def get(self,lat2 = None, long2 = None):
+    def get(self,id = None,lat2 = None, long2 = None):
         try:
             #obtient toutes les passagers
             resultat = []
-            qr = ParcoursPassager.query().order(ParcoursPassager.dateHeureP)
+            if(id is None):
+                qr = ParcoursPassager.query().order(ParcoursPassager.dateHeureP)
 
-            for p in qr:
-                dictPassager = p.to_dict()
-                latLong = dictPassager['departP']
-                vectlatLong = latLong.split(';')
-                latLongDest = dictPassager['destinationP']
-                vectlatLongDest = latLongDest.split(';')
+                for p in qr:
+                    dictPassager = p.to_dict()
+                    latLong = dictPassager['departP']
+                    vectlatLong = latLong.split(';')
+                    latLongDest = dictPassager['destinationP']
+                    vectlatLongDest = latLongDest.split(';')
+                    kmDep = calculerDistance(vectlatLong[0], vectlatLong[1], lat2, long2)
+                    kmDest = calculerDistance(vectlatLongDest[0], vectlatLongDest[1], lat2, long2)
+                    dictPassager['disDest'] = round(kmDest,2)
+                    dictPassager['disDep'] = round(kmDep,2)
+                    dictPassager['id'] = p.key.id()
+                    resultat.append(dictPassager)
+                    self.response.headers['Content-Type'] = 'application/json'
+            else:
+                cle = ndb.Key('ParcoursPassager',id)
+                qr = cle.get();
+                dictPassager = {}
+                vectlatLongDest = qr.destinationP.split(';')
+                vectlatLong = qr.departP.split(';')
                 kmDep = calculerDistance(vectlatLong[0], vectlatLong[1], lat2, long2)
                 kmDest = calculerDistance(vectlatLongDest[0], vectlatLongDest[1], lat2, long2)
+                dictPassager['departP'] = qr.departP
+                dictPassager['destinationP'] = qr.destinationP
+                dictPassager['identifiantCree'] = qr.identifiantCree
+                dictPassager['nombrePassager'] = qr.nombrePassager
+                dictPassager['dateHeureP'] = qr.dateHeureP
                 dictPassager['disDest'] = round(kmDest,2)
                 dictPassager['disDep'] = round(kmDep,2)
-                dictPassager['id'] = p.key.id()             
+                dictPassager['id'] = id 
                 resultat.append(dictPassager)
                 self.response.headers['Content-Type'] = 'application/json'
             self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))
@@ -222,7 +238,8 @@ application = webapp2.WSGIApplication(
     [
         ('/',                                                       MainPageHandler),
         webapp2.Route(r'/conducteur/lat/<lat2>/long/<long2>',       handler=ConducteurHandler, methods=['GET','PUT']),
-        webapp2.Route(r'/conducteur/<id>/lat/<lat2>/long/<long2>',  handler=ConducteurHandler, methods=['GET']),                                               
+        webapp2.Route(r'/conducteur/<id>/lat/<lat2>/long/<long2>',  handler=ConducteurHandler, methods=['GET']),
+        webapp2.Route(r'/passager/<id>/lat/<lat2>/long/<long2>',    handler=PassagerHandler, methods=['GET']),                                        
         webapp2.Route(r'/passager/lat/<lat2>/long/<long2>',         handler=PassagerHandler, methods=['GET','PUT']),
         webapp2.Route(r'/conducteur/<id>/nbPlace/<nbPlace>',        handler=ConducteurHandler,methods=['PUT']),
         webapp2.Route(r'/conducteur',                               handler=ConducteurHandler,methods=['PUT']),

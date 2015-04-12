@@ -6,62 +6,37 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONObject;
-
-import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Objects;
-
-import com.jg.jl.tpmobile.cocar.cocar.WebServices.jsonParser;
+import com.jg.jl.tpmobile.cocar.cocar.webService.webService;
 
 /**
  * Created by Jiimmy on 2015-03-04.
  */
 public class proposition_fragment extends Fragment {
     View rootView;
-    private final String TAG = this.getClass().getSimpleName();
-    private final static String WEB_SERVICE_URL = "appcocar.appspot.com";
-    private final static String REST_CONDUCTEUR = "/conducteur";
-    private final static String REST_PASSAGER = "/passager";
-    private final static String REST_NBPLACE = "/nbPlace/";
-    private final static String REST_LAT = "/lat/";
-    private final static String REST_LONG = "/long/";
-    private String[] vectLongLat = null;
-
-    private HttpClient m_ClientHttp = new DefaultHttpClient();
+    private webService web = new webService();
     private ArrayList<ParcoursConducteur> listConducteur = null;
     private ArrayList<ParcoursPassager> listPassager = null;
     SessionManager session;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         rootView = inflater.inflate(R.layout.proposition_layout, container, false);
         return rootView;
     }
@@ -73,54 +48,6 @@ public class proposition_fragment extends Fragment {
         new backCreate().execute((Void)null);
     }
 
-    //méthode qui permet d'obtenir les conducteurs
-      public ArrayList<ParcoursConducteur> getConducteur() {
-            Exception m_exception;
-            ArrayList<ParcoursConducteur> liste = null;
-            session = new SessionManager(getActivity().getApplicationContext());
-             UserRepo UtilCourant = new UserRepo(getActivity().getApplicationContext());
-            try{
-                User unUser = UtilCourant.getUserByIdentification(session.getIdentification());
-                String longLat = unUser.get_adresse();
-                vectLongLat = longLat.split(";");
-                vectLongLat[0].replace(',','.');
-                vectLongLat[1].replace(',','.');
-                URI uri = new URI("Http", WEB_SERVICE_URL, REST_CONDUCTEUR+ REST_LAT +
-                        vectLongLat[0] + REST_LONG + vectLongLat[1], null, null);
-                HttpGet get = new HttpGet(uri);
-                String body = m_ClientHttp.execute(get,new BasicResponseHandler());
-                Log.i(TAG,"Reçu conduteur: " + body);
-                liste = jsonParser.parseConducteurListe(body);
-
-            }catch (Exception e){
-                m_exception = e;
-            }
-            return liste;
-        }
-    public ArrayList<ParcoursPassager> getPassager() {
-        Exception m_exception;
-        ArrayList<ParcoursPassager> liste = null;
-        session = new SessionManager(getActivity().getApplicationContext());
-        UserRepo UtilCourant = new UserRepo(getActivity().getApplicationContext());
-        try{
-            User unUser = UtilCourant.getUserByIdentification(session.getIdentification());
-            String longLat = unUser.get_adresse();
-            vectLongLat = longLat.split(";");
-            vectLongLat[0].replace(',','.');
-            vectLongLat[1].replace(',','.');
-            URI uri = new URI("Http", WEB_SERVICE_URL, REST_PASSAGER + REST_LAT +
-                    vectLongLat[0] + REST_LONG + vectLongLat[1], null, null);
-            HttpGet get = new HttpGet(uri);
-            String body = m_ClientHttp.execute(get,new BasicResponseHandler());
-            Log.i(TAG,"Reçu passager : " + body);
-            liste = jsonParser.parsePassagerListe(body);
-
-        }catch (Exception e){
-            m_exception = e;
-        }
-        return liste;
-    }
-
 //Exécution asynchrone pour obtenir les données
 private class backCreate extends  AsyncTask<Void, Void, Void>{
     @Override
@@ -130,8 +57,8 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
 
     @Override
     protected Void doInBackground(Void... params) {
-        listConducteur = getConducteur();
-        listPassager = getPassager();
+        listConducteur = web.getConducteur(getActivity());
+        listPassager = web.getPassager(getActivity());
         return null;
     }
 
@@ -141,9 +68,9 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
         chargementProposition();
     }
 }
-
     //Permet de charger tous les propositions disponibles dans le service web
     private void chargementProposition() {
+        session = new SessionManager(getActivity().getApplicationContext());
         final ListView maListe = (ListView) rootView.findViewById(R.id.listviewperso);
         ArrayList<HashMap<String, String>> listMap = new ArrayList<>();
         HashMap<String, String> map;
@@ -246,7 +173,7 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
                             "\n/!\\ Attention cette action est définitif, vous ne pouvez pas annuler une fois accepté./!\\ ");
 
                 adb.setNegativeButton("Annuler", null);
-                adb.setPositiveButton("Proposer",new btnProposer(1,map.get("id")));
+                adb.setPositiveButton("Proposer",new btnProposer(1,map.get("id"),map.get("type")));
                 adb.show();
             }
         });
@@ -279,56 +206,48 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
     }
     private int m_nbPlace;
     private String m_id;
-    ParcoursConducteur unParcours = new ParcoursConducteur();
+    private String m_Type;
     private class btnProposer implements DialogInterface.OnClickListener{
 
-        public btnProposer(int p_nbPlace, String p_id){
+        public btnProposer(int p_nbPlace, String p_id,String p_type){
             p_id = p_id.substring(26);
             m_nbPlace = p_nbPlace;
             m_id = p_id;
+            m_Type = p_type;
         }
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            new updateConducteur().execute((Void)null);
+            if(m_Type.equals("Conducteur")){
+                new updateConducteur().execute((Void)null);
+            }else{
+                new updatePassager().execute((Void)null);
+            }
             Toast.makeText(getActivity(), "Update réussi", Toast.LENGTH_SHORT).show();
-
         }
     }
 
-
     private class updateConducteur extends AsyncTask<Void,Void,Void>{
-        Exception m_exception;
+        @Override
+        protected void onPreExecute() {
+            getActivity().setProgressBarIndeterminateVisibility(true);
 
+        }
+        @Override
+        protected Void doInBackground(Void... params) {
+            web.getConduEtInsertSQL(m_id, m_nbPlace, getActivity());
+            return null;
+        }
+    }
+
+    private class updatePassager extends AsyncTask<Void,Void,Void>{
         @Override
         protected void onPreExecute() {
             getActivity().setProgressBarIndeterminateVisibility(true);
         }
-
         @Override
         protected Void doInBackground(Void... params) {
-            try {
-
-                URI uri = new URI("http",WEB_SERVICE_URL,REST_CONDUCTEUR + "/" +m_id + REST_NBPLACE + m_nbPlace,null,null);
-                URI uri2 = new URI("http",WEB_SERVICE_URL,REST_CONDUCTEUR + "/" + m_id + REST_LAT +
-                        vectLongLat[0] + REST_LONG + vectLongLat[1],null,null);
-                HttpGet get = new HttpGet(uri2);
-                ArrayList<ParcoursConducteur> m_listeCondu;
-                HttpPut put = new HttpPut(uri);
-                put.addHeader("Content-Type", "application/json");
-
-                ParcoursConducteurRepo repCondu = new ParcoursConducteurRepo(getActivity().getApplicationContext());
-
-
-                String body = m_ClientHttp.execute(get,new BasicResponseHandler());
-                m_listeCondu = jsonParser.parseConducteurListe(body);
-                m_ClientHttp.execute(put,new BasicResponseHandler());
-                unParcours = m_listeCondu.get(0);
-                unParcours.set_nombreDePlace(m_nbPlace);
-                repCondu.insert(unParcours);
-            }catch (Exception e){
-                m_exception = e;
-            }
+            web.getPassEtInsertSQL(getActivity(), m_id);
             return null;
         }
     }

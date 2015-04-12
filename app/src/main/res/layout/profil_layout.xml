@@ -21,7 +21,7 @@
             android:layout_alignParentStart="true" />
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="343dp"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="15"
@@ -31,7 +31,7 @@
         android:text="@string/hint_nom" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="318dp"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
@@ -39,7 +39,7 @@
             android:layout_gravity="center_horizontal"
              />
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="336dp"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:ems="15"
@@ -48,7 +48,7 @@
         android:text="@string/txt_Email" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="332dp"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
@@ -56,7 +56,7 @@
             android:layout_gravity="center_horizontal"
             />
         <TextView
-        android:layout_width="match_parent"
+        android:layout_width="344dp"
         android:layout_height="wrap_content"
         android:inputType="textPostalAddress"
         android:ems="15"
@@ -65,7 +65,7 @@
         android:text="@string/hint_Address"
         android:layout_marginTop="15dp" />
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="310dp"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
@@ -74,7 +74,7 @@
             />
 
         <TextView
-        android:layout_width="match_parent"
+        android:layout_width="346dp"
         android:layout_height="wrap_content"
         android:inputType="phone"
         android:ems="15"
@@ -84,7 +84,7 @@
         android:layout_marginTop="15dp" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="326dp"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
@@ -94,7 +94,7 @@
 
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="335dp"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
