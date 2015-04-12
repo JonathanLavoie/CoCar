@@ -179,6 +179,7 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
         });
     }
 
+    //permet de tri en date de la proposition la plus proche de la date actuelle.
     public ArrayList<HashMap<String, String>> triBulleMap(ArrayList<HashMap<String, String>> list) {
         for (int i = 0; i <= list.size() - 2; i++) {
             for (int j = list.size() - 1; i < j; j--) {

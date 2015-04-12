@@ -32,6 +32,7 @@ public class depart_fragment extends Fragment{
         return rootView;
     }
 
+    //Méthode qui charge tous les donnée du fragment départ.
     private void chargementDepart() {
         final ListView maListe = (ListView) rootView.findViewById(R.id.lstDepart);
         ArrayList<HashMap<String, String>> listMap = new ArrayList<>();
@@ -78,7 +79,7 @@ public class depart_fragment extends Fragment{
             lst.addView(tv);
         }
         else {
-            //listMap = triBulle(listMap);
+            listMap = triBulle(listMap);
 
             SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), listMap, R.layout.layout_proposition_personnalise,
                     new String[]{"img", "id", "date", "description"}, new int[]{R.id.img, R.id.titre, R.id.date, R.id.description});
@@ -98,17 +99,20 @@ public class depart_fragment extends Fragment{
         }
     }
 
+    //permet de faire un tri des depart en date du départ le plus prochain.
     public ArrayList<HashMap<String, String>> triBulle(ArrayList<HashMap<String, String>> list) {
         for (int i = 0; i <= list.size() - 2; i++) {
             for (int j = list.size() - 1; i < j; j--) {
                 HashMap<String, String> hashmap1 = list.get(j);
                 HashMap<String, String> hashmap2 = list.get(j - 1);
-                SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+                SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date date1;
                 Date date2;
                 try {
-                    date1 = date.parse(hashmap1.get("date"));
-                    date2 = date.parse(hashmap2.get("date"));
+                    String sub1 = hashmap1.get("date").substring(7);
+                    String sub2 = hashmap2.get("date").substring(7);
+                    date1 = date.parse(sub1);
+                    date2 = date.parse(sub2);
                     if (date1.before(date2)) {
                         HashMap<String, String> tempo = list.get(j);
                         list.set(j, list.get(j - 1));

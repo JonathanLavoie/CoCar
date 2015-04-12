@@ -55,6 +55,7 @@ public class BaseActivity extends ActionBarActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
+    //Évènement qui indique quel fragment pour chaque élément de la liste du menu.
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments

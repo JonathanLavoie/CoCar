@@ -25,6 +25,8 @@ public class profil_fragment extends Fragment{
         return rootView;
     }
 
+
+    //Charge tous les donner du profil de la personne connecter.
     public void chargerProfil()
     {
         session = new SessionManager(getActivity().getApplicationContext());
