@@ -6,7 +6,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
+        android:inputType="numberDecimal|numberSigned"
         android:ems="10"
         android:id="@+id/txtDepartC"
         android:layout_marginTop="5dp"
@@ -15,7 +15,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberSigned"
+        android:inputType="numberDecimal|numberSigned"
         android:ems="10"
         android:id="@+id/txtDepartCLong"
         android:layout_marginTop="5dp"
@@ -24,7 +24,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
+        android:inputType="numberDecimal|numberSigned"
         android:ems="10"
         android:id="@+id/txtDestinationC"
         android:layout_marginTop="5dp"
@@ -33,7 +33,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberSigned"
+        android:inputType="numberDecimal|numberSigned"
         android:ems="10"
         android:id="@+id/txtDestinationCLong"
         android:layout_marginTop="5dp"

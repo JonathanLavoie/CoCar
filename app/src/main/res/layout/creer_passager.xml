@@ -7,7 +7,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:inputType="numberDecimal|numberSigned"
         android:ems="10"
         android:id="@+id/txtDepartP"
         android:layout_marginTop="5dp"
@@ -16,7 +16,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:inputType="numberDecimal|numberSigned"
         android:ems="10"
         android:id="@+id/txtDepartP2"
         android:layout_marginTop="5dp"
@@ -25,7 +25,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:inputType="numberDecimal|numberSigned"
         android:ems="10"
         android:id="@+id/txtDestinationP"
         android:layout_marginTop="5dp"
@@ -34,7 +34,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:inputType="numberDecimal|numberSigned"
         android:ems="10"
         android:id="@+id/txtDestinationP2"
         android:layout_marginTop="5dp"
@@ -68,7 +68,7 @@
         android:ems="10"
         android:id="@+id/dateD"
         android:inputType="date"
-        android:hint="MM/DD/YYYY"
+        android:hint="YYYY-MM-DD"
         android:labelFor="@id/textView5" />
 
     <TextView
