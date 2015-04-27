@@ -30,6 +30,7 @@ public class webService {
     private final static String WEB_SERVICE_URL = "appcocar.appspot.com";
     private final static String REST_CONDUCTEUR = "/conducteur";
     private final static String REST_PASSAGER = "/passager";
+    private final static String REST_USER = "/user";
     private final static String REST_NBPLACE = "/nbPlace/";
     private final static String REST_LAT = "/lat/";
     private final static String REST_LONG = "/long/";
@@ -54,6 +55,19 @@ public class webService {
             m_exception = e;
         }
     }
+    public void putUser(User user)
+    {
+        try{
+            URI uri = new URI("http",WEB_SERVICE_URL,REST_USER + "/" + user.get_identification(),null,null);
+            HttpPut put = new HttpPut(uri);
+            JSONObject obj = jsonParser.userToJSONObject(user);
+            put.setEntity(new StringEntity(obj.toString()));
+            put.addHeader("Content-Type", "application/json");
+            m_ClientHttp.execute(put, new BasicResponseHandler());
+        } catch (Exception e) {
+            m_exception = e;
+        }
+    }
 
     public void putPassager(ParcoursPassager passager) {
         try {
@@ -69,6 +83,20 @@ public class webService {
         }
     }
 
+    public User getUserByEmail(String email){
+        User unUser = new User();
+        try {
+            URI uri = new URI("http", WEB_SERVICE_URL, REST_USER + "/" + email, null, null);
+            HttpGet get = new HttpGet(uri);
+            String body = m_ClientHttp.execute(get,new BasicResponseHandler());
+            Log.i(TAG, "Reçu user: " + body);
+            unUser = jsonParser.parseUser(body);
+
+        }catch (Exception e) {
+            m_exception = e;
+        }
+        return unUser;
+    }
     public ArrayList<ParcoursConducteur> getConducteur(Activity activity) {
         ArrayList<ParcoursConducteur> liste = null;
         session = new SessionManager(activity.getApplicationContext());

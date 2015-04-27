@@ -6,6 +6,7 @@ package com.jg.jl.tpmobile.cocar.cocar;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,13 +14,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.jg.jl.tpmobile.cocar.cocar.webService.webService;
 
 
 public class InscriptionActivity extends Activity {
 
     // Variable pour les champs de l'activity
     EditText txtNom, txtIndentifiant, txtMotPasse, txtlong, txtNumTel,txtLat;
-
+    webService web = new webService();
+    User user;
+    User utilisateur;
+    String nom,motDePasse,adresse,phone,email;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,29 +58,21 @@ public class InscriptionActivity extends Activity {
      * @param view
      */
     public void inscription(View view) {
-        String nom = txtNom.getText().toString();
-        String email = txtIndentifiant.getText().toString();
-        String motDePasse = txtMotPasse.getText().toString();
-        String adresse = txtLat.getText().toString() + ";" + txtlong.getText().toString();
-        String phone = txtNumTel.getText().toString();
-
-        if (champsValide(nom.trim(), email.trim(), motDePasse.trim(),txtLat.getText().toString().trim(), txtlong.getText().toString().trim(),phone.trim())) {
-            // Insertion dans la bd
-            UserRepo repo = new UserRepo(this);
-            User user = new User();
-            user.set_nom(nom);
-            user.set_identification(email);
-            user.set_motPasse(Util.encryptPassword(motDePasse));
-            user.set_adresse(adresse);
-            user.set_phone(phone);
-            repo.insert(user);
-            // redirection vers la connexion
-            Toast.makeText(this,"Inscription réussie",Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(InscriptionActivity.this, Login.class);
-            startActivity(i);
-            finish();
-        }
+        nom = txtNom.getText().toString();
+        email = txtIndentifiant.getText().toString();
+        motDePasse = txtMotPasse.getText().toString();
+        adresse = txtLat.getText().toString() + ";" + txtlong.getText().toString();
+        phone = txtNumTel.getText().toString();
+        new getUser().execute((Void)null);
     }
+
+private class addUser extends AsyncTask<Void,Void,Void>{
+    @Override
+    protected Void doInBackground(Void... params) {
+        web.putUser(user);
+        return null;
+    }
+}
 
     /**
      * Méthode pour regardé si les champs sont valide
@@ -102,7 +99,7 @@ public class InscriptionActivity extends Activity {
                 if (Util.phoneValide(phone)) {
                     // Vérifie si l'adresse courriel est utilisé
                     UserRepo repo = new UserRepo(this);
-                    User utilisateur = repo.getUserByIdentification(email);
+
                     if (utilisateur.get_nom() == "" || utilisateur.get_nom() == null) {
                         try {
                             lat = Double.parseDouble(Latitude);
@@ -139,6 +136,34 @@ public class InscriptionActivity extends Activity {
             // Erreur sur les champs vide
             Util.afficherAlertBox(InscriptionActivity.this, "Tous les champs sont obligatoire et ne doivent pas être vide!","Erreur");
             return false;
+        }
+    }
+
+    private class getUser extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... params) {
+           utilisateur =  web.getUserByEmail(email);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (champsValide(nom.trim(), email.trim(), motDePasse.trim(),txtLat.getText().toString().trim(), txtlong.getText().toString().trim(),phone.trim())) {
+                // Insertion dans la bd
+                user = new User();
+                user.set_nom(nom);
+                user.set_identification(email);
+                user.set_motPasse(Util.encryptPassword(motDePasse));
+                user.set_adresse(adresse);
+                user.set_phone(phone);
+                new addUser().execute((Void)null);
+
+                // redirection vers la connexion
+                Toast.makeText(getApplicationContext(),"Inscription réussie",Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(InscriptionActivity.this, Login.class);
+                startActivity(i);
+                finish();
+            }
         }
     }
 

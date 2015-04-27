@@ -13,7 +13,7 @@ from google.appengine.ext import ndb
 from google.appengine.ext import db
 from random import randint
 from math import radians,cos,sin,asin,sqrt
-from models import ParcoursConducteur,ParcoursPassager
+from models import ParcoursConducteur,ParcoursPassager,User
 
 def serialiser_pour_json(obj):
     ''' Retourne une fonction pour mettre un objet en JSON'''
@@ -233,7 +233,42 @@ class PassagerHandler(webapp2.RequestHandler):
             logging.info(ex)
             self.error(500)
             
-            
+
+class UserHandler(webapp2.RequestHandler):
+    def put(self,email):
+        cle = ndb.Key('User',email)
+        user = cle.get();
+        status = 204
+        if(user is None):
+            user = User(key=cle)
+            status = 201
+            jsonObj = json.loads(self.request.body)
+            user.userNom = jsonObj["nom"]
+            user.userPW = jsonObj["PW"]
+            user.userAdresse = jsonObj["adresse"]
+            user.userPhone = jsonObj["phone"]
+            user.userSumRate = int(jsonObj['sumRate'])
+            user.userCountRate = int(jsonObj["countRate"])
+            user.put()
+        self.response.set_status(status)
+        
+    def get(self,email):
+        resultat = []
+        cle = ndb.Key('User',email)
+        qr = cle.get();
+        if(qr is not None):
+            dictUser = {}
+            dictUser['email'] = email;
+            dictUser['nom'] = qr.userNom
+            dictUser['PW'] = qr.userPW
+            dictUser['adresse'] = qr.userAdresse
+            dictUser['phone'] = qr.userPhone
+            dictUser['sumRate'] = qr.userSumRate
+            dictUser['countRate'] = qr.userCountRate
+            resultat.append(dictUser)
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))
+        
 application = webapp2.WSGIApplication(
     [
         ('/',                                                       MainPageHandler),
@@ -244,5 +279,6 @@ application = webapp2.WSGIApplication(
         webapp2.Route(r'/conducteur/<id>/nbPlace/<nbPlace>',        handler=ConducteurHandler,methods=['PUT']),
         webapp2.Route(r'/conducteur',                               handler=ConducteurHandler,methods=['PUT']),
         webapp2.Route(r'/passager',                                 handler=PassagerHandler, methods=['PUT']),
+        webapp2.Route(r'/user/<email>',                             handler=UserHandler, methods=['PUT','GET']),
     ],
     debug=True)
