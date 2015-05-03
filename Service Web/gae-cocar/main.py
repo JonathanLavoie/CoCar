@@ -13,7 +13,7 @@ from google.appengine.ext import ndb
 from google.appengine.ext import db
 from random import randint
 from math import radians,cos,sin,asin,sqrt
-from models import ParcoursConducteur,ParcoursPassager,User
+from models import ParcoursConducteur,ParcoursPassager,User,DepartUser
 
 def serialiser_pour_json(obj):
     ''' Retourne une fonction pour mettre un objet en JSON'''
@@ -268,7 +268,28 @@ class UserHandler(webapp2.RequestHandler):
             resultat.append(dictUser)
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))
-        
+
+class parcoursUserHandler(webapp2.RequestHandler):
+    def put(self):
+        try: 
+            jsonObj = json.loads(self.request.body)
+            id = idAleatoire()
+            
+            cle = ndb.Key('DepartUser',id)
+            depart = DepartUser(key=cle)
+            depart.userId1 = jsonObj["userId1"]
+            depart.userId2 = jsonObj["userId2"]
+            depart.parcourId = jsonObj["parcourId"]
+            depart.nbPassager = int(jsonObj["nbPassager"])
+            depart.rate = int(jsonObj["rate"])
+            depart.put()
+            self.response.set_status(201)
+        except (ValueError, db.BadValueError), ex:
+            logging.info(ex)
+            self.error(400)
+        except Exception, ex:
+            logging.info(ex)
+            self.error(500)        
 application = webapp2.WSGIApplication(
     [
         ('/',                                                       MainPageHandler),
@@ -279,6 +300,7 @@ application = webapp2.WSGIApplication(
         webapp2.Route(r'/conducteur/<id>/nbPlace/<nbPlace>',        handler=ConducteurHandler,methods=['PUT']),
         webapp2.Route(r'/conducteur',                               handler=ConducteurHandler,methods=['PUT']),
         webapp2.Route(r'/passager',                                 handler=PassagerHandler, methods=['PUT']),
+        webapp2.Route(r'/depart',                                   handler=parcoursUserHandler, methods=['PUT']),
         webapp2.Route(r'/user/<email>',                             handler=UserHandler, methods=['PUT','GET']),
     ],
     debug=True)

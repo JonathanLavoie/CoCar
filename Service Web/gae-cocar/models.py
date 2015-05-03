@@ -27,4 +27,10 @@ class User(ndb.Model):
     userPhone = ndb.StringProperty()
     userSumRate = ndb.IntegerProperty()
     userCountRate = ndb.IntegerProperty()
-    
+
+class DepartUser(ndb.Model):
+    userId1 = ndb.StringProperty()
+    userId2 = ndb.StringProperty()
+    parcourId = ndb.StringProperty()
+    nbPassager = ndb.IntegerProperty()
+    rate = ndb.IntegerProperty()
