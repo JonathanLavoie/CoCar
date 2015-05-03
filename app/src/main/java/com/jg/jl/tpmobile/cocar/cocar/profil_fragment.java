@@ -31,7 +31,7 @@ public class profil_fragment extends Fragment{
     {
         session = new SessionManager(getActivity().getApplicationContext());
         UserRepo repo = new UserRepo(getActivity());
-        User unUtilisateur = repo.getUserByIdentification(session.getIdentification());
+        User unUtilisateur = repo.getUser();
         TextView nom = (TextView)rootView.findViewById(R.id.lblVotreNom);
         TextView adresse = (TextView)rootView.findViewById((R.id.lblVotreAdresse));
         TextView email = (TextView)rootView.findViewById((R.id.lblVotreEmail));

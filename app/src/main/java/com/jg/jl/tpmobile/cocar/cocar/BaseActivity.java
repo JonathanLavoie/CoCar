@@ -144,7 +144,9 @@ public class BaseActivity extends ActionBarActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_Deconnexion) {
+            UserRepo repo = new UserRepo(this);
             session = new SessionManager(getApplicationContext());
+            repo.delete(session.getIdentification());
             session.logoutUser();
             Intent i = new Intent(BaseActivity.this, Login.class);
             startActivity(i);

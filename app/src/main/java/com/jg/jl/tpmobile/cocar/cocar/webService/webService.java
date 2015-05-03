@@ -102,7 +102,7 @@ public class webService {
         session = new SessionManager(activity.getApplicationContext());
         UserRepo UtilCourant = new UserRepo(activity.getApplicationContext());
         try {
-            User unUser = UtilCourant.getUserByIdentification(session.getIdentification());
+            User unUser = UtilCourant.getUser();
             String longLat = unUser.get_adresse();
             vectLongLat = longLat.split(";");
             vectLongLat[0].replace(',', '.');
@@ -125,7 +125,7 @@ public class webService {
         session = new SessionManager(activity.getApplicationContext());
         UserRepo UtilCourant = new UserRepo(activity.getApplicationContext());
         try {
-            User unUser = UtilCourant.getUserByIdentification(session.getIdentification());
+            User unUser = UtilCourant.getUser();
             String longLat = unUser.get_adresse();
             vectLongLat = longLat.split(";");
             vectLongLat[0].replace(',', '.');

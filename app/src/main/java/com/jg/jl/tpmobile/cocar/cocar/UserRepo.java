@@ -75,10 +75,9 @@ public class UserRepo {
 
     /**
      * Retourne l'usager a partir de l'identifiant
-     * @param identification
      * @return - L'utilisateur
      */
-    public User getUserByIdentification(String identification){
+    public User getUser(){
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         // Création de la requête
         String selectQuery =  "SELECT  " +
@@ -89,14 +88,12 @@ public class UserRepo {
                 User.KEY_phone + "," +
                 User.KEY_sumRate + "," +
                 User.KEY_countRate +
-                " FROM " + User.TABLE
-                + " WHERE " +
-                User.KEY_Identification + "=?";
+                " FROM " + User.TABLE;
 
         // Création d'un nouveau utilisateur
         User user = new User();
         // Création d'un cursor
-        Cursor cursor = db.rawQuery(selectQuery, new String[] { identification } );
+        Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -113,5 +110,17 @@ public class UserRepo {
         cursor.close();
         db.close();
         return user;
+    }
+
+    public boolean checkNotEmpty()
+    {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT * FROM " + User.TABLE;
+        Cursor cursor =  db.rawQuery(query,null);
+        while (cursor.moveToNext())
+        {
+            return true;
+        }
+        return false;
     }
 }
