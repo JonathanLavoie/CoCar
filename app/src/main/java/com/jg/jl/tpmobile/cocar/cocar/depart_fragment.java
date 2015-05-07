@@ -2,6 +2,9 @@ package com.jg.jl.tpmobile.cocar.cocar;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -18,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Created by Jiimmy on 2015-03-04.
@@ -50,8 +54,11 @@ public class depart_fragment extends Fragment{
             map.put("img", String.valueOf(R.drawable.passager));
             map.put("id","Numéro de parcours : " + listPassager.get(i).get_ID());
             map.put("date", "Date : " + listPassager.get(i).get_date()+ " " + listPassager.get(i).get_heure());
-            map.put("description", "Depart : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
-                    + "\nNombre de passager réserver: " + listPassager.get(i).get_nombrePassager());
+            map.put("description", "Départ : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
+                    + "\nNombre de passager : " + listPassager.get(i).get_nombrePassager());
+            map.put("Depart",  listPassager.get(i).get_depart());
+            map.put("Destination", listPassager.get(i).get_destination());
+            map.put("NbrPlace",  "" + listPassager.get(i).get_nombrePassager());
             map.put("infoSupp", "\nCourriel : " + listPassager.get(i).get_identifiant() + "\n");
             listMap.add(map);
         }
@@ -64,7 +71,10 @@ public class depart_fragment extends Fragment{
             map.put("date", "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
             map.put("description", "Depart : " + listConducteur.get(i).get_depart() +
                     "\nDestination : " + listConducteur.get(i).get_destination() +
-                    "\nNombre de place réserver: " + listConducteur.get(i).get_nombreDePlace());
+                    "\nNombre de place disponible : " + listConducteur.get(i).get_nombreDePlace());
+            map.put("Depart",  listConducteur.get(i).get_depart());
+            map.put("Destination", listConducteur.get(i).get_destination());
+            map.put("NbrPlace",  "" + listConducteur.get(i).get_nombreDePlace());
             map.put("infoSupp", "\nCourriel du demandeur : \n" + listConducteur.get(i).get_identifiant() +
                     "Km max à parcourir : " + listConducteur.get(i).get_KM() + "\n");
             listMap.add(map);
@@ -82,17 +92,33 @@ public class depart_fragment extends Fragment{
             listMap = triBulle(listMap);
 
             SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), listMap, R.layout.layout_proposition_personnalise,
-                    new String[]{"img", "id", "date", "description"}, new int[]{R.id.img, R.id.titre, R.id.date, R.id.description});
+                    new String[]{"img", "id","date","description"}, new int[]{R.id.img, R.id.titre,R.id.date,R.id.description});
             maListe.setAdapter(adapter);
 
             maListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                HashMap<String, String> map;
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
-                    HashMap<String, String> map = (HashMap<String, String>) maListe.getItemAtPosition(position);
+                    map = (HashMap<String, String>) maListe.getItemAtPosition(position);
                     adb.setTitle("Aperçu");
-                    adb.setMessage(map.get("id") + "\n" + map.get("date") + " \nType : " +map.get("type") + "\n"+ map.get("description") + map.get("infoSupp"));
+                    adb.setMessage(map.get("id") + "\n" + map.get("date") + " \nType : " + map.get("type")
+                            + "\n" + map.get("description") + map.get("infoSupp"));
                     adb.setPositiveButton("OK", null);
+                    adb.setNeutralButton("Afficher Carte", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            String Depart[] = map.get("Depart").split(";");
+                            float latDepart = Float.parseFloat(Depart[0]);
+                            float longDepart = Float.parseFloat(Depart[1]);
+                            String url = "https://maps.google.com/maps?z=10&t=m&q=loc:"+latDepart+"+"+longDepart+"";
+                            Uri uri = Uri.parse(url);
+                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                            startActivity(intent);
+                            /*String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latDepart, longDepart);
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                            startActivity(intent);*/
+                        }
+                    });
                     adb.show();
                 }
             });
