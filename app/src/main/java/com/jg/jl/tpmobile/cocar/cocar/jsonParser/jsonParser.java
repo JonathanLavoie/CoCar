@@ -8,11 +8,28 @@ import org.json.JSONObject;
 
 import com.jg.jl.tpmobile.cocar.cocar.ParcoursConducteur;
 import com.jg.jl.tpmobile.cocar.cocar.ParcoursPassager;
+import com.jg.jl.tpmobile.cocar.cocar.User;
 
 /**
  * Created by Jiimmy on 2015-04-01.
  */
 public class jsonParser{
+
+    public static User parseUser(String p_body) throws JSONException{
+        User unUser = new User();
+        JSONArray array = new JSONArray(p_body);
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject jsonUser = array.getJSONObject(i);
+            unUser.set_identification(jsonUser.getString("email"));
+            unUser.set_nom(jsonUser.getString("nom"));
+            unUser.set_motPasse(jsonUser.getString("PW"));
+            unUser.set_adresse(jsonUser.getString("adresse"));
+            unUser.set_phone(jsonUser.getString("phone"));
+            unUser.set_sumRate(jsonUser.getInt("sumRate"));
+            unUser.set_countRate(jsonUser.getInt("countRate"));
+        }
+        return unUser;
+    }
     public static ArrayList<ParcoursConducteur> parseConducteurListe(String p_body) throws JSONException{
         ArrayList<ParcoursConducteur> liste = new ArrayList<>();
         JSONArray array = new JSONArray(p_body);
@@ -79,4 +96,14 @@ public class jsonParser{
         return jsonObj;
     }
 
+    public static JSONObject userToJSONObject(User user) throws JSONException{
+        JSONObject jsonObj = new JSONObject();
+        jsonObj.put("nom",user.get_nom());
+        jsonObj.put("PW",user.get_motPasse());
+        jsonObj.put("adresse",user.get_adresse());
+        jsonObj.put("phone",user.get_phone());
+        jsonObj.put("sumRate","0");
+        jsonObj.put("countRate","0");
+        return jsonObj;
+    }
 }

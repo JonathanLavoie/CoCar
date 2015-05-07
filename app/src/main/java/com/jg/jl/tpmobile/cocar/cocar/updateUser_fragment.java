@@ -38,7 +38,7 @@ public class updateUser_fragment extends Fragment {
         txtNumTel = (EditText) rootView.findViewById(R.id.txtPhone);
 
         UserRepo repo = new UserRepo(getActivity().getApplicationContext());
-        User user = repo.getUserByIdentification(session.getIdentification());
+        User user = repo.getUser();
         lblEmail.setText(user.get_identification());
         txtNom.setText(user.get_nom());
         txtAdresse.setText(user.get_adresse());

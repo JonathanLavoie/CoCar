@@ -1,35 +1,30 @@
 package com.jg.jl.tpmobile.cocar.cocar;
 
-import com.jg.jl.tpmobile.cocar.cocar.webService.webService;
-import android.app.ListFragment;
+
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.view.ContextMenu;
-import android.view.MenuItem;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
-/**
- * Created by Jiimmy on 2015-03-04.
- */
-public class rechercher_fragment extends ListFragment{
-    private String[] m_Tokens = {"Créer un parcours (Passager et Conducteur)"};
-    private ArrayList<String> m_Items = new ArrayList<String>();
-    private ArrayAdapter<String> m_Adapter;
-    private webService web = new webService();
+import com.jg.jl.tpmobile.cocar.cocar.webService.webService;
+
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class creation_fragment extends Fragment {
+    View rootView;
     ParcoursConducteur conduc = new ParcoursConducteur();
     ParcoursPassager passager = new ParcoursPassager();
     EditText txtSetDepart;
@@ -41,45 +36,43 @@ public class rechercher_fragment extends ListFragment{
     EditText date;
     EditText time;
     EditText nbPass;
-    View rootView;
+    private webService web = new webService();
+
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        m_Items.addAll(Arrays.asList(m_Tokens));
-        m_Adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,m_Items);
-        this.setListAdapter(m_Adapter);
-        rootView = inflater.inflate(R.layout.rechercher_layout,container,false);
+        rootView = inflater.inflate(R.layout.creation_layout,container,false);
+        chargementListe();
         return rootView;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        this.registerForContextMenu(this.getListView());
-        super.onActivityCreated(savedInstanceState);
-    }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        getActivity().getMenuInflater().inflate(R.menu.menu_rechercher, menu);
-    }
+    private void chargementListe(){
+        ListView maListe = (ListView)rootView.findViewById(R.id.listCreation);
+        String[] tokens = {"Vous êtes un conducteur","Vous êtes un passager"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(rootView.getContext(),
+                android.R.layout.simple_list_item_1, android.R.id.text1, tokens);
+        maListe.setAdapter(adapter);
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case R.id.menu_conducteur:
-                CreateConducteur();
-                break;
-            case R.id.menu_passager:
-                CreatePassager();
-                break;
-        }
-        return super.onContextItemSelected(item);
+        maListe.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0:
+                            CreateConducteur();
+                        break;
+                    case 1:
+                            CreatePassager();
+                        break;
+                }
+            }
+        });
     }
 
     //Methode qui survient avec un clique sur creer un conducteur.
     private void CreateConducteur(){
 
-        View setView = View.inflate(getActivity(),R.layout.recherche_conducteur,null);
+        View setView = View.inflate(getActivity(),R.layout.creer_conducteur,null);
         txtSetDepart = (EditText) setView.findViewById(R.id.txtDepartC);
         txtSetDepartLong = (EditText) setView.findViewById(R.id.txtDepartCLong);
         txtSetDestination = (EditText) setView.findViewById(R.id.txtDestinationC);
@@ -90,7 +83,7 @@ public class rechercher_fragment extends ListFragment{
         time = (EditText) setView.findViewById(R.id.heureC);
 
         final AlertDialog d = new AlertDialog.Builder(getActivity())
-        .setTitle("Nouveau parcours")
+                .setTitle("Nouveau parcours")
                 .setView(setView)
                 .setNegativeButton("Annuler",null)
                 .setPositiveButton("Creer", null)
@@ -126,9 +119,9 @@ public class rechercher_fragment extends ListFragment{
                             message = "Les longitudes et latitudes doivent être numérique";
                         }
                         if (depart < 46 || depart > 47 ||
-                                 departlong > -71 || departlong < -72 ||
-                                 destination < 46 || destination > 47 ||
-                                 destinationlong > -71 || destinationlong < -72)
+                                departlong > -71 || departlong < -72 ||
+                                destination < 46 || destination > 47 ||
+                                destinationlong > -71 || destinationlong < -72)
                         {
                             valide = false;
                             if (message == "") {
@@ -180,7 +173,7 @@ public class rechercher_fragment extends ListFragment{
                             conduc.set_heure(time.getText().toString());
                             conduc.set_identifiant(session.getIdentification());
                             new putConducteur().execute((Void)null);
-                            Toast.makeText(getActivity(),"Parcours Creer",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Parcours Creer", Toast.LENGTH_SHORT).show();
 
                             d.dismiss();
                         }
@@ -195,23 +188,22 @@ public class rechercher_fragment extends ListFragment{
         d.show();
     }
 
-//Insert un conducteur dans le web service.
-private class putConducteur extends AsyncTask<Void,Void,Void>{
-    @Override
-    protected void onPreExecute() {
-        getActivity().setProgressBarIndeterminateVisibility(true);
+    //Insert un conducteur dans le web service.
+    private class putConducteur extends AsyncTask<Void,Void,Void> {
+        @Override
+        protected void onPreExecute() {
+            getActivity().setProgressBarIndeterminateVisibility(true);
+        }
+        @Override
+        protected Void doInBackground(Void... params) {
+            web.putConduc(conduc);
+            return null;
+        }
     }
-    @Override
-    protected Void doInBackground(Void... params) {
-        web.putConduc(conduc);
-        return null;
-    }
-}
-
     //méthode qui survient après un clique sur creer un passager.
     private void CreatePassager() {
 
-        View setView = View.inflate(getActivity(), R.layout.recherche_passager, null);
+        View setView = View.inflate(getActivity(), R.layout.creer_passager, null);
         txtSetDepart = (EditText) setView.findViewById(R.id.txtDepartP);
         txtSetDepartLong = (EditText) setView.findViewById(R.id.txtDepartP2);
         txtSetDestinationLong = (EditText) setView.findViewById(R.id.txtDestinationP2);

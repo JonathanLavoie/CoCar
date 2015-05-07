@@ -12,7 +12,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Rechercher"
+            android:text="Créer"
             android:id="@+id/textView2"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
@@ -20,7 +20,7 @@
     </RelativeLayout>
 
     <ListView
-        android:id="@android:id/list"
+        android:id="@+id/listCreation"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:choiceMode="none"
