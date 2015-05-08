@@ -30,5 +30,6 @@ public class googleMap extends ActionBarActivity {
         LatLng location = new LatLng(latDepart,longDepart);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(location, 18);
         map.animateCamera(update);
+        map.getUiSettings().setZoomControlsEnabled(true);
     }
 }
