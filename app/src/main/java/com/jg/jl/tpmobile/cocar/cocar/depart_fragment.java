@@ -107,14 +107,23 @@ public class depart_fragment extends Fragment{
                     adb.setPositiveButton("OK", null);
                     adb.setNeutralButton("Afficher Carte", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
+                            Intent i = new Intent(getActivity(), googleMap.class);
+                            Bundle b = new Bundle();
                             String Depart[] = map.get("Depart").split(";");
+                            float latDepart = Float.parseFloat(Depart[0]);
+                            float longDepart = Float.parseFloat(Depart[1]);
+                            b.putFloat("lat", latDepart);
+                            b.putFloat("long", longDepart);
+                            i.putExtras(b);
+                            startActivity(i);
+                            /*String Depart[] = map.get("Depart").split(";");
                             float latDepart = Float.parseFloat(Depart[0]);
                             float longDepart = Float.parseFloat(Depart[1]);
                             String url = "https://maps.google.com/maps?z=10&t=m&q=loc:"+latDepart+"+"+longDepart+"";
                             Uri uri = Uri.parse(url);
                             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                             startActivity(intent);
-                            /*String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latDepart, longDepart);
+                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latDepart, longDepart);
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                             startActivity(intent);*/
                         }
