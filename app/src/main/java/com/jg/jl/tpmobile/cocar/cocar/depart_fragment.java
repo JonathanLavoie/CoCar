@@ -110,10 +110,15 @@ public class depart_fragment extends Fragment{
                             Intent i = new Intent(getActivity(), googleMap.class);
                             Bundle b = new Bundle();
                             String Depart[] = map.get("Depart").split(";");
+                            String Dest[] = map.get("Destination").split(";");
                             float latDepart = Float.parseFloat(Depart[0]);
                             float longDepart = Float.parseFloat(Depart[1]);
+                            float latDest = Float.parseFloat(Dest[0]);
+                            float longDest = Float.parseFloat(Dest[1]);
                             b.putFloat("lat", latDepart);
                             b.putFloat("long", longDepart);
+                            b.putFloat("latDest", latDest);
+                            b.putFloat("longDest",longDest);
                             i.putExtras(b);
                             startActivity(i);
                             /*String Depart[] = map.get("Depart").split(";");
