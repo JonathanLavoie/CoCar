@@ -2,16 +2,26 @@ package com.jg.jl.tpmobile.cocar.cocar;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.InputFilter;
+import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -32,6 +42,7 @@ public class proposition_fragment extends Fragment {
     private webService web = new webService();
     private ArrayList<ParcoursConducteur> listConducteur = null;
     private ArrayList<ParcoursPassager> listPassager = null;
+    HashMap<String,String> mapPut;
     SessionManager session;
     @Nullable
     @Override
@@ -93,10 +104,15 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
 
                     if(date.before(date1)) {
                         map = new HashMap<>();
+
                         type = "Conducteur";
                         map.put("type", type);
                         map.put("img", String.valueOf(R.drawable.car72));
-                        map.put("id", "Identifiant du parcours : " + listConducteur.get(i).get_ID());
+                        map.put("id", "Identifiant de parcours : " + listConducteur.get(i).get_ID());
+                        map.put("idParcours", listConducteur.get(i).get_ID());
+                        map.put("id1",session.getIdentification());
+                        map.put("id2",listConducteur.get(i).get_identifiant());
+                        map.put("nbPass", String.valueOf(listConducteur.get(i).get_nombreDePlace()));
                         map.put("date", "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
                         map.put("description", "Depart : " + listConducteur.get(i).get_depart() +
                                 "\nDestination : " + listConducteur.get(i).get_destination() +
@@ -130,6 +146,9 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
                         map.put("type", type);
                         map.put("img", String.valueOf(R.drawable.passager));
                         map.put("id", "Identifiant de parcours : " + listPassager.get(i).get_ID());
+                        map.put("idParcours", listPassager.get(i).get_ID());
+                        map.put("id1",session.getIdentification());
+                        map.put("id2",listPassager.get(i).get_identifiant());
                         map.put("date", "Date : " + listPassager.get(i).get_date() + " " + listPassager.get(i).get_heure());
                         map.put("description", "Départ : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
                                 + "\nNombre de passager : " + listPassager.get(i).get_nombrePassager());
@@ -172,8 +191,24 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
                             + map.get("infoSupp")+
                             "\n/!\\ Attention cette action est définitif, vous ne pouvez pas annuler une fois accepté./!\\ ");
 
+                final RadioGroup group = new RadioGroup(getActivity());
+                LinearLayout ll = new LinearLayout(getActivity());
+                ll.setOrientation(LinearLayout.HORIZONTAL);
+                if(map.get("type") == "Conducteur"){
+                        for(int i = 1;i <= Integer.parseInt(map.get("nbPass"));i++)
+                        {
+                            final RadioButton input = new RadioButton(getActivity());
+                            input.setText(String.valueOf(i));
+                            int idi = i;
+                            input.setId(idi);
+                            ll.addView(input);
+                        }
+                    group.addView(ll);
+                    adb.setView(group);
+                }
+
                 adb.setNegativeButton("Annuler", null);
-                adb.setPositiveButton("Proposer",new btnProposer(1,map.get("id"),map.get("type")));
+                adb.setPositiveButton("Proposer",new btnProposer(null,map.get("id"),map.get("type"),map));
                 adb.show();
             }
         });
@@ -208,18 +243,27 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
     private int m_nbPlace;
     private String m_id;
     private String m_Type;
+    private String m_idParcours;
+    private String m_id1;
+    private String m_id2;
+    private String tempo;
     private class btnProposer implements DialogInterface.OnClickListener{
 
-        public btnProposer(int p_nbPlace, String p_id,String p_type){
+        public btnProposer(EditText input, String p_id,String p_type, HashMap<String, String> hashmap){
             p_id = p_id.substring(26);
-            m_nbPlace = p_nbPlace;
+            //tempo = input.getText().toString();
+
             m_id = p_id;
             m_Type = p_type;
+            m_idParcours = hashmap.get("idParcours");
+            m_id1 = hashmap.get("id1");
+            m_id2 = hashmap.get("id2");
         }
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
             if(m_Type.equals("Conducteur")){
+                //m_nbPlace = Integer.parseInt(tempo);
                 new updateConducteur().execute((Void)null);
             }else{
                 new updatePassager().execute((Void)null);
@@ -233,10 +277,12 @@ private class backCreate extends  AsyncTask<Void, Void, Void>{
         protected void onPreExecute() {
             getActivity().setProgressBarIndeterminateVisibility(true);
 
+
         }
         @Override
         protected Void doInBackground(Void... params) {
             web.getConduEtInsertSQL(m_id, m_nbPlace, getActivity());
+            web.putDepart(m_id1,m_id2,m_idParcours,m_nbPlace);
             return null;
         }
     }

@@ -30,6 +30,7 @@ public class jsonParser{
         }
         return unUser;
     }
+
     public static ArrayList<ParcoursConducteur> parseConducteurListe(String p_body) throws JSONException{
         ArrayList<ParcoursConducteur> liste = new ArrayList<>();
         JSONArray array = new JSONArray(p_body);
@@ -75,7 +76,15 @@ public class jsonParser{
         return liste;
     }
 
-
+public static JSONObject SSSIIToJSONObject(String id1,String id2,String idParcours,int nbPass) throws JSONException{
+    JSONObject jsonObj = new JSONObject();
+    jsonObj.put("userId1",id1);
+    jsonObj.put("userId2",id2);
+    jsonObj.put("parcourId",idParcours);
+    jsonObj.put("nbPassager",nbPass);
+    jsonObj.put("rate","0");
+    return jsonObj;
+}
     public static JSONObject conducteurToJSONObject(ParcoursConducteur condu) throws JSONException{
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("departC",condu.get_depart());

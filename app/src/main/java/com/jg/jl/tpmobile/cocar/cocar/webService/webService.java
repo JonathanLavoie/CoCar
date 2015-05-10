@@ -1,6 +1,7 @@
 package com.jg.jl.tpmobile.cocar.cocar.webService;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.util.Log;
 
 import com.jg.jl.tpmobile.cocar.cocar.ParcoursConducteur;
@@ -32,6 +33,7 @@ public class webService {
     private final static String REST_PASSAGER = "/passager";
     private final static String REST_USER = "/user";
     private final static String REST_NBPLACE = "/nbPlace/";
+    private final static String REST_DEPART = "/depart";
     private final static String REST_LAT = "/lat/";
     private final static String REST_LONG = "/long/";
     private HttpClient m_ClientHttp = new DefaultHttpClient();
@@ -83,6 +85,20 @@ public class webService {
         }
     }
 
+
+    public void putDepart(String id1,String id2,String idParcours,int nbPass)
+    {
+        try{
+            URI uri = new URI("http",WEB_SERVICE_URL,REST_DEPART,null,null);
+            HttpPut put = new HttpPut(uri);
+            JSONObject obj = jsonParser.SSSIIToJSONObject(id1,id2,idParcours,nbPass);
+            put.setEntity(new StringEntity(obj.toString()));
+            put.addHeader("Content-Type", "application/json");
+            m_ClientHttp.execute(put, new BasicResponseHandler());
+        }catch (Exception e) {
+            m_exception = e;
+        }
+    }
     public User getUserByEmail(String email){
         User unUser = new User();
         try {
@@ -162,7 +178,7 @@ public class webService {
         m_ClientHttp.execute(put,new BasicResponseHandler());
         unParcoursCond = m_listeCondu.get(0);
         unParcoursCond.set_nombreDePlace(m_nbPlace);
-        repCondu.insert(unParcoursCond);
+        //repCondu.insert(unParcoursCond);
         }catch (Exception e){
             m_exception = e;
         }
