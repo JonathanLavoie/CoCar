@@ -155,20 +155,18 @@ public class BaseActivity extends ActionBarActivity
         }
         if(id == R.id.action_help) {
             if (mTitle.equals("Créer un parcours")) {
-                Util.afficherAlertBox(BaseActivity.this,"Vous avez le choix de créer un parcours passager ou étudiant." +
-                        " Avec les informations nécessaires, vous allez créer un parcours qui va être disponible par d'autres utilisateurs de CoCar. " +
-                        " Si vous créez un parcours passager, uniquement le conducteur pourra accepter votre offre et un parcours conducteur pourra" +
-                                " uniquement être accepté par des passagers.",
+                Util.afficherAlertBox(BaseActivity.this,"Vous avez le choix de créer un parcours passager ou conduceur." +
+                        " Avec les informations nécessaires, vous allez créer un parcours qui va être disponible par tous les autres utilisateurs de CoCar. ",
                         "Guide utilisateur");
             }
             if (mTitle.equals("Départ")) {
-                Util.afficherAlertBox(BaseActivity.this,"Vous avez une liste de tous vos départs que vous avez acceptée." +
-                        " Si vous appuyez sur ces départs, vous allez retrouvez plus d’information sur se départ," +
-                        " et vous pouvez voire le départ sur une carte en appuyant sur < AFFICHER CARTE>","Guide utilisateur");
+                Util.afficherAlertBox(BaseActivity.this,"Vous avez une liste de tous vos départs que vous avez acceptés." +
+                        " Si vous appuyez sur les départs, vous allez retrouver plus d’information sur ce départ" +
+                        " et vous pouvez voir le départ sur une carte en appuyant sur <AFFICHER CARTE>.","Guide utilisateur");
             }
             if (mTitle.equals("Proposition")) {
                 Util.afficherAlertBox(BaseActivity.this,"Vous avez une liste de toutes les propositions que vous pouvez accepter." +
-                        " Lorseque vous appuyez sur une des propositions, il vous affiche plus d’information et la possibilité d'accepter cette offre." +
+                        " Lorsque vous appuyez sur une des propositions, il vous affiche plus d’information sur cette proposition et la possibilité d'accepter cette offre." +
                         " Lorsque vous acceptez une proposition, il vous est impossible de l'annuler.","Guide utilisateur");
             }
             if (mTitle.equals("Évaluer un utilisateur")) {
@@ -177,13 +175,13 @@ public class BaseActivity extends ActionBarActivity
             }
             if (mTitle.equals("Profil")) {
                 Util.afficherAlertBox(BaseActivity.this,"Sur cette page, vous pouvez voir votre profil avec toutes vos informations. " +
-                        "Vous pouvez également voir votre évaluation que les autres utilisateurs vous ont donnée.","Guide utilisateur");
+                        "Vous pouvez également voir votre le total des évaluations que les autres utilisateurs vous ont donnés.","Guide utilisateur");
             }
             if (mTitle.equals("Modifier le profil")) {
                 Util.afficherAlertBox(BaseActivity.this,"Sur cette page, vous pouvez modifier votre profil." +
                         " Vous pouvez modifier votre nom, votre position, votre numéro de téléphone." +
                         " Si vous désirer changé votre mot de passe, vous entré un différent, mais si vous entré rien," +
-                        "o le mot de passe va rester le même.","Guide utilisateur");
+                        "le mot de passe va rester le même.","Guide utilisateur");
             }
         }
 
