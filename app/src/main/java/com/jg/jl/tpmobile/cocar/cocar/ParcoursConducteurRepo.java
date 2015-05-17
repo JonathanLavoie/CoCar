@@ -28,7 +28,7 @@ public class ParcoursConducteurRepo {
 
     /**
      * Méthode pour ajouter un parcours Passager
-     * @param parcoursConducteur - Un Parcours de passager
+     * @param parcoursConducteur - Un arcours de passager
      */
     public void insert(ParcoursConducteur parcoursConducteur) {
         //Ouvre la connexion

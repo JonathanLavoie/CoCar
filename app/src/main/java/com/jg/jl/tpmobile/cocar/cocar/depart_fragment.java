@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -15,6 +16,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import com.jg.jl.tpmobile.cocar.cocar.webService.webService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,12 +31,38 @@ import java.util.Locale;
  */
 public class depart_fragment extends Fragment{
     View rootView;
+    ArrayList<ParcoursPassager> listPassager;
+    ArrayList<ParcoursConducteur> listConducteur;
+    webService web = new webService();
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.depart_layout,container,false);
-        chargementDepart();
+
         return rootView;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        new backDepart().execute((Void)null);
+    }
+
+    private class backDepart extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... params) {
+            //TODO recupéré les valeurs...
+            listConducteur = web.getDepartCondu(getActivity());
+            listPassager = web.getDepartPass(getActivity());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            chargementDepart();
+        }
     }
 
     //Méthode qui charge tous les donnée du fragment départ.
@@ -43,9 +72,6 @@ public class depart_fragment extends Fragment{
         HashMap<String, String> map;
         ParcoursConducteurRepo unParcoursConducteur = new ParcoursConducteurRepo(getActivity());
         ParcoursPassagerRepo unParcoursPassager = new ParcoursPassagerRepo(getActivity());
-
-        ArrayList<ParcoursPassager> listPassager = unParcoursPassager.getAllParcours();
-        ArrayList<ParcoursConducteur> listConducteur = unParcoursConducteur.getAllParcours();
         String type;
         for (int i = 0; i < listPassager.size(); i++) {
             map = new HashMap<>();
@@ -61,6 +87,7 @@ public class depart_fragment extends Fragment{
             map.put("NbrPlace",  "" + listPassager.get(i).get_nombrePassager());
             map.put("infoSupp", "\nCourriel : " + listPassager.get(i).get_identifiant() + "\n");
             listMap.add(map);
+            unParcoursPassager.insert(listPassager.get(i));
         }
         for (int i = 0; i < listConducteur.size(); i++) {
             map = new HashMap<>();
@@ -78,6 +105,7 @@ public class depart_fragment extends Fragment{
             map.put("infoSupp", "\nCourriel du demandeur : \n" + listConducteur.get(i).get_identifiant() +
                     "Km max à parcourir : " + listConducteur.get(i).get_KM() + "\n");
             listMap.add(map);
+            unParcoursConducteur.insert(listConducteur.get(i));
         }
 
         if (listMap.isEmpty())

@@ -7,17 +7,16 @@ package com.jg.jl.tpmobile.cocar.cocar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.jg.jl.tpmobile.cocar.cocar.webService.webService;
 
-
-public class InscriptionActivity extends Activity {
+public class InscriptionActivity extends Activity  {
 
     // Variable pour les champs de l'activity
     EditText txtNom, txtIndentifiant, txtMotPasse, txtlong, txtNumTel,txtLat;
@@ -25,6 +24,7 @@ public class InscriptionActivity extends Activity {
     User user;
     User utilisateur;
     String nom,motDePasse,adresse,phone,email;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +38,6 @@ public class InscriptionActivity extends Activity {
         txtlong = (EditText) findViewById(R.id.txtLongInscrip);
         txtNumTel = (EditText) findViewById(R.id.txtPhone);
     }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

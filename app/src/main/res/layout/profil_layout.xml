@@ -108,6 +108,14 @@
             android:id="@+id/ratingBarProfil"
             android:rating="1" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rafraichir"
+            android:id="@+id/button"
+            android:layout_gravity="center_horizontal"
+            android:onClick="refresh"/>
+
     </LinearLayout>
 
 </RelativeLayout>

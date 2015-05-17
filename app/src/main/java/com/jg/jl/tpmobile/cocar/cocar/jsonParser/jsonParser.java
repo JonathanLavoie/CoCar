@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jg.jl.tpmobile.cocar.cocar.NoteDepart;
 import com.jg.jl.tpmobile.cocar.cocar.ParcoursConducteur;
 import com.jg.jl.tpmobile.cocar.cocar.ParcoursPassager;
 import com.jg.jl.tpmobile.cocar.cocar.User;
@@ -29,6 +30,24 @@ public class jsonParser{
             unUser.set_countRate(jsonUser.getInt("countRate"));
         }
         return unUser;
+    }
+
+    public static ArrayList<NoteDepart> parseNoteDepart(String p_body) throws JSONException{
+        ArrayList<NoteDepart> liste = new ArrayList<>();
+        JSONArray array = new JSONArray(p_body);
+        for (int i = 0; i < array.length(); i++)
+        {
+            JSONObject jsonNote = array.getJSONObject(i);
+            NoteDepart note = new NoteDepart();
+            note.setIdParcours(jsonNote.getString("parcourId"));
+            note.setIdUser1(jsonNote.getString("userId1"));
+            note.setIdUser2(jsonNote.getString("userId2"));
+            note.setRate(Float.parseFloat(jsonNote.getString("rate")));
+            note.setNbPassager(jsonNote.getInt("nbPassager"));
+            note.setIdNote(jsonNote.getString("id"));
+            liste.add(note);
+        }
+        return liste;
     }
     public static ArrayList<ParcoursConducteur> parseConducteurListe(String p_body) throws JSONException{
         ArrayList<ParcoursConducteur> liste = new ArrayList<>();
@@ -75,6 +94,17 @@ public class jsonParser{
         return liste;
     }
 
+
+    public static JSONObject SSSIIToJSONObject(String id1,String id2,String idParcours,int nbPass,String type) throws JSONException{
+        JSONObject jsonObj = new JSONObject();
+        jsonObj.put("userId1",id1);
+        jsonObj.put("userId2",id2);
+        jsonObj.put("parcourId",idParcours);
+        jsonObj.put("nbPassager",nbPass);
+        jsonObj.put("rate","0");
+        jsonObj.put("type",type);
+        return jsonObj;
+    }
 
     public static JSONObject conducteurToJSONObject(ParcoursConducteur condu) throws JSONException{
         JSONObject jsonObj = new JSONObject();

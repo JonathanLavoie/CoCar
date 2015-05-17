@@ -32,8 +32,8 @@ public class UserRepo {
         values.put(User.KEY_motPasse, user.get_motPasse());
         values.put(User.KEY_adresse, user.get_adresse());
         values.put(User.KEY_phone, user.get_phone());
-        values.put(User.KEY_sumRate, 0);
-        values.put(User.KEY_countRate, 0);
+        values.put(User.KEY_sumRate, user.get_sumRate());
+        values.put(User.KEY_countRate, user.get_countRate());
 
         // Ajoute les données
         db.insert(User.TABLE, null, values);
@@ -103,7 +103,7 @@ public class UserRepo {
                 user.set_adresse(cursor.getString(cursor.getColumnIndex(User.KEY_adresse)));
                 user.set_phone(cursor.getString(cursor.getColumnIndex(User.KEY_phone)));
                 user.set_sumRate(cursor.getInt(cursor.getColumnIndex(User.KEY_sumRate)));
-                user.set_countRate(cursor.getInt(cursor.getColumnIndex(User.KEY_sumRate)));
+                user.set_countRate(cursor.getInt(cursor.getColumnIndex(User.KEY_countRate)));
             } while (cursor.moveToNext());
         }
         // Ferme le cursor, la BD et renvois l'utilisateur selectionner

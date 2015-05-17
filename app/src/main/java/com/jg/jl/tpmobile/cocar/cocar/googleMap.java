@@ -49,14 +49,6 @@ public class googleMap extends ActionBarActivity {
         map.animateCamera(update);
         map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         markerOptions = new MarkerOptions();
-        //map.addMarker(new MarkerOptions()
-          //      .position(new LatLng(latDepart, longDepart))
-            //    .title("Position de la personne"))
-              //  .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-        //map.addMarker(new MarkerOptions()
-          //      .position(new LatLng(latDest, longDest))
-            //    .title("Destination de la personne"))
-              //  .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 map.getUiSettings().setZoomControlsEnabled(true);
         GetRouteTask getRoute = new GetRouteTask();
         getRoute.execute();

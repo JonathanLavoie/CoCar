@@ -4,7 +4,10 @@ package com.jg.jl.tpmobile.cocar.cocar;
  * Created by Jonathan Lavoie on 19/02/2015.
  */
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -88,15 +91,24 @@ public class Login extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (utilisateur.get_motPasse().equals(Util.encryptPassword(motDePass.trim()))) {
-                // Ajoute les Shared preferences et redirige vers la page recherche
-                session.createLoginSession(identifiant.trim(), utilisateur.get_nom());
-                repo.insert(utilisateur);
-                Intent i = new Intent(Login.this,BaseActivity.class);
-                startActivity(i);
+            ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            NetworkInfo m3G = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+            if(mWifi.isConnected() || m3G.isConnected()) {
+                if (utilisateur.get_motPasse().equals(Util.encryptPassword(motDePass.trim()))) {
+                    // Ajoute les Shared preferences et redirige vers la page recherche
+                    session.createLoginSession(identifiant.trim(), utilisateur.get_nom());
+                    repo.insert(utilisateur);
+                    Intent i = new Intent(Login.this, BaseActivity.class);
+                    startActivity(i);
+                } else {
+                    Util.afficherAlertBox(Login.this, "Identification ou mot de passe incorrect", "Erreur");
+                }
             }
-            else {
-                Util.afficherAlertBox(Login.this, "Identification ou mot de passe incorrect","Erreur");
+            else
+            {
+                Util.afficherAlertBox(Login.this,"Aucune connexion internet trouvé\nConnexion impossible","Erreur WIFI non trouvé");
             }
         }
     }
