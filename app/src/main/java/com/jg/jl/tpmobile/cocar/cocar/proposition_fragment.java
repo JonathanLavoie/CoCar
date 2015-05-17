@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -19,9 +20,11 @@ import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -119,6 +122,8 @@ public class proposition_fragment extends Fragment {
                             map.put("idParcours", listConducteur.get(i).get_ID());
                             map.put("id1", session.getIdentification());
                             map.put("id2", listConducteur.get(i).get_identifiant());
+                            map.put("Depart",listConducteur.get(i).get_depart());
+                            map.put("Destination", listConducteur.get(i).get_destination());
                             map.put("nbPass", String.valueOf(listConducteur.get(i).get_nombreDePlace()));
                             map.put("date", "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
                             map.put("description", "Depart : " + listConducteur.get(i).get_depart() +
@@ -154,6 +159,8 @@ public class proposition_fragment extends Fragment {
                             map.put("idParcours", listPassager.get(i).get_ID());
                             map.put("id1", session.getIdentification());
                             map.put("id2", listPassager.get(i).get_identifiant());
+                            map.put("Depart",listPassager.get(i).get_depart());
+                            map.put("Destination", listPassager.get(i).get_destination());
                             map.put("nbPass",String.valueOf(listPassager.get(i).get_nombrePassager()));
                             map.put("date", "Date : " + listPassager.get(i).get_date() + " " + listPassager.get(i).get_heure());
                             map.put("description", "Départ : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
@@ -190,23 +197,156 @@ public class proposition_fragment extends Fragment {
         maListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
-                 mapp = (HashMap<String,String>)  maListe.getItemAtPosition(position);
-                adb.setTitle("Parcours " + mapp.get("type"));
 
-                adb.setMessage(mapp.get("id") + "\n" + mapp.get("date") +
-                        " \nType : " + mapp.get("type") + "\n" +
-                        mapp.get("description")
-                        + mapp.get("infoSupp") +
-                        "\n/!\\ Attention cette action est définitif, vous ne pouvez pas annuler une fois accepté./!\\ ");
-
-                adb.setNegativeButton("Annuler", null);
-                adb.setPositiveButton("Proposer",new btnProposer(null,mapp.get("id"),mapp.get("type"),mapp));
-                adb.show();
+                mapp = (HashMap<String,String>)  maListe.getItemAtPosition(position);
+                if (mapp.get("type") == "Conducteur") {
+                    proposerCondu();
+                } else {
+                    proposerPass();
+                }
             }
         });
     }
+    private int m_nbPlace;
+    private String m_id;
+    private String m_Type;
+    private String m_idParcours;
+    private String m_id1;
+    private String m_id2;
 
+
+    public void proposerPass(){
+        View setView = View.inflate(getActivity(),R.layout.propo_condu_layout,null);
+        TextView tvDescrip = (TextView) setView.findViewById(R.id.descPropo);
+        TextView label = (TextView) setView.findViewById(R.id.labelNbPass);
+        final NumberPicker np = (NumberPicker) setView.findViewById(R.id.numberPicker);
+        np.setVisibility(View.INVISIBLE);
+        label.setVisibility(View.INVISIBLE);
+        tvDescrip.setText(mapp.get("id") + "\n" + mapp.get("date") +
+                " \nType : " + mapp.get("type") + "\n" +
+                mapp.get("description")
+                + mapp.get("infoSupp"));
+        final AlertDialog d = new AlertDialog.Builder(getActivity())
+                .setTitle("Parcours " + mapp.get("type")).setView(setView)
+                .setNegativeButton("Annuler", null).setNeutralButton("Voir Carte", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent(getActivity(), googleMap.class);
+                        Bundle b = new Bundle();
+                        String[] Depart = mapp.get("Depart").split(";");
+                        String[] Dest = mapp.get("Destination").split(";");
+                        float latDepart = Float.parseFloat(Depart[0]);
+                        float longDepart = Float.parseFloat(Depart[1]);
+                        float latDest = Float.parseFloat(Dest[0]);
+                        float longDest = Float.parseFloat(Dest[1]);
+
+                        UserRepo repo = new UserRepo(getActivity());
+                        User unUser = repo.getUser();
+                        String[] LatLong = unUser.get_adresse().split(";");
+                        float latCur = Float.parseFloat(LatLong[0]);
+                        float longCur = Float.parseFloat(LatLong[1]);
+                        b.putFloat("latCurr",latCur);
+                        b.putFloat("longCurr",longCur);
+
+                        b.putFloat("lat", latDepart);
+                        b.putFloat("long", longDepart);
+                        b.putFloat("latDest", latDest);
+                        b.putFloat("longDest",longDest);
+                        i.putExtras(b);
+                        startActivity(i);
+                    }
+                })
+                .setPositiveButton("Proposer", null)
+                .create();
+        d.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+               Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        m_nbPlace = np.getValue();
+                        m_Type = mapp.get("type");
+                        m_idParcours = mapp.get("idParcours");
+                        m_id1 = mapp.get("id1");
+                        m_id2 = mapp.get("id2");
+                        new updatePassager().execute((Void)null);
+                        Toast.makeText(getActivity(),"Passager ajouter dans départ",Toast.LENGTH_SHORT).show();
+                        d.dismiss();
+                    }
+                });
+            }
+        });
+        d.show();
+    }
+
+
+    public void proposerCondu()
+    {
+        View setView = View.inflate(getActivity(),R.layout.propo_condu_layout,null);
+        TextView tvDescrip = (TextView) setView.findViewById(R.id.descPropo);
+        final NumberPicker np = (NumberPicker) setView.findViewById(R.id.numberPicker);
+        np.setWrapSelectorWheel(true);
+        np.setMinValue(1);
+        np.setMaxValue(Integer.parseInt(mapp.get("nbPass")));
+        tvDescrip.setText(mapp.get("id") + "\n" + mapp.get("date") +
+                " \nType : " + mapp.get("type") + "\n" +
+                mapp.get("description")
+                + mapp.get("infoSupp"));
+        final AlertDialog d = new AlertDialog.Builder(getActivity())
+                .setTitle("Parcours " + mapp.get("type")).setView(setView)
+                .setNegativeButton("Annuler", null).setNeutralButton("Voir Carte", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent(getActivity(), googleMap.class);
+                        Bundle b = new Bundle();
+                        String Depart[] = mapp.get("Depart").split(";");
+                        String Dest[] = mapp.get("Destination").split(";");
+                        float latDepart = Float.parseFloat(Depart[0]);
+                        float longDepart = Float.parseFloat(Depart[1]);
+                        float latDest = Float.parseFloat(Dest[0]);
+                        float longDest = Float.parseFloat(Dest[1]);
+
+                        UserRepo repo = new UserRepo(getActivity());
+                        User unUser = repo.getUser();
+                        String[] LatLong = unUser.get_adresse().split(";");
+                        float latCur = Float.parseFloat(LatLong[0]);
+                        float longCur = Float.parseFloat(LatLong[1]);
+                        b.putFloat("latCurr",latCur);
+                        b.putFloat("longCurr",longCur);
+
+                        b.putFloat("lat", latDepart);
+                        b.putFloat("long", longDepart);
+                        b.putFloat("latDest", latDest);
+                        b.putFloat("longDest", longDest);
+                        i.putExtras(b);
+                        startActivity(i);
+                    }
+                })
+                .setPositiveButton("Proposer",null)
+                .create();
+        d.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        m_nbPlace = np.getValue();
+                        m_id = mapp.get("id");
+                        m_Type = mapp.get("type");
+                        m_idParcours = mapp.get("idParcours");
+                        m_id1 = mapp.get("id1");
+                        m_id2 = mapp.get("id2");
+                        new updateConducteur().execute((Void)null);
+                        Toast.makeText(getActivity(),"Conducteur ajouter dans départ",Toast.LENGTH_SHORT).show();
+                        d.dismiss();
+                    }
+                });
+            }
+        });
+        d.show();
+    }
     //permet de tri en date de la proposition la plus proche de la date actuelle.
     public ArrayList<HashMap<String, String>> triBulleMap(ArrayList<HashMap<String, String>> list) {
         for (int i = 0; i <= list.size() - 2; i++) {
@@ -233,37 +373,6 @@ public class proposition_fragment extends Fragment {
         }
         return list;
     }
-    private int m_nbPlace;
-    private String m_id;
-    private String m_Type;
-    private String m_idParcours;
-    private String m_id1;
-    private String m_id2;
-    private String tempo;
-    private class btnProposer implements DialogInterface.OnClickListener{
-
-        public btnProposer(EditText input, String p_id,String p_type, HashMap<String, String> hashmap){
-            p_id = p_id.substring(26);
-            //tempo = input.getText().toString();
-            m_nbPlace = 1;
-            m_id = p_id;
-            m_Type = p_type;
-            m_idParcours = hashmap.get("idParcours");
-            m_id1 = hashmap.get("id1");
-            m_id2 = hashmap.get("id2");
-        }
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            if(m_Type.equals("Conducteur")){
-                //m_nbPlace = Integer.parseInt(tempo);
-                new updateConducteur().execute((Void)null);
-            }else{
-                new updatePassager().execute((Void)null);
-            }
-            Toast.makeText(getActivity(), "Update réussi", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     private class updateConducteur extends AsyncTask<Void,Void,Void>{
         @Override
@@ -274,7 +383,7 @@ public class proposition_fragment extends Fragment {
         }
         @Override
         protected Void doInBackground(Void... params) {
-            web.getCondu(m_id, m_nbPlace);
+            web.getCondu(m_idParcours, m_nbPlace);
             web.putDepart(m_id1, m_id2, m_idParcours, m_nbPlace,m_Type);
             return null;
         }
@@ -287,7 +396,7 @@ public class proposition_fragment extends Fragment {
         }
         @Override
         protected Void doInBackground(Void... params) {
-            web.getPass(m_id);
+            web.getPass(m_idParcours);
             web.putDepart(m_id1,m_id2,m_idParcours,Integer.parseInt(mapp.get("nbPass")),m_Type);
             return null;
         }

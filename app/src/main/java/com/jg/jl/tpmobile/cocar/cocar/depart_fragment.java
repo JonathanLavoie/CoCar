@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jg.jl.tpmobile.cocar.cocar.webService.webService;
 
@@ -70,16 +71,16 @@ public class depart_fragment extends Fragment{
         final ListView maListe = (ListView) rootView.findViewById(R.id.lstDepart);
         ArrayList<HashMap<String, String>> listMap = new ArrayList<>();
         HashMap<String, String> map;
-        ParcoursConducteurRepo unParcoursConducteur = new ParcoursConducteurRepo(getActivity());
-        ParcoursPassagerRepo unParcoursPassager = new ParcoursPassagerRepo(getActivity());
         String type;
         for (int i = 0; i < listPassager.size(); i++) {
             map = new HashMap<>();
             type = "Passager";
             map.put("type", type);
-            map.put("img", String.valueOf(R.drawable.passager));
+            map.put("img", String.valueOf(R.drawable.car72));
+            map.put("etat","Vous êtes le conducteur");
             map.put("id","Numéro de parcours : " + listPassager.get(i).get_ID());
-            map.put("date", "Date : " + listPassager.get(i).get_date()+ " " + listPassager.get(i).get_heure());
+            map.put("idPar",listPassager.get(i).get_ID());
+            map.put("date",map.get("etat") + "\n" + "Date : " + listPassager.get(i).get_date()+ " " + listPassager.get(i).get_heure());
             map.put("description", "Départ : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
                     + "\nNombre de passager : " + listPassager.get(i).get_nombrePassager());
             map.put("Depart",  listPassager.get(i).get_depart());
@@ -87,15 +88,16 @@ public class depart_fragment extends Fragment{
             map.put("NbrPlace",  "" + listPassager.get(i).get_nombrePassager());
             map.put("infoSupp", "\nCourriel : " + listPassager.get(i).get_identifiant() + "\n");
             listMap.add(map);
-            unParcoursPassager.insert(listPassager.get(i));
         }
         for (int i = 0; i < listConducteur.size(); i++) {
             map = new HashMap<>();
             type = "Conducteur";
             map.put("type", type);
-            map.put("img", String.valueOf(R.drawable.car72));
+            map.put("img", String.valueOf(R.drawable.passager));
             map.put("id","Numéro de parcours : " + listConducteur.get(i).get_ID());
-            map.put("date", "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
+            map.put("idPar",listConducteur.get(i).get_ID());
+            map.put("etat","Vous êtes le passager");
+            map.put("date", map.get("etat") + "\n" + "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
             map.put("description", "Depart : " + listConducteur.get(i).get_depart() +
                     "\nDestination : " + listConducteur.get(i).get_destination() +
                     "\nNombre de place disponible : " + listConducteur.get(i).get_nombreDePlace());
@@ -103,9 +105,8 @@ public class depart_fragment extends Fragment{
             map.put("Destination", listConducteur.get(i).get_destination());
             map.put("NbrPlace",  "" + listConducteur.get(i).get_nombreDePlace());
             map.put("infoSupp", "\nCourriel du demandeur : \n" + listConducteur.get(i).get_identifiant() +
-                    "Km max à parcourir : " + listConducteur.get(i).get_KM() + "\n");
+                    "\nKm max à parcourir : " + listConducteur.get(i).get_KM() + "\n");
             listMap.add(map);
-            unParcoursConducteur.insert(listConducteur.get(i));
         }
 
         if (listMap.isEmpty())
@@ -143,22 +144,27 @@ public class depart_fragment extends Fragment{
                             float longDepart = Float.parseFloat(Depart[1]);
                             float latDest = Float.parseFloat(Dest[0]);
                             float longDest = Float.parseFloat(Dest[1]);
+
+                            UserRepo repo = new UserRepo(getActivity());
+                            User unUser = repo.getUser();
+                            String[] LatLong = unUser.get_adresse().split(";");
+                            float latCur = Float.parseFloat(LatLong[0]);
+                            float longCur = Float.parseFloat(LatLong[1]);
+                            b.putFloat("latCurr", latCur);
+                            b.putFloat("longCurr", longCur);
+
                             b.putFloat("lat", latDepart);
                             b.putFloat("long", longDepart);
                             b.putFloat("latDest", latDest);
-                            b.putFloat("longDest",longDest);
+                            b.putFloat("longDest", longDest);
                             i.putExtras(b);
                             startActivity(i);
-                            /*String Depart[] = map.get("Depart").split(";");
-                            float latDepart = Float.parseFloat(Depart[0]);
-                            float longDepart = Float.parseFloat(Depart[1]);
-                            String url = "https://maps.google.com/maps?z=10&t=m&q=loc:"+latDepart+"+"+longDepart+"";
-                            Uri uri = Uri.parse(url);
-                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                            startActivity(intent);
-                            String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latDepart, longDepart);
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                            startActivity(intent);*/
+                        }
+                    });
+                    adb.setNegativeButton("Supprimer", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getActivity(),map.get("idPar") + " va être supprimer bientôt",Toast.LENGTH_SHORT).show();
                         }
                     });
                     adb.show();

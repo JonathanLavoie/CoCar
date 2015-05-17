@@ -341,7 +341,7 @@ class departPrevuHandler(webapp2.RequestHandler):
                        cle = ndb.Key('ParcoursPassager',dict['parcourId'])
                        qr = cle.get();
                        dictPar = {}
-                       dictPar['id'] = p.key.id()
+                       dictPar['id'] = dict['parcourId']
                        dictPar['departP'] = qr.departP
                        dictPar['destinationP'] = qr.destinationP
                        dictPar['identifiantCree'] = qr.identifiantCree
@@ -355,7 +355,7 @@ class departPrevuHandler(webapp2.RequestHandler):
                         cle = ndb.Key('ParcoursConducteur',numero)
                         qr = cle.get();
                         dictPar = {}
-                        dictPar['id'] = p.key.id()
+                        dictPar['id'] = dict['parcourId']
                         dictPar['departC'] = qr.departC
                         dictPar['destinationC'] = qr.destinationC
                         dictPar['identifiantCree'] = qr.identifiantCree

@@ -25,13 +25,14 @@ import java.util.ArrayList;
 public class googleMap extends ActionBarActivity {
 
     private GoogleMap map;
-    private float latDepart,latDest;
-    private float longDepart,longDest;
+    private float latDepart,latDest, latCurr;
+    private float longDepart,longDest, longCurr;
     MarkerOptions markerOptions;
     mapHelper mapHelp;
     Document document;
     LatLng locationDep;
     LatLng locationDest;
+    LatLng locationCurr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +44,11 @@ public class googleMap extends ActionBarActivity {
         longDepart = b.getFloat("long");
         latDest = b.getFloat("latDest");
         longDest = b.getFloat("longDest");
+        latCurr = b.getFloat("latCurr");
+        longCurr = b.getFloat("longCurr");
         locationDep = new LatLng(latDepart,longDepart);
         locationDest = new LatLng(latDest,longDest);
+        locationCurr = new LatLng(latCurr,longCurr);
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(locationDep, 15);
         map.animateCamera(update);
         map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
@@ -88,10 +92,18 @@ public class googleMap extends ActionBarActivity {
                 map.addPolyline(rectLine);
                 markerOptions.position(locationDep)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                markerOptions.title("Position de depart");
                 markerOptions.draggable(false);
                 map.addMarker(markerOptions);
                 markerOptions.position(locationDest)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                markerOptions.title("Position de la destination");
+                markerOptions.draggable(false);
+                map.addMarker(markerOptions);
+
+                markerOptions.position(locationCurr)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                markerOptions.title("Votre position par defaut");
                 markerOptions.draggable(false);
                 map.addMarker(markerOptions);
 
