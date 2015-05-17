@@ -341,6 +341,7 @@ class departPrevuHandler(webapp2.RequestHandler):
                        cle = ndb.Key('ParcoursPassager',dict['parcourId'])
                        qr = cle.get();
                        dictPar = {}
+                       dictPar['idDep'] = p.key.id()
                        dictPar['id'] = dict['parcourId']
                        dictPar['departP'] = qr.departP
                        dictPar['destinationP'] = qr.destinationP
@@ -355,6 +356,7 @@ class departPrevuHandler(webapp2.RequestHandler):
                         cle = ndb.Key('ParcoursConducteur',numero)
                         qr = cle.get();
                         dictPar = {}
+                        dictPar['idDep'] = p.key.id()
                         dictPar['id'] = dict['parcourId']
                         dictPar['departC'] = qr.departC
                         dictPar['destinationC'] = qr.destinationC
@@ -365,27 +367,46 @@ class departPrevuHandler(webapp2.RequestHandler):
                         dictPar['disDep'] = "0"
                         dictPar['disDest'] = "0"
                         resultat.append(dictPar) 
-            self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))    
+            self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))
         except (ValueError, db.BadValueError), ex:
             logging.info(ex)
             self.error(400)
         except Exception, ex:
             logging.info(ex)
-            self.error(500)     
+            self.error(500)
+             
+class deleteParcours(webapp2.RequestHandler):
+    def delete(self,idenPar,idenDep,unType,nbPass):
+        try:
+            cle = ndb.Key('DepartUser',idenDep)
+            cle.delete()
+            if(unType == "Conducteur"):
+                cle = ndb.Key('ParcoursConducteur',idenPar)
+                condu = cle.get()
+                condu.nombrePlace = condu.nombrePlace + int(nbPass)
+                condu.put()           
+        except (ValueError, db.BadValueError), ex:
+            logging.info(ex)
+            self.error(400)
+        except Exception, ex:
+            logging.info(ex)
+            self.error(500) 
+          
 application = webapp2.WSGIApplication(
     [
-        ('/',                                                       MainPageHandler),
-        webapp2.Route(r'/conducteur/lat/<lat2>/long/<long2>',       handler=ConducteurHandler, methods=['GET','PUT']),
-        webapp2.Route(r'/conducteur/<iden>/lat/<lat2>/long/<long2>',handler=ConducteurHandler, methods=['GET']),
-        webapp2.Route(r'/passager/<iden>/lat/<lat2>/long/<long2>',  handler=PassagerHandler, methods=['GET']),                                        
-        webapp2.Route(r'/passager/lat/<lat2>/long/<long2>',         handler=PassagerHandler, methods=['GET','PUT']),
-        webapp2.Route(r'/conducteur/<iden>/nbPlace/<nbPlace>',      handler=ConducteurHandler,methods=['PUT']),
-        webapp2.Route(r'/conducteur',                               handler=ConducteurHandler,methods=['PUT']),
-        webapp2.Route(r'/passager',                                 handler=PassagerHandler, methods=['PUT']),
-        webapp2.Route(r'/depart',                                   handler=parcoursUserHandler, methods=['PUT']),
-		webapp2.Route(r'/depart/<email>',                           handler=parcoursUserHandler, methods=['GET']),
-        webapp2.Route(r'/depart/<identi>/rating/<note>/user/<user>',handler=parcoursUserHandler, methods=['POST']),
-        webapp2.Route(r'/departPrevu/<iden>/type/<type>',           handler=departPrevuHandler, methods=['GET']),
-        webapp2.Route(r'/user/<email>',                             handler=UserHandler, methods=['PUT','GET']),
+        ('/',                                                                            MainPageHandler),
+        webapp2.Route(r'/conducteur/lat/<lat2>/long/<long2>',                            handler=ConducteurHandler, methods=['GET','PUT']),
+        webapp2.Route(r'/conducteur/<iden>/lat/<lat2>/long/<long2>',                     handler=ConducteurHandler, methods=['GET']),
+        webapp2.Route(r'/passager/<iden>/lat/<lat2>/long/<long2>',                       handler=PassagerHandler, methods=['GET']),                                        
+        webapp2.Route(r'/passager/lat/<lat2>/long/<long2>',                              handler=PassagerHandler, methods=['GET','PUT']),
+        webapp2.Route(r'/conducteur/<iden>/nbPlace/<nbPlace>',                           handler=ConducteurHandler,methods=['PUT']),
+        webapp2.Route(r'/conducteur',                                                    handler=ConducteurHandler,methods=['PUT']),
+        webapp2.Route(r'/passager',                                                      handler=PassagerHandler, methods=['PUT']),
+        webapp2.Route(r'/depart',                                                        handler=parcoursUserHandler, methods=['PUT']),
+		webapp2.Route(r'/depart/<email>',                                                handler=parcoursUserHandler, methods=['GET']),
+        webapp2.Route(r'/depart/<identi>/rating/<note>/user/<user>',                     handler=parcoursUserHandler, methods=['POST']),
+        webapp2.Route(r'/departPrevu/<iden>/type/<type>',                                handler=departPrevuHandler, methods=['GET']),
+        webapp2.Route(r'/user/<email>',                                                  handler=UserHandler, methods=['PUT','GET']),
+        webapp2.Route(r'/depart/<idenPar>/idDep/<idenDep>/type/<unType>/nbPlace/<nbPass>', handler=deleteParcours, methods=['DELETE']),
     ],
     debug=True)

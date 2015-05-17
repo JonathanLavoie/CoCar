@@ -35,6 +35,7 @@ public class depart_fragment extends Fragment{
     ArrayList<ParcoursPassager> listPassager;
     ArrayList<ParcoursConducteur> listConducteur;
     webService web = new webService();
+    String deleteIdPar,deleteIdDep,deleteType,deletePlace;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,8 +79,10 @@ public class depart_fragment extends Fragment{
             map.put("type", type);
             map.put("img", String.valueOf(R.drawable.car72));
             map.put("etat","Vous êtes le conducteur");
-            map.put("id","Numéro de parcours : " + listPassager.get(i).get_ID());
-            map.put("idPar",listPassager.get(i).get_ID());
+            String[] idPar = listPassager.get(i).get_ID().split(";");
+            map.put("idDep",idPar[1]);
+            map.put("id","Numéro de parcours : " + idPar[0]);
+            map.put("idPar",idPar[0]);
             map.put("date",map.get("etat") + "\n" + "Date : " + listPassager.get(i).get_date()+ " " + listPassager.get(i).get_heure());
             map.put("description", "Départ : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
                     + "\nNombre de passager : " + listPassager.get(i).get_nombrePassager());
@@ -94,8 +97,11 @@ public class depart_fragment extends Fragment{
             type = "Conducteur";
             map.put("type", type);
             map.put("img", String.valueOf(R.drawable.passager));
-            map.put("id","Numéro de parcours : " + listConducteur.get(i).get_ID());
-            map.put("idPar",listConducteur.get(i).get_ID());
+            String id = listConducteur.get(i).get_ID();
+            String[] idPar = id.split(";");
+            map.put("idDep",idPar[1]);
+            map.put("id","Numéro de parcours : " + idPar[0]);
+            map.put("idPar",idPar[0]);
             map.put("etat","Vous êtes le passager");
             map.put("date", map.get("etat") + "\n" + "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
             map.put("description", "Depart : " + listConducteur.get(i).get_depart() +
@@ -165,6 +171,11 @@ public class depart_fragment extends Fragment{
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Toast.makeText(getActivity(),map.get("idPar") + " va être supprimer bientôt",Toast.LENGTH_SHORT).show();
+                            deleteIdPar = map.get("idPar");
+                            deleteIdDep = map.get("idDep");
+                            deleteType = map.get("type");
+                            deletePlace = map.get("NbrPlace");
+                            new delete().execute((Void)null);
                         }
                     });
                     adb.show();
@@ -172,6 +183,16 @@ public class depart_fragment extends Fragment{
             });
         }
     }
+
+
+    private class delete extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... params) {
+            web.deletePar(deleteIdPar,deleteIdDep,deleteType,deletePlace);
+            return null;
+        }
+    }
+
 
     //permet de faire un tri des depart en date du départ le plus prochain.
     public ArrayList<HashMap<String, String>> triBulle(ArrayList<HashMap<String, String>> list) {

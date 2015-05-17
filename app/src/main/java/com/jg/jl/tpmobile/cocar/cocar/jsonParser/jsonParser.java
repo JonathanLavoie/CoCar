@@ -57,7 +57,14 @@ public class jsonParser{
             String date = jsonCond.getString("dateHeureC");
             String[] vectDate = date.split("T");
             ParcoursConducteur condu = new ParcoursConducteur();
-            condu.set_ID(jsonCond.getString("id"));
+            if(!jsonCond.isNull("idDep"))
+            {
+                condu.set_ID(jsonCond.getString("id")+ ";" + jsonCond.getString("idDep"));
+            }
+            else
+            {
+                condu.set_ID(jsonCond.getString("id"));
+            }
             condu.set_depart(jsonCond.getString("departC"));
             condu.set_destination(jsonCond.getString("destinationC"));
             condu.set_date(vectDate[0]);
@@ -82,7 +89,16 @@ public class jsonParser{
             ParcoursPassager pass = new ParcoursPassager();
             pass.set_depart(jsonCond.getString("departP"));
             pass.set_destination(jsonCond.getString("destinationP"));
-            pass.set_ID(jsonCond.getString("id"));
+
+            if(!jsonCond.isNull("idDep"))
+            {
+                pass.set_ID(jsonCond.getString("id")+ ";" + jsonCond.getString("idDep"));
+            }
+            else
+            {
+                pass.set_ID(jsonCond.getString("id"));
+            }
+
             pass.set_date(vectDate[0]);
             pass.set_heure(vectDate[1]);
             pass.set_identifiant(jsonCond.getString("identifiantCree"));

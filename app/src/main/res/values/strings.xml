@@ -26,8 +26,8 @@
     <string name="txt_latDestination">Latitude de destination</string>
     <string name="hint_nom">Prénom et Nom</string>
     <string name="hint_Address">Votre adresse</string>
-    <string name="title_activity_search">searchActivity</string>
-
+    <string name="title_activity_search" translatable="false">searchActivity</string>
+    <string name="txt_create">Creer</string>
     <string name="title_Profil">Profil</string>
     <string name="title_Depart">Départ</string>
     <string name="title_Proposition">Proposition</string>
@@ -36,21 +36,21 @@
     <string name="title_modifProfil">Modifier le profil</string>
     <string name="btn_Modif">Modifier</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
 
     <string name="action_settings">Déconnexion</string>
-    <string name="title_activity_base">BaseActivity</string>
+    <string name="title_activity_base" translatable="false">BaseActivity</string>
 
     <string name="title_Conducteur">Vous êtes un conducteur</string>
     <string name="title_passager">Vous êtes un passager</string>
 
-    <string name="action_example">Example action</string>
-    <string name="title_activity_update_user">UpdateUserActivity</string>
+    <string name="action_example" translatable="false">Example action</string>
+    <string name="title_activity_update_user" translatable="false">UpdateUserActivity</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world" translatable="false">Hello world!</string>
 
 <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_google_map">googleMap</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="title_activity_google_map" translatable="false">googleMap</string>
 </resources>

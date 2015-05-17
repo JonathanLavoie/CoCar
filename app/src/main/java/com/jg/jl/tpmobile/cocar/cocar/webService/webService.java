@@ -14,6 +14,7 @@ import com.jg.jl.tpmobile.cocar.cocar.UserRepo;
 import com.jg.jl.tpmobile.cocar.cocar.jsonParser.jsonParser;
 
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -41,6 +42,7 @@ public class webService {
     private final static String REST_RATE = "/rating/";
     private final static String REST_DEPARTPREVU = "/departPrevu/";
     private final static String REST_TYPE = "/type/";
+    private final static String REST_IDDEP  = "/idDep/";
     private HttpClient m_ClientHttp = new DefaultHttpClient();
     private Exception m_exception;
     SessionManager session;
@@ -101,6 +103,20 @@ public class webService {
             put.setEntity(new StringEntity(obj.toString()));
             put.addHeader("Content-Type", "application/json");
             m_ClientHttp.execute(put, new BasicResponseHandler());
+        }catch (Exception e) {
+            m_exception = e;
+        }
+    }
+
+
+    public void deletePar(String idPar,String idDep,String type,String place)
+    {
+        try{
+            URI uri = new URI("http",WEB_SERVICE_URL,REST_DEPART + "/" +idPar + REST_IDDEP + idDep
+                    + REST_TYPE + type + REST_NBPLACE + place,null,null);
+            HttpDelete delete = new HttpDelete(uri);
+            m_ClientHttp.execute(delete);
+
         }catch (Exception e) {
             m_exception = e;
         }

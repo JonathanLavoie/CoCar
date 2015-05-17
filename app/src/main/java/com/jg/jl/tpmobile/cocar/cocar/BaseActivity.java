@@ -154,30 +154,30 @@ public class BaseActivity extends ActionBarActivity
             return true;
         }
         if(id == R.id.action_help) {
-            if (mTitle.equals("Créer un parcours")) {
+            if (mTitle.equals("Créer un parcours") || mTitle.equals("Create a travel")) {
                 Util.afficherAlertBox(BaseActivity.this,"Vous avez le choix de créer un parcours passager ou conduceur." +
                         " Avec les informations nécessaires, vous allez créer un parcours qui va être disponible par tous les autres utilisateurs de CoCar. ",
                         "Guide utilisateur");
             }
-            if (mTitle.equals("Départ")) {
+            if (mTitle.equals("Départ") || mTitle.equals("Departure")) {
                 Util.afficherAlertBox(BaseActivity.this,"Vous avez une liste de tous vos départs que vous avez acceptés." +
                         " Si vous appuyez sur les départs, vous allez retrouver plus d’information sur ce départ" +
                         " et vous pouvez voir le départ sur une carte en appuyant sur <AFFICHER CARTE>.","Guide utilisateur");
             }
-            if (mTitle.equals("Proposition")) {
+            if (mTitle.equals("Proposition") || mTitle.equals("Offer")) {
                 Util.afficherAlertBox(BaseActivity.this,"Vous avez une liste de toutes les propositions que vous pouvez accepter." +
                         " Lorsque vous appuyez sur une des propositions, il vous affiche plus d’information sur cette proposition et la possibilité d'accepter cette offre." +
                         " Lorsque vous acceptez une proposition, il vous est impossible de l'annuler.","Guide utilisateur");
             }
-            if (mTitle.equals("Évaluer un utilisateur")) {
+            if (mTitle.equals("Évaluer un utilisateur") ||mTitle.equals("Rate a user")) {
                 Util.afficherAlertBox(BaseActivity.this,"Sur cette page, vous pouvez évaluer un autre utilisateur que vous avez partagé la même voiture." +
                         " Le plus d`étoiles que vous donnez, la meilleure note vous y donnerait.","Guide utilisateur");
             }
-            if (mTitle.equals("Profil")) {
+            if (mTitle.equals("Profil") || mTitle.equals("Profile")) {
                 Util.afficherAlertBox(BaseActivity.this,"Sur cette page, vous pouvez voir votre profil avec toutes vos informations. " +
                         "Vous pouvez également voir votre le total des évaluations que les autres utilisateurs vous ont donnés.","Guide utilisateur");
             }
-            if (mTitle.equals("Modifier le profil")) {
+            if (mTitle.equals("Modifier le profil") || mTitle.equals("Update profile")) {
                 Util.afficherAlertBox(BaseActivity.this,"Sur cette page, vous pouvez modifier votre profil." +
                         " Vous pouvez modifier votre nom, votre position, votre numéro de téléphone." +
                         " Si vous désirer changé votre mot de passe, vous entré un différent, mais si vous entré rien," +
