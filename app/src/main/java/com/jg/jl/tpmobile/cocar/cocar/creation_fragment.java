@@ -3,7 +3,13 @@ package com.jg.jl.tpmobile.cocar.cocar;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +25,7 @@ import android.widget.Toast;
 
 import com.jg.jl.tpmobile.cocar.cocar.webService.webService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,12 +43,16 @@ public class creation_fragment extends Fragment {
     EditText date;
     EditText time;
     EditText nbPass;
+    ArrayList<ParcoursPassager> mdecoPass = new ArrayList<>();
+    ArrayList<ParcoursConducteur> mdecoCondu = new ArrayList<>();
     private webService web = new webService();
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.creation_layout,container,false);
+        getActivity().registerReceiver(this.m_conn,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         chargementListe();
         return rootView;
     }
@@ -54,15 +65,15 @@ public class creation_fragment extends Fragment {
                 android.R.layout.simple_list_item_1, android.R.id.text1, tokens);
         maListe.setAdapter(adapter);
 
-        maListe.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        maListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){
+                switch (position) {
                     case 0:
-                            CreateConducteur();
+                        CreateConducteur();
                         break;
                     case 1:
-                            CreatePassager();
+                        CreatePassager();
                         break;
                 }
             }
@@ -114,15 +125,14 @@ public class creation_fragment extends Fragment {
                             departlong = Double.parseDouble(txtSetDepartLong.getText().toString());
                             destination = Double.parseDouble(txtSetDestination.getText().toString());
                             destinationlong = Double.parseDouble(txtSetDestinationLong.getText().toString());
-                        } catch(NumberFormatException nfe) {
+                        } catch (NumberFormatException nfe) {
                             valide = false;
                             message = "Les longitudes et latitudes doivent être numérique";
                         }
                         if (depart < 46 || depart > 47 ||
                                 departlong > -71 || departlong < -72 ||
                                 destination < 46 || destination > 47 ||
-                                destinationlong > -71 || destinationlong < -72)
-                        {
+                                destinationlong > -71 || destinationlong < -72) {
                             valide = false;
                             if (message == "") {
                                 message = "La latitude doit être entre 46 et 47. La longitude doit être entre -71 et -72";
@@ -130,41 +140,41 @@ public class creation_fragment extends Fragment {
                         }
                         try {
                             nbPlace = Double.parseDouble(nb.getText().toString());
-                        } catch(NumberFormatException nfe) {
+                        } catch (NumberFormatException nfe) {
                             valide = false;
                             if (message == "") {
                                 message = "Les nombres de places doivent être numériques";
                             }
                         }
-                        if (nbPlace < 1 || nbPlace > 6)
-                        {
+                        if (nbPlace < 1 || nbPlace > 6) {
                             if (message == "") {
                                 message = "Le nombre de place doit être entre 1 et 6";
                             }
                             valide = false;
                         }
-                        if (!m.find())
-                        {
+                        if (!m.find()) {
                             if (message == "") {
                                 message = "La date n'est pas conforme";
                             }
                             valide = false;
                         }
-                        if (!m2.find())
-                        {
+                        if (!m2.find()) {
                             if (message == "") {
                                 message = "L'heure n'est pas conforme";
                             }
                             valide = false;
                         }
-                        if (valide){
+                        if (valide) {
+                            ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                            NetworkInfo m3G = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
                             SessionManager session = new SessionManager(getActivity().getApplicationContext());
-                            String latiD = txtSetDepart.getText().toString().replace(',','.');
-                            String longiD = txtSetDepartLong.getText().toString().replace(',','.');
-                            String coordonneeDepart =  latiD + ";" + longiD;
-                            String lati = txtSetDestination.getText().toString().replace(',','.');
-                            String longi = txtSetDestinationLong.getText().toString().replace(',','.');
-                            String coordonneeDestination =  lati + ";" + longi;
+                            String latiD = txtSetDepart.getText().toString().replace(',', '.');
+                            String longiD = txtSetDepartLong.getText().toString().replace(',', '.');
+                            String coordonneeDepart = latiD + ";" + longiD;
+                            String lati = txtSetDestination.getText().toString().replace(',', '.');
+                            String longi = txtSetDestinationLong.getText().toString().replace(',', '.');
+                            String coordonneeDestination = lati + ";" + longi;
                             conduc.set_depart(coordonneeDepart);
                             conduc.set_destination(coordonneeDestination);
                             conduc.set_nombreDePlace(Integer.parseInt(nb.getText().toString().trim()));
@@ -172,14 +182,20 @@ public class creation_fragment extends Fragment {
                             conduc.set_date(date.getText().toString());
                             conduc.set_heure(time.getText().toString());
                             conduc.set_identifiant(session.getIdentification());
-                            new putConducteur().execute((Void)null);
-                            Toast.makeText(getActivity(), "Parcours Creer", Toast.LENGTH_SHORT).show();
+                            if ((mWifi != null && mWifi.isConnected()) || (m3G != null && m3G.isConnected())) {
+
+                                new putConducteur().execute((Void) null);
+                                Toast.makeText(getActivity(), "Parcours Creer", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                                mdecoCondu.add(conduc);
+                                Util.afficherAlertBox(getActivity(),"Aucune connexion internet trouvé, \nmais votre parcours va être envoyé au retour de la connexion","Erreur WIFI non trouvé");
+                            }
 
                             d.dismiss();
-                        }
-                        else
-                        {
-                            Toast.makeText(getActivity(),message,Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -284,6 +300,9 @@ public class creation_fragment extends Fragment {
                             valide = false;
                         }
                         if (valide) {
+                            ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                            NetworkInfo m3G = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
                             SessionManager session = new SessionManager(getActivity().getApplicationContext());
                             String latiD = txtSetDepart.getText().toString().replace(',', '.');
                             String longiD = txtSetDepartLong.getText().toString().replace(',', '.');
@@ -297,22 +316,61 @@ public class creation_fragment extends Fragment {
                             passager.set_heure(time.getText().toString());
                             passager.set_identifiant(session.getIdentification());
                             passager.set_nombrePassager(Integer.parseInt(nbPass.getText().toString()));
-                            new putPassager().execute((Void) null);
-                            Toast.makeText(getActivity(), "Passager Creer", Toast.LENGTH_SHORT).show();
-
-                            d.dismiss();
-                        } else {
-                            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                            if ((mWifi != null && mWifi.isConnected()) || (m3G != null && m3G.isConnected())) {
+                                new putPassager().execute((Void) null);
+                                Toast.makeText(getActivity(), "Passager Creer", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                                mdecoPass.add(passager);
+                                Util.afficherAlertBox(getActivity(),"Aucune connexion internet trouvé, \n" +
+                                        "mais votre parcours va être envoyé au retour de la connexion","Erreur WIFI non trouvé");
+                            }
+                                d.dismiss();
+                            } else {
+                                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
-                });
-            }
-        });
-        d.show();
-    }
 
-    //insert un passager dans le service web.
-    private class putPassager extends AsyncTask<Void,Void,Void>{
+                    );
+                }
+            }
+
+            );
+            d.show();
+        }
+
+
+    private BroadcastReceiver m_conn = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            NetworkInfo m3G = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if ((mWifi != null && mWifi.isConnected()) || (m3G != null && m3G.isConnected())) {
+                if (!mdecoPass.isEmpty())
+                {
+                    for (int i =0; i < mdecoPass.size(); i++)
+                    {
+                        passager = mdecoPass.get(i);
+                        new putPassager().execute((Void) null);
+                    }
+                }
+                if (!mdecoCondu.isEmpty())
+                {
+                    for (int i =0; i < mdecoCondu.size(); i++)
+                    {
+                        conduc = mdecoCondu.get(i);
+                        new putConducteur().execute((Void) null);
+                    }
+                }
+            }
+        }
+    };
+
+                //insert un passager dans le service web.
+        private class putPassager extends AsyncTask<Void,Void,Void>{
         @Override
         protected void onPreExecute() {
             getActivity().setProgressBarIndeterminateVisibility(true);

@@ -93,7 +93,7 @@ public class proposition_fragment extends Fragment {
 
         final ListView maListe = (ListView) rootView.findViewById(R.id.listviewperso);
         ArrayList<HashMap<String, String>> listMap = new ArrayList<>();
-        if(mWifi.isConnected() || m3G.isConnected()) {
+        if((mWifi != null && mWifi.isConnected()) || (m3G != null && m3G.isConnected())) {
             session = new SessionManager(getActivity().getApplicationContext());
 
             HashMap<String, String> map;

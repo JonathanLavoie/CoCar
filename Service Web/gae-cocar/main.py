@@ -56,7 +56,6 @@ class ConducteurHandler(webapp2.RequestHandler):
     def get(self,iden = None,lat2 = None,long2 = None):
         try:
             #obtient toutes les conducteurs
-            
             resultat = []
             if (iden is None):
                 qr = ParcoursConducteur.query()

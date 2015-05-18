@@ -2,8 +2,11 @@ package com.jg.jl.tpmobile.cocar.cocar;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -69,52 +72,60 @@ public class depart_fragment extends Fragment{
 
     //Méthode qui charge tous les donnée du fragment départ.
     private void chargementDepart() {
-        final ListView maListe = (ListView) rootView.findViewById(R.id.lstDepart);
+        ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo m3G = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         ArrayList<HashMap<String, String>> listMap = new ArrayList<>();
-        HashMap<String, String> map;
-        String type;
-        for (int i = 0; i < listPassager.size(); i++) {
-            map = new HashMap<>();
-            type = "Passager";
-            map.put("type", type);
-            map.put("img", String.valueOf(R.drawable.car72));
-            map.put("etat","Vous êtes le conducteur");
-            String[] idPar = listPassager.get(i).get_ID().split(";");
-            map.put("idDep",idPar[1]);
-            map.put("id","Numéro de parcours : " + idPar[0]);
-            map.put("idPar",idPar[0]);
-            map.put("date",map.get("etat") + "\n" + "Date : " + listPassager.get(i).get_date()+ " " + listPassager.get(i).get_heure());
-            map.put("description", "Départ : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
-                    + "\nNombre de passager : " + listPassager.get(i).get_nombrePassager());
-            map.put("Depart",  listPassager.get(i).get_depart());
-            map.put("Destination", listPassager.get(i).get_destination());
-            map.put("NbrPlace",  "" + listPassager.get(i).get_nombrePassager());
-            map.put("infoSupp", "\nCourriel : " + listPassager.get(i).get_identifiant() + "\n");
-            listMap.add(map);
+        final ListView maListe = (ListView) rootView.findViewById(R.id.lstDepart);
+        if((mWifi != null && mWifi.isConnected()) || (m3G != null && m3G.isConnected())) {
+            HashMap<String, String> map;
+            String type;
+            for (int i = 0; i < listPassager.size(); i++) {
+                map = new HashMap<>();
+                type = "Passager";
+                map.put("type", type);
+                map.put("img", String.valueOf(R.drawable.car72));
+                map.put("etat", "Vous êtes le conducteur");
+                String[] idPar = listPassager.get(i).get_ID().split(";");
+                map.put("idDep", idPar[1]);
+                map.put("id", "Numéro de parcours : " + idPar[0]);
+                map.put("idPar", idPar[0]);
+                map.put("date", map.get("etat") + "\n" + "Date : " + listPassager.get(i).get_date() + " " + listPassager.get(i).get_heure());
+                map.put("description", "Départ : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
+                        + "\nNombre de passager : " + listPassager.get(i).get_nombrePassager());
+                map.put("Depart", listPassager.get(i).get_depart());
+                map.put("Destination", listPassager.get(i).get_destination());
+                map.put("NbrPlace", "" + listPassager.get(i).get_nombrePassager());
+                map.put("infoSupp", "\nCourriel : " + listPassager.get(i).get_identifiant() + "\n");
+                listMap.add(map);
+            }
+            for (int i = 0; i < listConducteur.size(); i++) {
+                map = new HashMap<>();
+                type = "Conducteur";
+                map.put("type", type);
+                map.put("img", String.valueOf(R.drawable.passager));
+                String id = listConducteur.get(i).get_ID();
+                String[] idPar = id.split(";");
+                map.put("idDep", idPar[1]);
+                map.put("id", "Numéro de parcours : " + idPar[0]);
+                map.put("idPar", idPar[0]);
+                map.put("etat", "Vous êtes le passager");
+                map.put("date", map.get("etat") + "\n" + "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
+                map.put("description", "Depart : " + listConducteur.get(i).get_depart() +
+                        "\nDestination : " + listConducteur.get(i).get_destination() +
+                        "\nNombre de place disponible : " + listConducteur.get(i).get_nombreDePlace());
+                map.put("Depart", listConducteur.get(i).get_depart());
+                map.put("Destination", listConducteur.get(i).get_destination());
+                map.put("NbrPlace", "" + listConducteur.get(i).get_nombreDePlace());
+                map.put("infoSupp", "\nCourriel du demandeur : \n" + listConducteur.get(i).get_identifiant() +
+                        "\nKm max à parcourir : " + listConducteur.get(i).get_KM() + "\n");
+                listMap.add(map);
+            }
         }
-        for (int i = 0; i < listConducteur.size(); i++) {
-            map = new HashMap<>();
-            type = "Conducteur";
-            map.put("type", type);
-            map.put("img", String.valueOf(R.drawable.passager));
-            String id = listConducteur.get(i).get_ID();
-            String[] idPar = id.split(";");
-            map.put("idDep",idPar[1]);
-            map.put("id","Numéro de parcours : " + idPar[0]);
-            map.put("idPar",idPar[0]);
-            map.put("etat","Vous êtes le passager");
-            map.put("date", map.get("etat") + "\n" + "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
-            map.put("description", "Depart : " + listConducteur.get(i).get_depart() +
-                    "\nDestination : " + listConducteur.get(i).get_destination() +
-                    "\nNombre de place disponible : " + listConducteur.get(i).get_nombreDePlace());
-            map.put("Depart",  listConducteur.get(i).get_depart());
-            map.put("Destination", listConducteur.get(i).get_destination());
-            map.put("NbrPlace",  "" + listConducteur.get(i).get_nombreDePlace());
-            map.put("infoSupp", "\nCourriel du demandeur : \n" + listConducteur.get(i).get_identifiant() +
-                    "\nKm max à parcourir : " + listConducteur.get(i).get_KM() + "\n");
-            listMap.add(map);
+        else
+        {
+            Util.afficherAlertBox(getActivity(),"Aucune connexion internet trouvé","Erreur WIFI non trouvé");
         }
-
         if (listMap.isEmpty())
         {
             TextView tv = new TextView(getActivity());

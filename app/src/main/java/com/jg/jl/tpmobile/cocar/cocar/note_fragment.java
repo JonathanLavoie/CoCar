@@ -75,43 +75,47 @@ public class note_fragment extends Fragment{
 
         if((mWifi != null && mWifi.isConnected()) || (m3G != null && m3G.isConnected())) {
             session = new SessionManager(getActivity().getApplicationContext());
-            HashMap<String,String> map;
-            if(listNoteDepart != null && !listNoteDepart.isEmpty())
-            {
-                for(int i = 0;i < listNoteDepart.size(); i++) {
+            HashMap<String, String> map;
+            if (listNoteDepart != null && !listNoteDepart.isEmpty()) {
+                for (int i = 0; i < listNoteDepart.size(); i++) {
                     map = new HashMap<>();
-                    map.put("nbPass",String.valueOf(listNoteDepart.get(i).getNbPassager()));
+                    map.put("nbPass", String.valueOf(listNoteDepart.get(i).getNbPassager()));
                     map.put("idUser1", listNoteDepart.get(i).getIdUser1());
                     map.put("idUser2", listNoteDepart.get(i).getIdUser2());
-                    map.put("rating",String.valueOf(listNoteDepart.get(i).getRate()));
+                    map.put("rating", String.valueOf(listNoteDepart.get(i).getRate()));
                     map.put("idParcour", listNoteDepart.get(i).getIdParcours());
                     map.put("idNote", listNoteDepart.get(i).getIdNote());
-                    if(listNoteDepart.get(i).getRate() == 0) {
+                    if (listNoteDepart.get(i).getRate() == 0) {
                         listMap.add(map);
                     }
                 }
-                if(listMap.isEmpty())
-                {
-                    TextView tv = new TextView(getActivity());
-                    tv.setText("Aucun utilisateur à évaluer");
-                    tv.setPadding(50,250,0,0);
-                    RelativeLayout lst = (RelativeLayout)rootView.findViewById(R.id.rlnote);
-                    lst.addView(tv);
-                }
-                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(),listMap,R.layout.layout_note_personnalise,
-                        new String[]{"idUser1","idUser2","idParcour","rating"},
-                        new int[]{R.id.idUser1note,R.id.idUser2note,R.id.idParcournote,R.id.idRatePerso});
-                adapter.setViewBinder(new MyBinder());
-                maListe.setAdapter(adapter);
-                maListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                         mapp = (HashMap<String, String>) maListe.getItemAtPosition(position);
-                        evaluerUnUtil();
-                    }
-                });
             }
         }
+        else
+        {
+            Util.afficherAlertBox(getActivity(),"Aucune connexion internet trouvé","Erreur WIFI non trouvé");
+        }
+            if(listMap.isEmpty())
+            {
+                TextView tv = new TextView(getActivity());
+                tv.setText("Aucun utilisateur à évaluer");
+                tv.setPadding(50,250,0,0);
+                RelativeLayout lst = (RelativeLayout)rootView.findViewById(R.id.rlnote);
+                lst.addView(tv);
+            }
+            SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(),listMap,R.layout.layout_note_personnalise,
+                    new String[]{"idUser1","idUser2","idParcour","rating"},
+                    new int[]{R.id.idUser1note,R.id.idUser2note,R.id.idParcournote,R.id.idRatePerso});
+            adapter.setViewBinder(new MyBinder());
+            maListe.setAdapter(adapter);
+            maListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    mapp = (HashMap<String, String>) maListe.getItemAtPosition(position);
+                    evaluerUnUtil();
+                    }
+                });
+
     }
     class MyBinder implements SimpleAdapter.ViewBinder {
         @Override
