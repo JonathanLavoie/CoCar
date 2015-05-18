@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CoCar</string>
+    <string name="action_apropos">About</string>
+    <string name="action_creerparcours">Create a travel</string>
+    <string name="action_depart">Departure</string>
+    <string name="action_historique">History</string>
+    <string name="action_profil">Profile</string>
+    <string name="action_rechercher">Search</string>
+    <string name="action_settings">Logout</string>
+    <string name="btn_Inscription">Sign in</string>
+    <string name="btn_Modif">Change</string>
+    <string name="hint_Address">Our address</string>
+    <string name="hint_nom">First name and last name</string>
+    <string name="title_Conducteur">You are a driver</string>
+    <string name="title_Depart">Departure</string>
+    <string name="title_Note">Rate a user</string>
+    <string name="title_Rechercher">Create a travel</string>
+    <string name="txt_Email">Email</string>
+    <string name="txt_MotDePasse">Password</string>
+    <string name="txt_NumeroTel">Phone number</string>
+    <string name="txt_btn_connexion">Login</string>
+    <string name="txt_btn_enregistrer">Save</string>
+    <string name="txt_connexion">Login</string>
+    <string name="txt_hint_Password">Password</string>
+    <string name="txt_hint_login">Email</string>
+    <string name="txt_latDepart">Departure latitude</string>
+    <string name="txt_nom">Name</string>
+    <string name="title_activity_inscription">Registration</string>
+    <string name="title_passager">You are a occupent</string>
+    <string name="title_modifProfil">Update profile</string>
+    <string name="txt_latDestination">Destination latitude</string>
+    <string name="txt_longDepart">Departure longitude</string>
+    <string name="txt_longDestination">Destination longitude</string>
+    <string name="title_Profil">Profile</string>
+    <string name="action_proposition">Offer</string>
+    <string name="title_Proposition">Offer</string>
+    <string name="txt_create">Create</string>
+</resources>

@@ -3,5 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.jg.jl.tpmobile.cocar.cocar.BaseActivity">
     <item android:id="@+id/action_Deconnexion" android:title="@string/action_settings"
-        android:orderInCategory="100" android:showAsAction="never" />
+    android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_help" android:title="Aide"
+        android:orderInCategory="100" app:showAsAction="never" />
 </menu>

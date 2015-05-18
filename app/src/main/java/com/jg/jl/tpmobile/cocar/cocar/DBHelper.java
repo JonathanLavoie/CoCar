@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper  extends SQLiteOpenHelper {
     //Version de la BD
     // Doit être changé a chaque fois que la BD est modifier
-    private static final int DATABASE_VERSION = 16;
+    private static final int DATABASE_VERSION = 18;
 
     // Nom de la BD
     private static final String DATABASE_NAME = "CoCar.db";
@@ -30,17 +30,9 @@ public class DBHelper  extends SQLiteOpenHelper {
                 + User.KEY_motPasse + " TEXT, "
                 + User.KEY_adresse + " TEXT, "
                 + User.KEY_phone + " TEXT, "
-                + User.KEY_sumRate + " INTEGER, "
+                + User.KEY_sumRate + " FLOAT, "
                 + User.KEY_countRate + " INTEGER) ";
         db.execSQL(CREATE_TABLE_USER);
-        db.execSQL("DROP TABLE IF EXISTS " + Parcours.TABLE);
-        String CREATE_TABLE_PARCOURS = "CREATE TABLE " + Parcours.TABLE + "("
-                + Parcours.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + Parcours.KEY_ConducteurID + " INTEGER, "
-                + Parcours.KEY_PassagerID + " INTEGER, "
-                + Parcours.KEY_Heure + " TEXT, "
-                + Parcours.KEY_Date + " TEXT)";
-        db.execSQL(CREATE_TABLE_PARCOURS);
         db.execSQL("DROP TABLE IF EXISTS " + ParcoursPassager.TABLE);
         String CREATE_TABLE_PARCOURSPASSAGER = "CREATE TABLE " + ParcoursPassager.TABLE + "("
                 + ParcoursPassager.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -68,7 +60,6 @@ public class DBHelper  extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop tous les table
         db.execSQL("DROP TABLE IF EXISTS " + User.TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + Parcours.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + ParcoursPassager.TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + ParcoursConducteur.TABLE);
 

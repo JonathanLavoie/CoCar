@@ -53,12 +53,11 @@ class MainPageHandler(webapp2.RequestHandler):
 
 class ConducteurHandler(webapp2.RequestHandler):
     
-    def get(self,id = None,lat2 = None,long2 = None):
+    def get(self,iden = None,lat2 = None,long2 = None):
         try:
             #obtient toutes les conducteurs
-            
             resultat = []
-            if (id is None):
+            if (iden is None):
                 qr = ParcoursConducteur.query()
                 for p in qr:
                     dictConducteur = p.to_dict()
@@ -78,10 +77,10 @@ class ConducteurHandler(webapp2.RequestHandler):
                             resultat.append(dictConducteur)
                             self.response.headers['Content-Type'] = 'application/json'
             else:
-                cle = ndb.Key('ParcoursConducteur',id)
+                cle = ndb.Key('ParcoursConducteur',iden)
                 qr = cle.get()
                 dictConducteur = {}
-                dictConducteur['id'] = id
+                dictConducteur['id'] = iden
                 dictConducteur['dateHeureC'] = qr.dateHeureC
                 dictConducteur['departC'] = qr.departC
                 dictConducteur['destinationC'] = qr.destinationC
@@ -108,11 +107,11 @@ class ConducteurHandler(webapp2.RequestHandler):
             self.error(500)
 
     #Permet d'inserer un nouveau conducteur
-    def put(self,id = None,nbPlace = None):
+    def put(self,iden = None,nbPlace = None):
         try:   
-            if (id is None):
-                id = idAleatoire()
-            cle = ndb.Key('ParcoursConducteur',id)
+            if (iden is None):
+                iden = idAleatoire()
+            cle = ndb.Key('ParcoursConducteur',iden)
             cond = cle.get()
             status = 204
             if (cond is None):
@@ -152,11 +151,11 @@ class ConducteurHandler(webapp2.RequestHandler):
             self.error(500)
              
 class PassagerHandler(webapp2.RequestHandler):
-    def get(self,id = None,lat2 = None, long2 = None):
+    def get(self,iden = None,lat2 = None, long2 = None):
         try:
             #obtient toutes les passagers
             resultat = []
-            if(id is None):
+            if(iden is None):
                 qr = ParcoursPassager.query().order(ParcoursPassager.dateHeureP)
 
                 for p in qr:
@@ -173,7 +172,7 @@ class PassagerHandler(webapp2.RequestHandler):
                     resultat.append(dictPassager)
                     self.response.headers['Content-Type'] = 'application/json'
             else:
-                cle = ndb.Key('ParcoursPassager',id)
+                cle = ndb.Key('ParcoursPassager',iden)
                 qr = cle.get();
                 dictPassager = {}
                 vectlatLongDest = qr.destinationP.split(';')
@@ -187,7 +186,7 @@ class PassagerHandler(webapp2.RequestHandler):
                 dictPassager['dateHeureP'] = qr.dateHeureP
                 dictPassager['disDest'] = round(kmDest,2)
                 dictPassager['disDep'] = round(kmDep,2)
-                dictPassager['id'] = id 
+                dictPassager['id'] = iden
                 resultat.append(dictPassager)
                 self.response.headers['Content-Type'] = 'application/json'
             self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))
@@ -203,9 +202,9 @@ class PassagerHandler(webapp2.RequestHandler):
     def put(self):
         try:
             
-            id = idAleatoire()
+            iden = idAleatoire()
         
-            cle = ndb.Key('ParcoursPassager',id)
+            cle = ndb.Key('ParcoursPassager',iden)
             passa = cle.get()
             status = 204
 
@@ -272,35 +271,141 @@ class UserHandler(webapp2.RequestHandler):
 class parcoursUserHandler(webapp2.RequestHandler):
     def put(self):
         try: 
-            jsonObj = json.loads(self.request.body)
-            id = idAleatoire()
-            
-            cle = ndb.Key('DepartUser',id)
+            iden = idAleatoire()
+            cle = ndb.Key('DepartUser',iden)
             depart = DepartUser(key=cle)
+            jsonObj = json.loads(self.request.body) 
             depart.userId1 = jsonObj["userId1"]
             depart.userId2 = jsonObj["userId2"]
             depart.parcourId = jsonObj["parcourId"]
             depart.nbPassager = int(jsonObj["nbPassager"])
-            depart.rate = int(jsonObj["rate"])
+            depart.rate = float(jsonObj["rate"])
+            depart.type = jsonObj['type']
             depart.put()
-            self.response.set_status(201)
+            self.response.set_status(201)      
         except (ValueError, db.BadValueError), ex:
             logging.info(ex)
             self.error(400)
         except Exception, ex:
             logging.info(ex)
-            self.error(500)        
+            self.error(500)
+    
+    def post(self,identi,note,user):
+        try:
+            cle = ndb.Key('DepartUser',identi)
+            depart = cle.get()
+            depart.rate = float(note) 
+            depart.put()
+            cle = ndb.Key('User',user)
+            user = cle.get()
+            user.userSumRate = user.userSumRate + float(note)
+            user.userCountRate = user.userCountRate + 1
+            user.put()
+        except (ValueError, db.BadValueError), ex:
+            logging.info(ex)
+            self.error(400)
+        except Exception, ex:
+            logging.info(ex)
+            self.error(500)
+                
+    def get(self,email):
+        try:
+            qr = DepartUser.query()
+            resultat = []
+            for p in qr:
+                    
+                dict = p.to_dict()
+                dict["id"] = p.key.id()
+                if(dict['userId1'] == email or dict['userId2'] == email):
+                    resultat.append(dict)
+            self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))    
+                
+        except (ValueError, db.BadValueError), ex:
+            logging.info(ex)
+            self.error(400)
+        except Exception, ex:
+            logging.info(ex)
+            self.error(500) 
+            
+class departPrevuHandler(webapp2.RequestHandler):
+    def get(self,iden,type):
+        try:
+            qr = DepartUser.query()
+            resultat = []
+            for p in qr:
+               dict = p.to_dict()
+               if((dict['userId1'] == iden and dict['userId2'] == iden) or (dict['userId1'] == iden or dict['userId2'] == iden)):
+                   logging.info(type)
+                   if(dict["type"] == type and type == "Passager"):
+                       cle = ndb.Key('ParcoursPassager',dict['parcourId'])
+                       qr = cle.get();
+                       dictPar = {}
+                       dictPar['idDep'] = p.key.id()
+                       dictPar['id'] = dict['parcourId']
+                       dictPar['departP'] = qr.departP
+                       dictPar['destinationP'] = qr.destinationP
+                       dictPar['identifiantCree'] = qr.identifiantCree
+                       dictPar['nombrePassager'] = dict['nbPassager']
+                       dictPar['dateHeureP'] = qr.dateHeureP
+                       dictPar['disDep'] = "0"
+                       dictPar['disDest'] = "0"
+                       resultat.append(dictPar) 
+                   if(dict["type"] == type and type == "Conducteur"):
+                        numero = dict['parcourId']
+                        cle = ndb.Key('ParcoursConducteur',numero)
+                        qr = cle.get();
+                        dictPar = {}
+                        dictPar['idDep'] = p.key.id()
+                        dictPar['id'] = dict['parcourId']
+                        dictPar['departC'] = qr.departC
+                        dictPar['destinationC'] = qr.destinationC
+                        dictPar['identifiantCree'] = qr.identifiantCree
+                        dictPar['nombrePlace'] = dict['nbPassager']
+                        dictPar['dateHeureC'] = qr.dateHeureC
+                        dictPar['nbKm'] = qr.nbKm
+                        dictPar['disDep'] = "0"
+                        dictPar['disDest'] = "0"
+                        resultat.append(dictPar) 
+            self.response.out.write(json.dumps(resultat,default=serialiser_pour_json))
+        except (ValueError, db.BadValueError), ex:
+            logging.info(ex)
+            self.error(400)
+        except Exception, ex:
+            logging.info(ex)
+            self.error(500)
+             
+class deleteParcours(webapp2.RequestHandler):
+    def delete(self,idenPar,idenDep,unType,nbPass):
+        try:
+            cle = ndb.Key('DepartUser',idenDep)
+            cle.delete()
+            if(unType == "Conducteur"):
+                cle = ndb.Key('ParcoursConducteur',idenPar)
+                condu = cle.get()
+                condu.nombrePlace = condu.nombrePlace + int(nbPass)
+                condu.put()           
+        except (ValueError, db.BadValueError), ex:
+            logging.info(ex)
+            self.error(400)
+        except Exception, ex:
+            logging.info(ex)
+            self.error(500) 
+          
 application = webapp2.WSGIApplication(
     [
-        ('/',                                                       MainPageHandler),
-        webapp2.Route(r'/conducteur/lat/<lat2>/long/<long2>',       handler=ConducteurHandler, methods=['GET','PUT']),
-        webapp2.Route(r'/conducteur/<id>/lat/<lat2>/long/<long2>',  handler=ConducteurHandler, methods=['GET']),
-        webapp2.Route(r'/passager/<id>/lat/<lat2>/long/<long2>',    handler=PassagerHandler, methods=['GET']),                                        
-        webapp2.Route(r'/passager/lat/<lat2>/long/<long2>',         handler=PassagerHandler, methods=['GET','PUT']),
-        webapp2.Route(r'/conducteur/<id>/nbPlace/<nbPlace>',        handler=ConducteurHandler,methods=['PUT']),
-        webapp2.Route(r'/conducteur',                               handler=ConducteurHandler,methods=['PUT']),
-        webapp2.Route(r'/passager',                                 handler=PassagerHandler, methods=['PUT']),
-        webapp2.Route(r'/depart',                                   handler=parcoursUserHandler, methods=['PUT']),
-        webapp2.Route(r'/user/<email>',                             handler=UserHandler, methods=['PUT','GET']),
+        ('/',                                                                            MainPageHandler),
+        webapp2.Route(r'/conducteur/lat/<lat2>/long/<long2>',                            handler=ConducteurHandler, methods=['GET','PUT']),
+        webapp2.Route(r'/conducteur/<iden>/lat/<lat2>/long/<long2>',                     handler=ConducteurHandler, methods=['GET']),
+        webapp2.Route(r'/passager/<iden>/lat/<lat2>/long/<long2>',                       handler=PassagerHandler, methods=['GET']),                                        
+        webapp2.Route(r'/passager/lat/<lat2>/long/<long2>',                              handler=PassagerHandler, methods=['GET','PUT']),
+        webapp2.Route(r'/conducteur/<iden>/nbPlace/<nbPlace>',                           handler=ConducteurHandler,methods=['PUT']),
+        webapp2.Route(r'/conducteur',                                                    handler=ConducteurHandler,methods=['PUT']),
+        webapp2.Route(r'/passager',                                                      handler=PassagerHandler, methods=['PUT']),
+        webapp2.Route(r'/depart',                                                        handler=parcoursUserHandler, methods=['PUT']),
+		webapp2.Route(r'/depart/<email>',                                                handler=parcoursUserHandler, methods=['GET']),
+        webapp2.Route(r'/depart/<identi>/rating/<note>/user/<user>',                     handler=parcoursUserHandler, methods=['POST']),
+        webapp2.Route(r'/departPrevu/<iden>/type/<type>',                                handler=departPrevuHandler, methods=['GET']),
+        webapp2.Route(r'/user/<email>',                                                  handler=UserHandler, methods=['PUT','GET']),
+        webapp2.Route(r'/depart/<idenPar>/idDep/<idenDep>/type/<unType>/nbPlace/<nbPass>', handler=deleteParcours, methods=['DELETE']),
     ],
     debug=True)

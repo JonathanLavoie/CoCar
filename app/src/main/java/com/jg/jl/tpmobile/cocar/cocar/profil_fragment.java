@@ -46,7 +46,7 @@ public class profil_fragment extends Fragment{
         float rating = 0;
 
         if (unUtilisateur.get_countRate() != 0) {
-            rating = (float)unUtilisateur.get_sumRate() / (float)unUtilisateur.get_countRate();
+            rating = unUtilisateur.get_sumRate() / (float)unUtilisateur.get_countRate();
         }
         votreMoyennne.setText("Votre moyenne: " + rating + " étoiles");
         rate.setRating(rating);

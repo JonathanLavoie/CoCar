@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jg.jl.tpmobile.cocar.cocar.NoteDepart;
 import com.jg.jl.tpmobile.cocar.cocar.ParcoursConducteur;
 import com.jg.jl.tpmobile.cocar.cocar.ParcoursPassager;
 import com.jg.jl.tpmobile.cocar.cocar.User;
@@ -30,6 +31,24 @@ public class jsonParser{
         }
         return unUser;
     }
+
+    public static ArrayList<NoteDepart> parseNoteDepart(String p_body) throws JSONException{
+        ArrayList<NoteDepart> liste = new ArrayList<>();
+        JSONArray array = new JSONArray(p_body);
+        for (int i = 0; i < array.length(); i++)
+        {
+            JSONObject jsonNote = array.getJSONObject(i);
+            NoteDepart note = new NoteDepart();
+            note.setIdParcours(jsonNote.getString("parcourId"));
+            note.setIdUser1(jsonNote.getString("userId1"));
+            note.setIdUser2(jsonNote.getString("userId2"));
+            note.setRate(Float.parseFloat(jsonNote.getString("rate")));
+            note.setNbPassager(jsonNote.getInt("nbPassager"));
+            note.setIdNote(jsonNote.getString("id"));
+            liste.add(note);
+        }
+        return liste;
+    }
     public static ArrayList<ParcoursConducteur> parseConducteurListe(String p_body) throws JSONException{
         ArrayList<ParcoursConducteur> liste = new ArrayList<>();
         JSONArray array = new JSONArray(p_body);
@@ -38,7 +57,14 @@ public class jsonParser{
             String date = jsonCond.getString("dateHeureC");
             String[] vectDate = date.split("T");
             ParcoursConducteur condu = new ParcoursConducteur();
-            condu.set_ID(jsonCond.getString("id"));
+            if(!jsonCond.isNull("idDep"))
+            {
+                condu.set_ID(jsonCond.getString("id")+ ";" + jsonCond.getString("idDep"));
+            }
+            else
+            {
+                condu.set_ID(jsonCond.getString("id"));
+            }
             condu.set_depart(jsonCond.getString("departC"));
             condu.set_destination(jsonCond.getString("destinationC"));
             condu.set_date(vectDate[0]);
@@ -63,7 +89,16 @@ public class jsonParser{
             ParcoursPassager pass = new ParcoursPassager();
             pass.set_depart(jsonCond.getString("departP"));
             pass.set_destination(jsonCond.getString("destinationP"));
-            pass.set_ID(jsonCond.getString("id"));
+
+            if(!jsonCond.isNull("idDep"))
+            {
+                pass.set_ID(jsonCond.getString("id")+ ";" + jsonCond.getString("idDep"));
+            }
+            else
+            {
+                pass.set_ID(jsonCond.getString("id"));
+            }
+
             pass.set_date(vectDate[0]);
             pass.set_heure(vectDate[1]);
             pass.set_identifiant(jsonCond.getString("identifiantCree"));
@@ -75,6 +110,17 @@ public class jsonParser{
         return liste;
     }
 
+
+    public static JSONObject SSSIIToJSONObject(String id1,String id2,String idParcours,int nbPass,String type) throws JSONException{
+        JSONObject jsonObj = new JSONObject();
+        jsonObj.put("userId1",id1);
+        jsonObj.put("userId2",id2);
+        jsonObj.put("parcourId",idParcours);
+        jsonObj.put("nbPassager",nbPass);
+        jsonObj.put("rate","0");
+        jsonObj.put("type",type);
+        return jsonObj;
+    }
 
     public static JSONObject conducteurToJSONObject(ParcoursConducteur condu) throws JSONException{
         JSONObject jsonObj = new JSONObject();

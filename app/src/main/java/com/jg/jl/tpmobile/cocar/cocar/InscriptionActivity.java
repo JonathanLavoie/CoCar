@@ -5,19 +5,25 @@ package com.jg.jl.tpmobile.cocar.cocar;
  */
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.jg.jl.tpmobile.cocar.cocar.webService.webService;
 
+import java.util.ArrayList;
 
-public class InscriptionActivity extends Activity {
+public class InscriptionActivity extends Activity  {
 
     // Variable pour les champs de l'activity
     EditText txtNom, txtIndentifiant, txtMotPasse, txtlong, txtNumTel,txtLat;
@@ -25,11 +31,13 @@ public class InscriptionActivity extends Activity {
     User user;
     User utilisateur;
     String nom,motDePasse,adresse,phone,email;
+    ArrayList<User> decoUser = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
-
+        this.registerReceiver(this.m_conn,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         // Attribut les textBox a des varibales
         txtNom = (EditText) findViewById(R.id.txtNom);
         txtIndentifiant = (EditText) findViewById(R.id.txtEmail);
@@ -38,8 +46,6 @@ public class InscriptionActivity extends Activity {
         txtlong = (EditText) findViewById(R.id.txtLongInscrip);
         txtNumTel = (EditText) findViewById(R.id.txtPhone);
     }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -85,6 +91,7 @@ private class addUser extends AsyncTask<Void,Void,Void>{
     public Boolean champsValide(String nom, String email, String motPasse, String Latitude, String longitude, String phone) {
         Double lat;
         Double lon;
+
         // Vérifie si les champs ne sont pas vide
         if(nom.length() > 0 &&
                 email.length() > 0 &&
@@ -139,6 +146,27 @@ private class addUser extends AsyncTask<Void,Void,Void>{
         }
     }
 
+//Exécuter au retour du wifi...
+    private BroadcastReceiver m_conn = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            NetworkInfo m3G = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            if ((mWifi != null && mWifi.isConnected()) || (m3G != null && m3G.isConnected())) {
+                if (!decoUser.isEmpty())
+                {
+                    for (int i =0; i < decoUser.size(); i++)
+                    {
+                        user = decoUser.get(i);
+                        new addUser().execute((Void) null);
+                    }
+                }
+            }
+        }
+    };
+
+
     private class getUser extends AsyncTask<Void,Void,Void>{
         @Override
         protected Void doInBackground(Void... params) {
@@ -156,10 +184,20 @@ private class addUser extends AsyncTask<Void,Void,Void>{
                 user.set_motPasse(Util.encryptPassword(motDePasse));
                 user.set_adresse(adresse);
                 user.set_phone(phone);
-                new addUser().execute((Void)null);
-
-                // redirection vers la connexion
-                Toast.makeText(getApplicationContext(),"Inscription réussie",Toast.LENGTH_SHORT).show();
+                ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                NetworkInfo m3G = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                if ((mWifi != null && mWifi.isConnected()) || (m3G != null && m3G.isConnected())) {
+                    new addUser().execute((Void)null);
+                    // redirection vers la connexion
+                    Toast.makeText(getApplicationContext(),"Inscription réussie",Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    decoUser.add(user);
+                    Util.afficherAlertBox(InscriptionActivity.this,"Aucune connexion internet trouvé, \n" +
+                            "mais votre inscription va être envoyé au retour de la connexion","Erreur WIFI non trouvé");
+                }
                 Intent i = new Intent(InscriptionActivity.this, Login.class);
                 startActivity(i);
                 finish();

@@ -19,8 +19,8 @@ public class User {
 
     // property help us to keep data
     private String _identification, _nom, _motPasse, _adresse, _phone;
-    private int _sumRate, _countRate;
-
+    private int _countRate;
+    private float _sumRate;
     // Constructeur
     public User() {
         _identification = "";
@@ -54,7 +54,7 @@ public class User {
         this._phone = phone;
     }
 
-    public void set_sumRate(int sumRate) {
+    public void set_sumRate(float sumRate) {
         this._sumRate = sumRate;
     }
 
@@ -86,7 +86,7 @@ public class User {
         return _phone;
     }
 
-    public int get_sumRate() {
+    public float get_sumRate() {
         return _sumRate;
     }
 

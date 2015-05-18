@@ -2,9 +2,13 @@ package com.jg.jl.tpmobile.cocar.cocar;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -15,6 +19,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.jg.jl.tpmobile.cocar.cocar.webService.webService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,58 +35,97 @@ import java.util.Locale;
  */
 public class depart_fragment extends Fragment{
     View rootView;
+    ArrayList<ParcoursPassager> listPassager;
+    ArrayList<ParcoursConducteur> listConducteur;
+    webService web = new webService();
+    String deleteIdPar,deleteIdDep,deleteType,deletePlace;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.depart_layout,container,false);
-        chargementDepart();
+
         return rootView;
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        new backDepart().execute((Void)null);
+    }
+
+    private class backDepart extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... params) {
+            //TODO recupéré les valeurs...
+            listConducteur = web.getDepartCondu(getActivity());
+            listPassager = web.getDepartPass(getActivity());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            chargementDepart();
+        }
     }
 
     //Méthode qui charge tous les donnée du fragment départ.
     private void chargementDepart() {
-        final ListView maListe = (ListView) rootView.findViewById(R.id.lstDepart);
+        ConnectivityManager connManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo m3G = connManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         ArrayList<HashMap<String, String>> listMap = new ArrayList<>();
-        HashMap<String, String> map;
-        ParcoursConducteurRepo unParcoursConducteur = new ParcoursConducteurRepo(getActivity());
-        ParcoursPassagerRepo unParcoursPassager = new ParcoursPassagerRepo(getActivity());
-
-        ArrayList<ParcoursPassager> listPassager = unParcoursPassager.getAllParcours();
-        ArrayList<ParcoursConducteur> listConducteur = unParcoursConducteur.getAllParcours();
-        String type;
-        for (int i = 0; i < listPassager.size(); i++) {
-            map = new HashMap<>();
-            type = "Passager";
-            map.put("type", type);
-            map.put("img", String.valueOf(R.drawable.passager));
-            map.put("id","Numéro de parcours : " + listPassager.get(i).get_ID());
-            map.put("date", "Date : " + listPassager.get(i).get_date()+ " " + listPassager.get(i).get_heure());
-            map.put("description", "Départ : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
-                    + "\nNombre de passager : " + listPassager.get(i).get_nombrePassager());
-            map.put("Depart",  listPassager.get(i).get_depart());
-            map.put("Destination", listPassager.get(i).get_destination());
-            map.put("NbrPlace",  "" + listPassager.get(i).get_nombrePassager());
-            map.put("infoSupp", "\nCourriel : " + listPassager.get(i).get_identifiant() + "\n");
-            listMap.add(map);
+        final ListView maListe = (ListView) rootView.findViewById(R.id.lstDepart);
+        if((mWifi != null && mWifi.isConnected()) || (m3G != null && m3G.isConnected())) {
+            HashMap<String, String> map;
+            String type;
+            for (int i = 0; i < listPassager.size(); i++) {
+                map = new HashMap<>();
+                type = "Passager";
+                map.put("type", type);
+                map.put("img", String.valueOf(R.drawable.car72));
+                map.put("etat", "Vous êtes le conducteur");
+                String[] idPar = listPassager.get(i).get_ID().split(";");
+                map.put("idDep", idPar[1]);
+                map.put("id", "Numéro de parcours : " + idPar[0]);
+                map.put("idPar", idPar[0]);
+                map.put("date", map.get("etat") + "\n" + "Date : " + listPassager.get(i).get_date() + " " + listPassager.get(i).get_heure());
+                map.put("description", "Départ : " + listPassager.get(i).get_depart() + "\nDestination : " + listPassager.get(i).get_destination()
+                        + "\nNombre de passager : " + listPassager.get(i).get_nombrePassager());
+                map.put("Depart", listPassager.get(i).get_depart());
+                map.put("Destination", listPassager.get(i).get_destination());
+                map.put("NbrPlace", "" + listPassager.get(i).get_nombrePassager());
+                map.put("infoSupp", "\nCourriel : " + listPassager.get(i).get_identifiant() + "\n");
+                listMap.add(map);
+            }
+            for (int i = 0; i < listConducteur.size(); i++) {
+                map = new HashMap<>();
+                type = "Conducteur";
+                map.put("type", type);
+                map.put("img", String.valueOf(R.drawable.passager));
+                String id = listConducteur.get(i).get_ID();
+                String[] idPar = id.split(";");
+                map.put("idDep", idPar[1]);
+                map.put("id", "Numéro de parcours : " + idPar[0]);
+                map.put("idPar", idPar[0]);
+                map.put("etat", "Vous êtes le passager");
+                map.put("date", map.get("etat") + "\n" + "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
+                map.put("description", "Depart : " + listConducteur.get(i).get_depart() +
+                        "\nDestination : " + listConducteur.get(i).get_destination() +
+                        "\nNombre de place disponible : " + listConducteur.get(i).get_nombreDePlace());
+                map.put("Depart", listConducteur.get(i).get_depart());
+                map.put("Destination", listConducteur.get(i).get_destination());
+                map.put("NbrPlace", "" + listConducteur.get(i).get_nombreDePlace());
+                map.put("infoSupp", "\nCourriel du demandeur : \n" + listConducteur.get(i).get_identifiant() +
+                        "\nKm max à parcourir : " + listConducteur.get(i).get_KM() + "\n");
+                listMap.add(map);
+            }
         }
-        for (int i = 0; i < listConducteur.size(); i++) {
-            map = new HashMap<>();
-            type = "Conducteur";
-            map.put("type", type);
-            map.put("img", String.valueOf(R.drawable.car72));
-            map.put("id","Numéro de parcours : " + listConducteur.get(i).get_ID());
-            map.put("date", "Date : " + listConducteur.get(i).get_date() + " " + listConducteur.get(i).get_heure());
-            map.put("description", "Depart : " + listConducteur.get(i).get_depart() +
-                    "\nDestination : " + listConducteur.get(i).get_destination() +
-                    "\nNombre de place disponible : " + listConducteur.get(i).get_nombreDePlace());
-            map.put("Depart",  listConducteur.get(i).get_depart());
-            map.put("Destination", listConducteur.get(i).get_destination());
-            map.put("NbrPlace",  "" + listConducteur.get(i).get_nombreDePlace());
-            map.put("infoSupp", "\nCourriel du demandeur : \n" + listConducteur.get(i).get_identifiant() +
-                    "Km max à parcourir : " + listConducteur.get(i).get_KM() + "\n");
-            listMap.add(map);
+        else
+        {
+            Util.afficherAlertBox(getActivity(),"Aucune connexion internet trouvé","Erreur WIFI non trouvé");
         }
-
         if (listMap.isEmpty())
         {
             TextView tv = new TextView(getActivity());
@@ -107,16 +153,40 @@ public class depart_fragment extends Fragment{
                     adb.setPositiveButton("OK", null);
                     adb.setNeutralButton("Afficher Carte", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
+                            Intent i = new Intent(getActivity(), googleMap.class);
+                            Bundle b = new Bundle();
                             String Depart[] = map.get("Depart").split(";");
+                            String Dest[] = map.get("Destination").split(";");
                             float latDepart = Float.parseFloat(Depart[0]);
                             float longDepart = Float.parseFloat(Depart[1]);
-                            String url = "https://maps.google.com/maps?z=10&t=m&q=loc:"+latDepart+"+"+longDepart+"";
-                            Uri uri = Uri.parse(url);
-                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                            startActivity(intent);
-                            /*String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latDepart, longDepart);
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                            startActivity(intent);*/
+                            float latDest = Float.parseFloat(Dest[0]);
+                            float longDest = Float.parseFloat(Dest[1]);
+
+                            UserRepo repo = new UserRepo(getActivity());
+                            User unUser = repo.getUser();
+                            String[] LatLong = unUser.get_adresse().split(";");
+                            float latCur = Float.parseFloat(LatLong[0]);
+                            float longCur = Float.parseFloat(LatLong[1]);
+                            b.putFloat("latCurr", latCur);
+                            b.putFloat("longCurr", longCur);
+
+                            b.putFloat("lat", latDepart);
+                            b.putFloat("long", longDepart);
+                            b.putFloat("latDest", latDest);
+                            b.putFloat("longDest", longDest);
+                            i.putExtras(b);
+                            startActivity(i);
+                        }
+                    });
+                    adb.setNegativeButton("Supprimer", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getActivity(),map.get("idPar") + " va être supprimer bientôt",Toast.LENGTH_SHORT).show();
+                            deleteIdPar = map.get("idPar");
+                            deleteIdDep = map.get("idDep");
+                            deleteType = map.get("type");
+                            deletePlace = map.get("NbrPlace");
+                            new delete().execute((Void)null);
                         }
                     });
                     adb.show();
@@ -124,6 +194,16 @@ public class depart_fragment extends Fragment{
             });
         }
     }
+
+
+    private class delete extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... params) {
+            web.deletePar(deleteIdPar,deleteIdDep,deleteType,deletePlace);
+            return null;
+        }
+    }
+
 
     //permet de faire un tri des depart en date du départ le plus prochain.
     public ArrayList<HashMap<String, String>> triBulle(ArrayList<HashMap<String, String>> list) {
